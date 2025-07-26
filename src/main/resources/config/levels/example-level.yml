@@ -1,0 +1,13 @@
+# 要求和 quality一样 不识别颜色代码
+示例武器升级模板:
+  # 仅仅识别以下key
+  begin: 0  # 初始等级  必须, 默认 0
+  max: 20  # 最大等级  必须, 默认 100
+  level_up_need: 可食用物内部名  # TwItems inner Name
+  chance: 0.8  # 每次有0.8的概率成功
+  level_down_when_failed: false  # 失败是否丢降级 默认为false
+  # 计算方式BASE表示是在白值计算
+  # 其余的方式单独乘算，且计算完成后的值作为武器的白值
+  calculate_type: BASE  # 默认为BASE
+  attrs:
+    attack_damage: 1

@@ -1,0 +1,50 @@
+VERSION: 1.0  # 版本号，勿动
+# Debug 开关，默认false
+DEBUG: true  # false
+
+# 数据库设置
+database:
+  use_mysql: true  # 是否使用MySQL数据库
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    database_name: tw_item_manager
+    username: root
+    password: test123456
+
+
+# 是否生成示例配置文件
+generate_examples: true  # true
+
+# 是否取消原版暴击特效, 伤害特效
+cancel_generic_particles: true  # false
+
+# 是否生成伤害文本显示
+generate_damage_indicator: true  # false
+# 以下配置在 generate_damage_indicator 为 true 才生效
+default_prefix: "§6"  # 非暴击指示器颜色
+critical_prefix: "§4" # 暴击指示器颜色
+critical_large_scale: 2 # 所有指示器默认放大1.5倍
+view_range: 20.0  # 可见范围
+
+# 防御伤害抵消乘数
+world_k: 1  # 1点防御抵消 k点伤害
+
+# 是否进行伤害浮动
+damage_float: false # false
+damage_float_range: 0.08 # 浮动范围(默认0)
+
+# 防御计算
+# 是否使用平衡算法
+use_damage_reduction_balance_for_player: false  # false
+
+# 跳劈伤害加成 (暴击前伤害 * (1 + 数值))
+original_critical_strike_addition: 0.2 # 0.2
+
+# 稀有品质权重压制（让权重低的更加难以出现）
+rarity_intensity: 0.5  # 越大压制越多
+
+# 玩家数据类
+original_max_health: 20
+original_max_mana: 50
+original_mana_recovery_speed: 0.2 #(每tick恢复0.4蓝量, 相当于1s恢复8)

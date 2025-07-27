@@ -1,7 +1,7 @@
 package io.github.tanice.terraCraft.api.items;
 
-import io.github.tanice.terraCraft.api.items.level.TerraLevel;
-import io.github.tanice.terraCraft.api.items.quality.TerraQualityGroup;
+import io.github.tanice.terraCraft.api.items.levels.TerraLevel;
+import io.github.tanice.terraCraft.api.items.qualities.TerraQualityGroup;
 
 import java.util.Collection;
 import java.util.Optional;

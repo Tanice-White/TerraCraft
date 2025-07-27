@@ -8,7 +8,7 @@ database:
   mysql:
     host: 127.0.0.1
     port: 3306
-    database_name: tw_item_manager
+    database_name: terra_craft
     username: root
     password: test123456
 

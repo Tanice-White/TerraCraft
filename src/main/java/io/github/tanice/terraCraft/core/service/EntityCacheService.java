@@ -2,12 +2,11 @@ package io.github.tanice.terraCraft.core.service;
 
 import io.github.tanice.terraCraft.api.service.TerraCacheService;
 import io.github.tanice.terraCraft.api.service.TerraCached;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
 
 public class EntityCacheService implements TerraCacheService {
     /** 实体状态缓存 */
@@ -15,7 +14,7 @@ public class EntityCacheService implements TerraCacheService {
 
     public EntityCacheService() {
         entityCache = new ConcurrentHashMap<>();
-        Schedulers.async().repeat(this::cleanUp, 1, 20);
+        TerraSchedulers.async().repeat(this::cleanUp, 1, 20);
     }
 
     public void reload() {

@@ -44,17 +44,35 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         }
     }
 
-    /**
-     * 合并属性值
-     */
     @Override
-    public void merge(TerraCalculableMeta meta, int k) {
-        CalculableMeta other = (CalculableMeta) meta;
-        for (int i = 0; i < ATTRIBUTE_TYPE_COUNT; i++) {
-            attributeModifiers[i] += other.attributeModifiers[i] * k;
+    public void add(TerraCalculableMeta another, int k) {
+        double[] otherAttrMods = another.getAttributeModifierArray();
+        double[] otherDamageMods = another.getDamageTypeModifierArray();
+        int index;
+        for (AttributeType type : AttributeType.values()) {
+            index = type.ordinal();
+            attributeModifiers[index] += otherAttrMods[k] * k;
         }
-        for (int i = 0; i < DAMAGE_TYPE_COUNT; i++) {
-            damageTypeModifiers[i] += other.damageTypeModifiers[i] * k;
+
+        for (DamageFromType type : DamageFromType.values()) {
+            index = type.ordinal();
+            damageTypeModifiers[index] += otherDamageMods[k] * k;
+        }
+    }
+
+    @Override
+    public void multiply(TerraCalculableMeta another, int k) {
+        double[] otherAttrMods = another.getAttributeModifierArray();
+        double[] otherDamageMods = another.getDamageTypeModifierArray();
+        int index;
+        for (AttributeType type : AttributeType.values()) {
+            index = type.ordinal();
+            attributeModifiers[index] *= 1 + otherAttrMods[k] * k;
+        }
+
+        for (DamageFromType type : DamageFromType.values()) {
+            index = type.ordinal();
+            damageTypeModifiers[index] *= 1 + otherDamageMods[k] * k;
         }
     }
 

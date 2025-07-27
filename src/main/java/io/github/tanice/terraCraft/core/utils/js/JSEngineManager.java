@@ -80,7 +80,8 @@ public final class JSEngineManager implements TerraJSEngineManager, AutoCloseabl
             return extractVariables(exports);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load script: " + jsFileName, e);
+            TerraCraftLogger.warning("Failed to load script: " + jsFileName + " " + e.getMessage());
+            return Collections.emptyMap();
         }
     }
 

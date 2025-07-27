@@ -27,6 +27,8 @@ dependencies {
     // js引擎, 运行时需要使用
     implementation("org.graalvm.js:js:22.3.1")
     implementation("org.graalvm.js:js-scriptengine:22.3.1")
+    // json序列化
+    implementation ("com.fasterxml.jackson.core:jackson-databind:2.15.2")
     // MiniMessage
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
     // mm

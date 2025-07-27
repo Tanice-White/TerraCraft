@@ -95,7 +95,7 @@ public abstract class AbstractAttributeCalculator implements TerraAttributeCalcu
             /* BASE ADD MULTIPLY FIX */
             else {
                 meta = transformTmp.getOrDefault(acs, new CalculableMeta());
-                meta.merge(meta, 1);
+                meta.add(meta, 1);
                 transformTmp.put(acs, meta);
             }
         }

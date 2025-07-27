@@ -46,7 +46,7 @@ public class PlayerData implements TerraPlayerData, Cloneable {
     /**
      * 创建用于玩家初始化的PlayerData对象
      */
-    public static PlayerData initFrom(Player player) {
+    public static PlayerData newFrom(Player player) {
         TerraConfigManager cm = TerraCraftBukkit.inst().getConfigManager();
         return new PlayerData(
                 player.getUniqueId().toString(),
@@ -59,7 +59,7 @@ public class PlayerData implements TerraPlayerData, Cloneable {
         );
     }
 
-    public static PlayerData fromPlayer(Player player) {
+    public static PlayerData from(Player player) {
         // TODO 在 EntityAttribute 中获取 没有则在 数据库中获取
         return new PlayerData(
                 player.getUniqueId().toString(),
@@ -72,7 +72,7 @@ public class PlayerData implements TerraPlayerData, Cloneable {
         );
     }
 
-    public static PlayerData fromEdibleConfig(ConfigurationSection cfg) {
+    public static PlayerData from(ConfigurationSection cfg) {
         return new PlayerData(
                 null,
                 cfg.getDouble(HEALTH, 0D),
@@ -150,6 +150,11 @@ public class PlayerData implements TerraPlayerData, Cloneable {
     @Override
     public double getManaRecoverySpeed() {
         return this.manaRecoverySpeed;
+    }
+
+    @Override
+    public Map<String, Integer> getAte() {
+        return this.ate;
     }
 
     @Override

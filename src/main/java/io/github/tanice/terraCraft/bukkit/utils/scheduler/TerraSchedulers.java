@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public final class Schedulers {
+public final class TerraSchedulers {
     private static final TerraExecutor syncExecutor = new SyncExecutor();
     private static final TerraExecutor asyncExecutor = new AsyncExecutor();
     private static final TerraSingleExecutor databaseAsyncExecutor = new SingleAsyncExecutor();
@@ -48,7 +48,7 @@ public final class Schedulers {
         if (closing.get()) throw new IllegalStateException("TerraSyncExecutor is shutting down");
     }
 
-    private Schedulers() {
+    private TerraSchedulers() {
         throw new UnsupportedOperationException("Schedulers class cannot be instantiated");
     }
 
@@ -64,7 +64,7 @@ public final class Schedulers {
 
         @Override
         public void run(Runnable task) {
-            Schedulers.stateCheck();
+            TerraSchedulers.stateCheck();
 
             BukkitTask bukkitTask = Bukkit.getScheduler().runTask(
                     TerraCraftBukkit.inst(),
@@ -75,7 +75,7 @@ public final class Schedulers {
 
         @Override
         public void runLater(Runnable task, long delayTicks) {
-            Schedulers.stateCheck();
+            TerraSchedulers.stateCheck();
 
             BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(
                     TerraCraftBukkit.inst(),
@@ -87,7 +87,7 @@ public final class Schedulers {
 
         @Override
         public TerraTask repeat(Runnable task, long delayTicks, long periodTicks) {
-            Schedulers.stateCheck();
+            TerraSchedulers.stateCheck();
 
             BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(
                     TerraCraftBukkit.inst(),
@@ -113,7 +113,6 @@ public final class Schedulers {
         public void shutdown() {
             closing.set(true);
             for (int bid : tasks.values()) Bukkit.getScheduler().cancelTask(bid);
-
             tasks.clear();
         }
     }
@@ -153,14 +152,14 @@ public final class Schedulers {
 
         @Override
         public void run(Runnable task) {
-            Schedulers.stateCheck();
+            TerraSchedulers.stateCheck();
 
             tasks.put(ids.getAndAdd(1), this.executor.submit(task));
         }
 
         @Override
         public void runLater(Runnable task, long delayTicks) {
-            Schedulers.stateCheck();
+            TerraSchedulers.stateCheck();
 
             ScheduledFuture<?> future = this.executor.schedule(
                     task,
@@ -172,7 +171,7 @@ public final class Schedulers {
 
         @Override
         public TerraTask repeat(Runnable task, long delayTicks, long periodTicks) {
-            Schedulers.stateCheck();
+            TerraSchedulers.stateCheck();
 
             ScheduledFuture<?> future = this.executor.scheduleAtFixedRate(
                     task,
@@ -229,7 +228,7 @@ public final class Schedulers {
 
         @Override
         public void run(Runnable task) {
-            Schedulers.stateCheck();
+            TerraSchedulers.stateCheck();
 
             executor.execute(task);
         }

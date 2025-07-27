@@ -7,7 +7,7 @@ import io.github.tanice.terraCraft.api.service.TerraCached;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraPlayerDataLimitChangeEvent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
@@ -29,7 +29,7 @@ public class PlayerDataManager implements TerraPlayerDataManager {
         playerData = new ConcurrentHashMap<>();
         playerMana = new ConcurrentHashMap<>();
 
-        Schedulers.async().repeat(this::processManaRecovery, 2, MANA_RECOVERY_CD);
+        TerraSchedulers.async().repeat(this::processManaRecovery, 2, MANA_RECOVERY_CD);
 
         TerraEvents.subscribe(TerraPlayerDataLimitChangeEvent.class)
                 .priority(EventPriority.HIGH)

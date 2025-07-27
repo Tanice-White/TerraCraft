@@ -13,7 +13,7 @@ import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraAttributeUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.buffs.impl.AttributeBuff;
 import io.github.tanice.terraCraft.core.buffs.impl.BuffRecord;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -61,8 +61,8 @@ public final class BuffManager implements TerraBuffManager {
         this.entityBuffs = new ConcurrentHashMap<>();
         this.buffTaskQueue = new LinkedBlockingQueue<>();
         this.eventQueue = new LinkedBlockingQueue<>();
-        Schedulers.async().repeat(this::processBuffCycle, 1, BUFF_RUN_CD);
-        Schedulers.sync().repeat(this::doBuffEffects, 1, BUFF_RUN_CD);
+        TerraSchedulers.async().repeat(this::processBuffCycle, 1, BUFF_RUN_CD);
+        TerraSchedulers.sync().repeat(this::doBuffEffects, 1, BUFF_RUN_CD);
     }
 
     public void reload() {

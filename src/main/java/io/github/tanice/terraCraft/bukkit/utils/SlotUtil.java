@@ -3,21 +3,6 @@ package io.github.tanice.terraCraft.bukkit.utils;
 import java.util.*;
 
 public final class SlotUtil {
-    private static final Map<String, Slot> SLOT_LOOKUP = new HashMap<>();
-
-    static {
-        for (Slot slot : Slot.values()) {
-            for (String alias : slot.aliases) {
-                SLOT_LOOKUP.put(alias, slot);
-            }
-        }
-    }
-
-    public static Slot slotJudge(String slot) {
-        if (slot == null || slot.isEmpty()) return null;
-        String lowerSlot = slot.toLowerCase();
-        return SLOT_LOOKUP.getOrDefault(lowerSlot, null);
-    }
 
     public static boolean isMainHand(String slot) {
         return Slot.HAND.matches(slot);

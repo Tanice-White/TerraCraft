@@ -54,7 +54,7 @@ public class Edible extends AbstractItem implements TerraEdible {
         this.cd = cfg.getInt(CD, -1);
         this.times = cfg.getInt(TIMES, -1);
 
-        this.changedPlayerData = PlayerData.fromEdibleConfig(cfg);
+        this.changedPlayerData = PlayerData.from(cfg);
         this.food = cfg.getInt(FOOD, 0);
         this.level = cfg.getInt(LEVEL, 0);
         this.saturation = (float) cfg.getDouble(SATURATION, 0D);
@@ -83,7 +83,7 @@ public class Edible extends AbstractItem implements TerraEdible {
 
     @Override
     public boolean apply(Player player) {
-        PlayerData playerData = PlayerData.fromPlayer(player);
+        PlayerData playerData = PlayerData.from(player);
 
         TerraPlayerEatEvent event1 = TerraEvents.callAndReturn(new TerraPlayerEatEvent(player, this));
         if (event1.isCancelled()) return false;

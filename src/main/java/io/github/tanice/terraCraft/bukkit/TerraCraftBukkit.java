@@ -4,16 +4,20 @@ import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffManager;
 import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
+import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.service.TerraCacheService;
+import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
 import io.github.tanice.terraCraft.core.buffs.BuffManager;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.items.ItemManager;
+import io.github.tanice.terraCraft.core.players.PlayerDataManager;
 import io.github.tanice.terraCraft.core.service.EntityCacheService;
+import io.github.tanice.terraCraft.core.skills.SkillManager;
 import io.github.tanice.terraCraft.core.utils.database.DatabaseManager;
 import io.github.tanice.terraCraft.core.utils.js.JSEngineManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,31 +32,56 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private BuffManager buffManager;
     private ItemManager itemManager;
 
+    private EntityCacheService cacheService;
     private EntityAttributeManager entityAttributeManager;
-    private TerraCacheService cacheService;
+    private SkillManager skillManager;
+    private PlayerDataManager playerDataManager;
 
     @Override
     public void onEnable() {
         updateCode = System.currentTimeMillis();
         instance = this;
 
-        configManager = new ConfigManager(this);
         jsEngineManager = new JSEngineManager();
+        configManager = new ConfigManager(this);
         databaseManager = new DatabaseManager(this);
-
         buffManager = new BuffManager(this);
         itemManager = new ItemManager(this);
+        skillManager = new SkillManager(this);
+
+        cacheService = new EntityCacheService();
 
         entityAttributeManager = new EntityAttributeManager();
-        cacheService = new EntityCacheService();
-        // TODO 全局异步缓存清理
+        playerDataManager = new PlayerDataManager();
     }
 
     @Override
     public void onDisable() {
+        jsEngineManager.close();
         configManager.unload();
         buffManager.unload();
-        Schedulers.shutdown();
+        itemManager.unload();
+        skillManager.unload();
+        entityAttributeManager.unload();
+        playerDataManager.unload();
+        TerraSchedulers.shutdown();
+        databaseManager.unload();
+        cacheService.unload();
+    }
+
+    @Override
+    public void reload() {
+        this.updateCode = System.currentTimeMillis();
+        configManager.reload();
+        databaseManager.reload();
+        cacheService.reload();
+
+        jsEngineManager.reload();
+        buffManager.reload();
+        itemManager.reload();
+        skillManager.reload();
+        entityAttributeManager.reload();
+        playerDataManager.reload();
     }
 
     public static TerraCraftBukkit inst() {
@@ -95,12 +124,17 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     }
 
     @Override
-    public long getUpdateCode() {
-        return this.updateCode;
+    public TerraSkillManager getSkillManager() {
+        return this.skillManager;
     }
 
     @Override
-    public void reload() {
-        this.updateCode = System.currentTimeMillis();
+    public TerraPlayerDataManager getPlayerDataManager() {
+        return this.playerDataManager;
+    }
+
+    @Override
+    public long getUpdateCode() {
+        return this.updateCode;
     }
 }

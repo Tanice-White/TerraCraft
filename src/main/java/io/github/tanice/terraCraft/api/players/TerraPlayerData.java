@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.api.players;
 
+import java.util.Map;
 import java.util.UUID;
 
 public interface TerraPlayerData {
@@ -17,6 +18,8 @@ public interface TerraPlayerData {
     double getMaxMana();
 
     double getManaRecoverySpeed();
+
+    Map<String, Integer> getAte();
 
     TerraPlayerData clone();
 }

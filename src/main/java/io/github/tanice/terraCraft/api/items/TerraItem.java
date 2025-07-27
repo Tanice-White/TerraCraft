@@ -22,7 +22,7 @@ public interface TerraItem extends TerraBaseItem {
 
     String getSlotAsString();
 
-    TerraCalculableMeta getMeta();
+    TerraCalculableMeta copyMeta();
 
     List<TerraBaseBuff> getHoldBuffs();
 

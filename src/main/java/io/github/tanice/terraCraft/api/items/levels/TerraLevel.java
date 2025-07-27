@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.api.items.level;
+package io.github.tanice.terraCraft.api.items.levels;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 

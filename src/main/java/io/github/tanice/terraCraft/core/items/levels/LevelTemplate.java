@@ -1,8 +1,8 @@
-package io.github.tanice.terraCraft.core.items.level;
+package io.github.tanice.terraCraft.core.items.levels;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.items.level.TerraLevel;
+import io.github.tanice.terraCraft.api.items.levels.TerraLevel;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import org.bukkit.configuration.ConfigurationSection;
 

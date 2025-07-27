@@ -1,12 +1,15 @@
 package io.github.tanice.terraCraft.core.utils.database;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffRecord;
 import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.players.TerraPlayerData;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.buffs.impl.BuffRecord;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.players.PlayerData;
@@ -85,7 +88,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
     @Override
     public void saveBuffRecords(Collection<TerraBuffRecord> records){
         if (records.isEmpty()) return;
-        Schedulers.databaseAsync().run(() -> {
+        TerraSchedulers.databaseAsync().run(() -> {
             String sql = "INSERT INTO buff_records (uuid, buff_inner_name, cooldown_counter, duration_counter) "
                     + "VALUES (?, ?, ?, ?) "
                     + "ON DUPLICATE KEY UPDATE "
@@ -114,7 +117,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
     @Override
     public CompletableFuture<List<TerraBuffRecord>> loadPlayerBuffRecords(String uuid) {
         CompletableFuture<List<TerraBuffRecord>> future = new CompletableFuture<>();
-        Schedulers.databaseAsync().run(() -> {
+        TerraSchedulers.databaseAsync().run(() -> {
             List<TerraBuffRecord> res = new ArrayList<>();
             String selectSql = "SELECT buff_inner_name, cooldown_counter, duration_counter FROM buff_records WHERE uuid = ?";
             try (PreparedStatement pst = connection.prepareStatement(selectSql)) {
@@ -155,38 +158,45 @@ public final class DatabaseManager implements TerraDatabaseManager {
      * @param playerData PlayerData对象
      */
     public void savePlayerData(TerraPlayerData playerData) {
-        Schedulers.databaseAsync().run(() -> {
-            String sql = "INSERT INTO player_data (uuid, health, max_health, mana, max_mana, mana_recovery_speed) " +
-                    "VALUES (?, ?, ?, ?, ?, ?) " +
+        TerraSchedulers.databaseAsync().run(() -> {
+            String sql = "INSERT INTO player_data (uuid, health, max_health, mana, max_mana, mana_recovery_speed, ate) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                     "ON DUPLICATE KEY UPDATE " +
                     "health = VALUES(health), max_health = VALUES(max_health), " +
-                    "mana = VALUES(mana), max_mana = VALUES(max_mana), mana_recovery_speed = VALUES(mana_recovery_speed);"
+                    "mana = VALUES(mana), max_mana = VALUES(max_mana), " +
+                    "mana_recovery_speed = VALUES(mana_recovery_speed), ate = VALUES(ate);";
+
             try (PreparedStatement pst = connection.prepareStatement(sql)) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                String ateJson = null;
+
+                // 将Map转换为JSON字符串
+                if (playerData.getAte() != null) {
+                    ateJson = objectMapper.writeValueAsString(playerData.getAte());
+                }
+
                 pst.setString(1, playerData.getId().toString());
                 pst.setDouble(2, playerData.getHealth());
                 pst.setDouble(3, playerData.getMaxHealth());
                 pst.setDouble(4, playerData.getMana());
                 pst.setDouble(5, playerData.getMaxMana());
                 pst.setDouble(6, playerData.getManaRecoverySpeed());
+                pst.setString(7, ateJson);  // 设置JSON字符串
+
                 pst.executeUpdate();
-            } catch (SQLException e) {
-                logWarning("保存玩家数据出错: " + e.getMessage());
+            } catch (SQLException | JsonProcessingException e) {
+                TerraCraftLogger.error("Failed to save player data: " + e.getMessage());
             }
         });
     }
 
-    /**
-     * 从数据库加载PlayerData
-     * @param uuid 玩家UUID
-     * @return PlayerData对象，不存在则返回null
-     */
-    @Override
+    // 从数据库加载PlayerData
     public CompletableFuture<TerraPlayerData> loadPlayerData(String uuid) {
-        CompletableFuture<PlayerData> future = new CompletableFuture<>();
-        Schedulers.databaseAsync().run(() -> {
-            String sql = "SELECT health, max_health, mana, max_mana, mana_recovery_speed," +
-                    "food, saturation, level, allow_flight " +
+        CompletableFuture<TerraPlayerData> future = new CompletableFuture<>();
+        TerraSchedulers.databaseAsync().run(() -> {
+            String sql = "SELECT health, max_health, mana, max_mana, mana_recovery_speed, ate " +
                     "FROM player_data WHERE uuid = ?";
+
             try (PreparedStatement pst = connection.prepareStatement(sql)) {
                 pst.setString(1, uuid);
                 try (ResultSet rs = pst.executeQuery()) {
@@ -196,17 +206,30 @@ public final class DatabaseManager implements TerraDatabaseManager {
                         double mana = rs.getDouble("mana");
                         double maxMana = rs.getDouble("max_mana");
                         double manaRecoverySpeed = rs.getDouble("mana_recovery_speed");
-                        int food = rs.getInt("food");
-                        double saturation = rs.getDouble("saturation");
-                        int level = rs.getInt("level");
-                        boolean allowFlight = rs.getBoolean("allow_flight");
-                        future.complete(new PlayerData(uuid, food, (float) saturation, level,
-                                health, maxHealth, allowFlight, mana, maxMana, manaRecoverySpeed));
+
+                        String ateJson = rs.getString("ate");
+                        Map<String, Integer> ateMap = null;
+                        if (ateJson != null && !ateJson.isEmpty()) {
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            ateMap = objectMapper.readValue(ateJson, new TypeReference<>() {});
+                        }
+
+                        // 构建PlayerData对象（假设构造函数参数顺序对应）
+                        TerraPlayerData data = new PlayerData(
+                                uuid,
+                                health,
+                                maxHealth,
+                                mana,
+                                maxMana,
+                                manaRecoverySpeed,
+                                ateMap
+                        );
+                        future.complete(data);
                         return;
                     }
                 }
-            } catch (SQLException e) {
-                logWarning("加载玩家 " + uuid + " 的数据出错: " + e.getMessage());
+            } catch (SQLException | JsonProcessingException e) {
+                TerraCraftLogger.error("Failed to load data for player " + uuid + ": " + e.getMessage());
                 future.completeExceptionally(e);
             }
             future.complete(null);
@@ -222,10 +245,6 @@ public final class DatabaseManager implements TerraDatabaseManager {
                 + "duration_counter INT NOT NULL, "
                 + "PRIMARY KEY (uuid, buff_name))";
 
-        String entityPdcTableSql = "CREATE TABLE IF NOT EXISTS entity_pdc_data ("
-                + "uuid VARCHAR(50) PRIMARY KEY, "
-                + "data LONGBLOB NOT NULL)";
-
         String playerDataTableSql = "CREATE TABLE IF NOT EXISTS player_data ("
                 + "uuid VARCHAR(50) PRIMARY KEY, "
                 + "health DOUBLE NOT NULL, "
@@ -233,14 +252,10 @@ public final class DatabaseManager implements TerraDatabaseManager {
                 + "mana DOUBLE NOT NULL, "
                 + "max_mana DOUBLE NOT NULL, "
                 + "mana_recovery_speed DOUBLE NOT NULL, "
-                + "food DOUBLE NOT NULL, "
-                + "saturation DOUBLE NOT NULL, "
-                + "level DOUBLE NOT NULL, "
-                + "allow_flight BOOLEAN NOT NULL)";
+                + "ate TEXT)";
 
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(TerraBuffRecordsSql);
-            stmt.executeUpdate(entityPdcTableSql);
             stmt.executeUpdate(playerDataTableSql);
         } catch (SQLException e) {
             TerraCraftLogger.error("Failed to create database table: " + e.getMessage());

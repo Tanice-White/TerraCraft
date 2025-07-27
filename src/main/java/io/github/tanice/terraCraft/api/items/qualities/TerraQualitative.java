@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.api.items.quality;
+package io.github.tanice.terraCraft.api.items.qualities;
 
 public interface TerraQualitative {
 

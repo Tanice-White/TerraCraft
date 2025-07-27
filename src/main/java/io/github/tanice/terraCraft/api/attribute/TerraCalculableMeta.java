@@ -2,11 +2,18 @@ package io.github.tanice.terraCraft.api.attribute;
 
 public interface TerraCalculableMeta {
     /**
-     * 按照k倍合并目标同类属性值和同类伤害类型值到自身
+     * 按照k倍合并目标同类属性值（相加）和同类伤害类型值到自身
      * @param meta 目标属性
      * @param k 倍率
      */
-    void merge(TerraCalculableMeta meta, int k);
+    void add(TerraCalculableMeta meta, int k);
+
+    /**
+     * 按照k倍合并目标同类属性值（相乘）和同类伤害类型值到自身
+     * @param meta
+     * @param k
+     */
+    void multiply(TerraCalculableMeta meta, int k);
 
     /**
      * 获取生效的计算区

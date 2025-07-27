@@ -54,7 +54,7 @@ public class TerraEntityDamageByEntityEvent extends TerraEntityDamageEvent {
         EntityEquipment equipment = attacker.getEquipment();
         if (equipment != null) {
             ItemStack mainHandItem = equipment.getItemInMainHand();
-            TerraBaseItem bit = BukkitItemAdapter.adapt(mainHandItem);
+            TerraBaseItem bit = BukkitItemAdapter.itemAdapt(mainHandItem);
             if (bit instanceof Item it) {
                 weaponDamageType = it.getDamageType();
                 isTerraItem = true;

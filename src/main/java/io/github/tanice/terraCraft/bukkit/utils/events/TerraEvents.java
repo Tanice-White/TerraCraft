@@ -1,7 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.utils.events;
 
 import com.google.common.reflect.TypeToken;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -46,13 +46,13 @@ public final class TerraEvents {
 
     public static void callAsync(Event event) {
         Objects.requireNonNull(event, "event cannot be null");
-        Schedulers.async().run(() -> call(event));
+        TerraSchedulers.async().run(() -> call(event));
     }
 
     public static void callSync(Event event) {
         Objects.requireNonNull(event, "event cannot be null");
         if (Bukkit.isPrimaryThread()) call(event);
-        else Schedulers.sync().run(() -> call(event));
+        else TerraSchedulers.sync().run(() -> call(event));
     }
 
     public static <T extends Event> T callAndReturn(T event) {

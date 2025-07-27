@@ -6,7 +6,7 @@ import io.github.tanice.terraCraft.api.service.TerraCached;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraAttributeUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.calculator.EntityAttributeCalculator;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.entity.LivingEntity;
@@ -76,7 +76,7 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
 
         AtomicBoolean computing = computingFlags.computeIfAbsent(uuid, k -> new AtomicBoolean(false));
         if (computing.compareAndSet(false, true)) {
-            Schedulers.async().run(() -> asyncRun(uuid));
+            TerraSchedulers.async().run(() -> asyncRun(uuid));
 
             if (TerraCraftBukkit.inst().getConfigManager().isDebug()) {
                 TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updating");
@@ -104,7 +104,7 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
             /* 如果期间有新请求，继续处理 */
             if (dirtyFlags.get(uuid).getAndSet(false)) {
                 if (computingFlags.get(uuid).compareAndSet(false, true)) {
-                    Schedulers.async().run(() -> asyncRun(uuid));
+                    TerraSchedulers.async().run(() -> asyncRun(uuid));
                 }
             }
         }

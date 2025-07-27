@@ -4,11 +4,15 @@ import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
+import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.TerraGem;
 import io.github.tanice.terraCraft.api.items.TerraItem;
-import io.github.tanice.terraCraft.api.items.level.TerraLeveled;
-import io.github.tanice.terraCraft.api.items.quality.TerraQualitative;
+import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
+import io.github.tanice.terraCraft.api.items.qualities.TerraQualitative;
 import io.github.tanice.terraCraft.api.skills.TerraSkillCarrier;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.utils.SlotUtil;
+import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitItemAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
@@ -145,7 +149,7 @@ public class Item extends AbstractItem implements TerraItem, TerraQualitative, T
     }
 
     @Override
-    public TerraCalculableMeta getMeta() {
+    public TerraCalculableMeta copyMeta() {
         return this.meta.clone();
     }
 

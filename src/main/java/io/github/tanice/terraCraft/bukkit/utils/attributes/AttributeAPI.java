@@ -19,7 +19,7 @@ import static io.github.tanice.terraCraft.bukkit.utils.attributes.AttributeKeys.
  * TODO AttributeAPI 对接游戏原版属性  需要兼容
  * 有关更改物品原版属性的一切都需要通过此类实现
  */
-public class AttributeAPI {
+public final class AttributeAPI {
     private static final Map<String, Attribute> ATTRIBUTE_MAP = new HashMap<>();
 
     /* 被主动设置的原版属性的Namespace的key */

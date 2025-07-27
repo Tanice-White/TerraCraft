@@ -10,7 +10,7 @@ import io.github.tanice.terraCraft.api.skills.Trigger;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.items.Item;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.Schedulers;
+import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.skills.helper.mythicmobs.MMHelper;
 import org.bukkit.configuration.ConfigurationSection;
@@ -66,7 +66,7 @@ public final class SkillManager implements TerraSkillManager {
         this.playerSkillMap = new ConcurrentHashMap<>();
         this.playerSkillCooldowns = new ConcurrentHashMap<>();
 
-        Schedulers.async().repeat(this::cleanupExpiredRecords, 2, CLEAN_UP_CD);
+        TerraSchedulers.async().repeat(this::cleanupExpiredRecords, 2, CLEAN_UP_CD);
         this.loadResourceFiles();
     }
 
@@ -171,7 +171,7 @@ public final class SkillManager implements TerraSkillManager {
         AtomicBoolean computing = computingFlags.computeIfAbsent(uuid, k -> new AtomicBoolean(false));
 
         if (computing.compareAndSet(false, true)) {
-            Schedulers.async().run(() -> updateAvailableSkills(player));
+            TerraSchedulers.async().run(() -> updateAvailableSkills(player));
 
             if (TerraCraftBukkit.inst().getConfigManager().isDebug())
                 TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL, "Player " + player.getName() + " available skills updated");
@@ -230,7 +230,7 @@ public final class SkillManager implements TerraSkillManager {
             /* 如果期间有新请求，继续处理 */
             if (dirtyFlags.get(uuid).getAndSet(false)) {
                 if (computingFlags.get(uuid).compareAndSet(false, true)) {
-                    Schedulers.async().run(() -> updateAvailableSkills(player));
+                    TerraSchedulers.async().run(() -> updateAvailableSkills(player));
                 }
             }
         }

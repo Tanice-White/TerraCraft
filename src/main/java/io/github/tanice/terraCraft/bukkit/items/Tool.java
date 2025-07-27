@@ -1,8 +1,8 @@
 package io.github.tanice.terraCraft.bukkit.items;
 
 import io.github.tanice.terraCraft.api.items.TerraTool;
-import io.github.tanice.terraCraft.api.items.level.TerraLeveled;
-import io.github.tanice.terraCraft.api.items.quality.TerraQualitative;
+import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
+import io.github.tanice.terraCraft.api.items.qualities.TerraQualitative;
 import io.github.tanice.terraCraft.api.skills.TerraSkillCarrier;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.items.AbstractItem;

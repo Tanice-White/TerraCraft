@@ -2,11 +2,11 @@ package io.github.tanice.terraCraft.core.items;
 
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.level.TerraLevel;
-import io.github.tanice.terraCraft.api.items.quality.TerraQualityGroup;
+import io.github.tanice.terraCraft.api.items.levels.TerraLevel;
+import io.github.tanice.terraCraft.api.items.qualities.TerraQualityGroup;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
-import io.github.tanice.terraCraft.core.items.level.LevelTemplate;
-import io.github.tanice.terraCraft.core.items.quality.QualityGroup;
+import io.github.tanice.terraCraft.core.items.levels.LevelTemplate;
+import io.github.tanice.terraCraft.core.items.qualities.QualityGroup;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

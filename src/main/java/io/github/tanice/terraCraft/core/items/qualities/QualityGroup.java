@@ -1,7 +1,7 @@
-package io.github.tanice.terraCraft.core.items.quality;
+package io.github.tanice.terraCraft.core.items.qualities;
 
-import io.github.tanice.terraCraft.api.items.quality.TerraQuality;
-import io.github.tanice.terraCraft.api.items.quality.TerraQualityGroup;
+import io.github.tanice.terraCraft.api.items.qualities.TerraQuality;
+import io.github.tanice.terraCraft.api.items.qualities.TerraQualityGroup;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
@@ -9,7 +9,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.*;
 
 import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
-import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 /**
  * 品质组类，用于管理一组品质并实现基于权重的随机选择
@@ -94,7 +93,6 @@ public class QualityGroup implements TerraQualityGroup {
         ConfigurationSection sc;
         String displayName;
         int weight;
-        Operation op;
         for (String key : cfg.getKeys(false)) {
             sc = cfg.getConfigurationSection(key);
             if (sc == null) continue;
@@ -105,12 +103,7 @@ public class QualityGroup implements TerraQualityGroup {
                 continue;
             }
             weight = sc.getInt(WEIGHT);
-            op = safeValueOf(Operation.class, sc.getString(OPERATION), Operation.ERROR);
-            if (op == Operation.ERROR) {
-                TerraCraftLogger.error("Quality " + key + " in Group " + this.name + " has an invalid [op] value! Skipped.");
-                continue;
-            }
-            this.qualities.add(new Quality(key , weight, displayName, op, sc));
+            this.qualities.add(new Quality(key , weight, displayName, sc));
         }
     }
 

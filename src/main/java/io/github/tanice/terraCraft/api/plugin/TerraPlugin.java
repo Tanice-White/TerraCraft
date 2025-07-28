@@ -14,6 +14,8 @@ import java.io.File;
 
 public interface TerraPlugin {
 
+    void reload();
+
     TerraBuffManager getBuffManager();
 
     TerraConfigManager getConfigManager();
@@ -33,8 +35,4 @@ public interface TerraPlugin {
     TerraPlayerDataManager getPlayerDataManager();
 
     File getDataFolder();
-
-    long getUpdateCode();
-
-    void reload();
 }

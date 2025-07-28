@@ -33,7 +33,7 @@ public class PlayerDataManager implements TerraPlayerDataManager {
 
         TerraEvents.subscribe(TerraPlayerDataLimitChangeEvent.class)
                 .priority(EventPriority.HIGH)
-                .handler( event -> this.changePlayerDataLimit(event.getPlayer(), event.getDeltaPlayerData()))
+                .handler( event -> this.changePlayerDataLimit(event.getEntity(), event.getDeltaPlayerData()))
                 .register();
     }
 

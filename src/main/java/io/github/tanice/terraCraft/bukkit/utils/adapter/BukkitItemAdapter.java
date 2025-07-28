@@ -1,9 +1,12 @@
 package io.github.tanice.terraCraft.bukkit.utils.adapter;
 
+import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.events.TerraCalculableMetaLoadEvent;
+import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,17 +32,18 @@ public final class BukkitItemAdapter {
      */
     public static TerraCalculableMeta metaAdapt(ItemStack item) {
         if (item == null) return null;
-        Optional<TerraBaseItem> op = TerraCraftBukkit.inst().getItemManager().getItem(PDCAPI.getItemName(item));
-        if (op.isEmpty()) return null;
-
-        /* 本插件的物品计算属性 */
-        TerraBaseItem baseItem = op.get();
-        if (baseItem instanceof TerraItem terraItem) return terraItem.copyMeta();
-
-        /* TODO 根据PDC判断是否为其他插件物品并创建对应的计算属性 */
-        /* TODO 可以通过触发事件实现兼容 */
-
-        /* TODO 返回原版的计算属性 */
-        return null;
+        return TerraCraftBukkit.inst().getItemManager().getItem(PDCAPI.getItemName(item))
+                .map(baseItem -> {
+                    /* 本插件的物品计算属性 */
+                    if (baseItem instanceof TerraItem ti) return ti.copyMeta();
+                    return null;
+                })
+                .orElseGet(() ->{
+                    /* 是否为其他插件物品并创建对应的计算属性 */
+                    TerraCalculableMetaLoadEvent event = TerraEvents.callAndReturn(new TerraCalculableMetaLoadEvent(item));
+                    if (event.getMeta().getActiveSection() != AttributeActiveSection.INNER) return event.getMeta();
+                    /* TODO 返回原版属性 */
+                    return null;
+                });
     }
 }

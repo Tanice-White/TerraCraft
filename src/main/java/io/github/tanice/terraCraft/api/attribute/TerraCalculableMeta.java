@@ -48,6 +48,12 @@ public interface TerraCalculableMeta {
     double[] getDamageTypeModifierArray();
 
     /**
+     * 设置计算区
+     * @param section 此计算属性生效的计算区
+     */
+    void setAttributeActiveSection(AttributeActiveSection section);
+
+    /**
      * 克隆自身
      * @return 自身的可变副本
      */

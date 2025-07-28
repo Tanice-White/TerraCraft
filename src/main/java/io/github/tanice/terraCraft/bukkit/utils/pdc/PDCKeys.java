@@ -13,5 +13,4 @@ public final class PDCKeys {
     public static final NamespacedKey GEMS = new NamespacedKey(TerraCraftBukkit.inst(), "gems");
     public static final NamespacedKey DAMAGE = new NamespacedKey(TerraCraftBukkit.inst(), "damage");
     public static final NamespacedKey MAX_DAMAGE = new NamespacedKey(TerraCraftBukkit.inst(), "max_damage");
-    public static final NamespacedKey OWNER = new NamespacedKey(TerraCraftBukkit.inst(), "owner");
 }

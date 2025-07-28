@@ -49,72 +49,37 @@ public final class PDCAPI {
     }
 
     /**
-     * 获取物品的灵魂绑定对象的ID
-     */
-    public static String getOwner(ItemStack item) {
-        if (item == null) return null;
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return null;
-        return getOwner(meta);
-    }
-
-    public static String getOwner(ItemMeta meta) {
-        if (meta == null) return null;
-        return meta.getPersistentDataContainer().get(
-                PDCKeys.OWNER,
-                PersistentDataType.STRING
-        );
-    }
-
-    public static void setOwner(ItemStack item, String owner) {
-        if (item == null) return;
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-        setOwner(meta, owner);
-        item.setItemMeta(meta);
-    }
-
-    public static void setOwner(ItemMeta meta, String owner) {
-        if (meta == null) return;
-        meta.getPersistentDataContainer().set(
-                PDCKeys.OWNER,
-                PersistentDataType.STRING,
-                owner
-        );
-    }
-
-    /**
      * 获取物品的更新code
      */
-    public static Long getCode(ItemStack item) {
+    public static Integer getCode(ItemStack item) {
         if (item == null) return null;
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return null;
         return getCode(meta);
     }
 
-    public static Long getCode(ItemMeta meta) {
+    public static Integer getCode(ItemMeta meta) {
         if (meta == null) return null;
         return meta.getPersistentDataContainer().get(
                 PDCKeys.CODE,
-                PersistentDataType.LONG
+                PersistentDataType.INTEGER
         );
     }
 
-    public static void setCode(ItemStack item) {
+    public static void setCode(ItemStack item, int code) {
         if (item == null) return;
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
-        setCode(meta);
+        setCode(meta, code);
         item.setItemMeta(meta);
     }
 
-    public static void setCode(ItemMeta meta) {
+    public static void setCode(ItemMeta meta, int code) {
         if (meta == null) return;
         meta.getPersistentDataContainer().set(
                 PDCKeys.CODE,
-                PersistentDataType.LONG,
-                TerraCraftBukkit.inst().getUpdateCode()
+                PersistentDataType.INTEGER,
+                code
         );
     }
 

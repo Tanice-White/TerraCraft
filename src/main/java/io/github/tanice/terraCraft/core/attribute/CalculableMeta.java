@@ -6,6 +6,8 @@ import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Objects;
+
 public class CalculableMeta implements TerraCalculableMeta, Cloneable {
 
     private static final int ATTRIBUTE_TYPE_COUNT = AttributeType.values().length;
@@ -16,7 +18,7 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     /** 索引对应DamageFromType的ordinal() */
     private final double[] damageTypeModifiers;
     /** 计算区枚举 */
-    private final AttributeActiveSection activeSection;
+    private AttributeActiveSection activeSection;
 
     public CalculableMeta() {
         this.attributeModifiers = new double[ATTRIBUTE_TYPE_COUNT];
@@ -36,11 +38,11 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         if (cfg == null) return;
         for (AttributeType type : AttributeType.values()) {
             int index = type.ordinal();
-            attributeModifiers[index] = cfg.getDouble(type.name().toLowerCase(), 0D);
+            this.attributeModifiers[index] = cfg.getDouble(type.name().toLowerCase(), 0D);
         }
         for (DamageFromType type : DamageFromType.values()) {
             int index = type.ordinal();
-            damageTypeModifiers[index] = cfg.getDouble(type.name().toLowerCase(), 0D);
+            this.damageTypeModifiers[index] = cfg.getDouble(type.name().toLowerCase(), 0D);
         }
     }
 
@@ -51,12 +53,12 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         int index;
         for (AttributeType type : AttributeType.values()) {
             index = type.ordinal();
-            attributeModifiers[index] += otherAttrMods[k] * k;
+            this.attributeModifiers[index] += otherAttrMods[k] * k;
         }
 
         for (DamageFromType type : DamageFromType.values()) {
             index = type.ordinal();
-            damageTypeModifiers[index] += otherDamageMods[k] * k;
+            this.damageTypeModifiers[index] += otherDamageMods[k] * k;
         }
     }
 
@@ -67,38 +69,44 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         int index;
         for (AttributeType type : AttributeType.values()) {
             index = type.ordinal();
-            attributeModifiers[index] *= 1 + otherAttrMods[k] * k;
+            this.attributeModifiers[index] *= 1 + otherAttrMods[k] * k;
         }
 
         for (DamageFromType type : DamageFromType.values()) {
             index = type.ordinal();
-            damageTypeModifiers[index] *= 1 + otherDamageMods[k] * k;
+            this.damageTypeModifiers[index] *= 1 + otherDamageMods[k] * k;
         }
     }
 
     @Override
     public double get(AttributeType type) {
-        return attributeModifiers[type.ordinal()];
+        return this.attributeModifiers[type.ordinal()];
     }
 
     @Override
     public double get(DamageFromType type) {
-        return damageTypeModifiers[type.ordinal()];
+        return this.damageTypeModifiers[type.ordinal()];
     }
 
     @Override
     public double[] getAttributeModifierArray() {
-        return attributeModifiers;
+        return this.attributeModifiers;
     }
 
     @Override
     public double[] getDamageTypeModifierArray() {
-        return damageTypeModifiers;
+        return this.damageTypeModifiers;
+    }
+
+    @Override
+    public void setAttributeActiveSection(AttributeActiveSection section) {
+        Objects.requireNonNull(section, "AttributeActiveSection should not be null when set");
+        this.activeSection = section;
     }
 
     @Override
     public AttributeActiveSection getActiveSection() {
-        return activeSection;
+        return this.activeSection;
     }
 
     /**

@@ -3,12 +3,10 @@ package io.github.tanice.terraCraft.bukkit.items;
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraGem;
-import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.items.AbstractItem;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.ItemStack;
 
 import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
 

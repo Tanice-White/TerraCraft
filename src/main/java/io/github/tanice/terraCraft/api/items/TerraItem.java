@@ -14,8 +14,6 @@ public interface TerraItem extends TerraBaseItem {
 
     boolean isSoulBind();
 
-    int getGemStackNumber();
-
     String getSetName();
 
     DamageFromType getDamageType();

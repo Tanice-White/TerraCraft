@@ -11,10 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
@@ -39,6 +36,7 @@ public abstract class AbstractItem implements TerraBaseItem {
     protected List<String> hideFlags;
     protected final Map<String, String> customNBT;
 
+    protected int hashCode;
     protected ItemStack item = new ItemStack(Material.AIR);
 
     /**
@@ -62,6 +60,7 @@ public abstract class AbstractItem implements TerraBaseItem {
         this.customModelData = cfg.getInt(CUSTOM_MODEL_DATA);
         this.hideFlags = cfg.getStringList(HIDE_FLAGS);
         this.color = cfg.getString(COLOR, "");
+        this.hash();
         this.generate();
     }
 
@@ -161,6 +160,11 @@ public abstract class AbstractItem implements TerraBaseItem {
         return new ArrayList<>(lore);
     }
 
+    @Override
+    public int getHashCode() {
+        return this.hashCode;
+    }
+
     private void generate() {
         if (material.isAir()) return;
 
@@ -188,6 +192,7 @@ public abstract class AbstractItem implements TerraBaseItem {
         }
 
         attachCustomNBT(meta);
+        PDCAPI.setCode(meta, hashCode);
         item.setItemMeta(meta);
     }
 
@@ -220,5 +225,12 @@ public abstract class AbstractItem implements TerraBaseItem {
      */
     protected void removeCustomNBT(ItemMeta meta) {
         PDCAPI.removeAllCustomNBT(meta);
+    }
+
+    protected void hash() {
+        this.hashCode = Objects.hash(
+                name, material, displayName, loreTemplateName, lore, amount, maxStackSize,
+                customModelData, unbreakable, maxDamage, color, hideFlags, customNBT
+        );
     }
 }

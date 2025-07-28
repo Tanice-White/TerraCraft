@@ -17,9 +17,10 @@ repositories {
         url = "https://oss.sonatype.org/content/groups/public/"
     }
     // mm
-    maven {
-        url = "https://mvn.lumine.io/repository/maven-public/"
-    }
+    maven { url = "https://mvn.lumine.io/repository/maven-public/" }
+    // packageEvents
+    maven { url = "https://repo.codemc.io/repository/maven-releases/" }
+    maven { url = "https://repo.codemc.io/repository/maven-snapshots/" }
 }
 
 dependencies {
@@ -33,6 +34,8 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
     // mm
     compileOnly("io.lumine:Mythic-Dist:5.9.0")
+    // packageEvents
+    compileOnly("com.github.retrooper:packetevents-spigot:2.9.3")
 }
 
 tasks {

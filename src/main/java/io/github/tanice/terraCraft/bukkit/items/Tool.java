@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.items;
 
 import io.github.tanice.terraCraft.api.items.TerraTool;
+import io.github.tanice.terraCraft.api.items.gems.TerraGemCarrier;
 import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
 import io.github.tanice.terraCraft.api.items.qualities.TerraQualitative;
 import io.github.tanice.terraCraft.api.skills.TerraSkillCarrier;
@@ -11,7 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.List;
 
 @NonnullByDefault
-public class Tool extends AbstractItem implements TerraTool, TerraQualitative, TerraLeveled, TerraSkillCarrier {
+public class Tool extends AbstractItem implements TerraTool, TerraQualitative, TerraLeveled, TerraSkillCarrier, TerraGemCarrier {
 
     // TODO 完善 component
 
@@ -38,5 +39,10 @@ public class Tool extends AbstractItem implements TerraTool, TerraQualitative, T
     @Override
     public List<String> getSkillNames() {
         return List.of();
+    }
+
+    @Override
+    public int getGemStackNumber() {
+        return 0;
     }
 }

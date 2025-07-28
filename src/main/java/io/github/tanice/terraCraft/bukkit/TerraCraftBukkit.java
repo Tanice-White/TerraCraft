@@ -1,5 +1,7 @@
 package io.github.tanice.terraCraft.bukkit;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffManager;
 import io.github.tanice.terraCraft.api.config.TerraConfigManager;
@@ -10,6 +12,8 @@ import io.github.tanice.terraCraft.api.service.TerraCacheService;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
+import io.github.tanice.terraCraft.bukkit.listeners.GenericParticleListener;
+import io.github.tanice.terraCraft.bukkit.listeners.TerraItemListener;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
 import io.github.tanice.terraCraft.core.buffs.BuffManager;
@@ -23,7 +27,6 @@ import io.github.tanice.terraCraft.core.utils.js.JSEngineManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
-    private long updateCode;
     private static TerraCraftBukkit instance;
 
     private ConfigManager configManager;
@@ -37,9 +40,11 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private SkillManager skillManager;
     private PlayerDataManager playerDataManager;
 
+    private GenericParticleListener particleListener;
+    private TerraItemListener itemListener;
+
     @Override
     public void onEnable() {
-        updateCode = System.currentTimeMillis();
         instance = this;
 
         jsEngineManager = new JSEngineManager();
@@ -53,6 +58,10 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
         entityAttributeManager = new EntityAttributeManager();
         playerDataManager = new PlayerDataManager();
+
+        itemListener = new TerraItemListener();
+        particleListener = new GenericParticleListener();
+        PacketEvents.getAPI().getEventManager().registerListener(particleListener, PacketListenerPriority.NORMAL);
     }
 
     @Override
@@ -67,11 +76,11 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         TerraSchedulers.shutdown();
         databaseManager.unload();
         cacheService.unload();
+        particleListener.unload();
     }
 
     @Override
     public void reload() {
-        this.updateCode = System.currentTimeMillis();
         configManager.reload();
         databaseManager.reload();
         cacheService.reload();
@@ -82,6 +91,8 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         skillManager.reload();
         entityAttributeManager.reload();
         playerDataManager.reload();
+
+        particleListener.reload();
     }
 
     public static TerraCraftBukkit inst() {
@@ -131,10 +142,5 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     @Override
     public TerraPlayerDataManager getPlayerDataManager() {
         return this.playerDataManager;
-    }
-
-    @Override
-    public long getUpdateCode() {
-        return this.updateCode;
     }
 }

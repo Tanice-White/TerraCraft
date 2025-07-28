@@ -37,4 +37,6 @@ public interface TerraBaseItem {
     List<String> getLore();
 
     ItemStack getBukkitItem();
+
+    int getHashCode();
 }

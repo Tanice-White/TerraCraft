@@ -4,7 +4,6 @@ import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.items.TerraEdible;
 import io.github.tanice.terraCraft.api.players.TerraPlayerData;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.events.entity.TerraAttributeUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraPlayerDataLimitChangeEvent;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraPlayerEatEvent;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
@@ -54,7 +53,7 @@ public class Edible extends AbstractItem implements TerraEdible {
         this.cd = cfg.getInt(CD, -1);
         this.times = cfg.getInt(TIMES, -1);
 
-        this.changedPlayerData = PlayerData.from(cfg);
+        this.changedPlayerData = PlayerData.newFrom(cfg);
         this.food = cfg.getInt(FOOD, 0);
         this.level = cfg.getInt(LEVEL, 0);
         this.saturation = (float) cfg.getDouble(SATURATION, 0D);
@@ -83,7 +82,13 @@ public class Edible extends AbstractItem implements TerraEdible {
 
     @Override
     public boolean apply(Player player) {
-        PlayerData playerData = PlayerData.from(player);
+        Optional<TerraPlayerData> op = TerraCraftBukkit.inst().getPlayerDataManager().getPlayerData(player.getUniqueId());
+
+        if (op.isEmpty()) {
+            TerraCraftLogger.error("Player " + player.getName() + " has not been loaded!");
+            return false;
+        }
+        TerraPlayerData playerData = op.get();
 
         TerraPlayerEatEvent event1 = TerraEvents.callAndReturn(new TerraPlayerEatEvent(player, this));
         if (event1.isCancelled()) return false;
@@ -101,10 +106,8 @@ public class Edible extends AbstractItem implements TerraEdible {
         player.setSaturation(player.getSaturation() + saturation);
         player.setLevel(player.getLevel() + level);
 
-        if (!buffs.isEmpty()) {
-            if (TerraCraftBukkit.inst().getBuffManager().activateBuffs(player, buffs))
-                TerraEvents.call(new TerraAttributeUpdateEvent(player));
-        }
+        if (!buffs.isEmpty()) TerraCraftBukkit.inst().getBuffManager().activateBuffs(player, buffs);
+
         if (!effects.isEmpty()) player.addPotionEffects(effects);
         if (!commandLore.isEmpty()) {
             for (String cn : commandLore) {

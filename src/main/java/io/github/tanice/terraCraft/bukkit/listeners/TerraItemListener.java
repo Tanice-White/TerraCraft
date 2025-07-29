@@ -8,7 +8,7 @@ import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.TerraItemUpdateEvent;
-import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitItemAdapter;
+import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -39,7 +39,7 @@ public class TerraItemListener implements Listener {
             if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
             ItemStack item = event.getItem();
-            TerraBaseItem baseItem = BukkitItemAdapter.itemAdapt(item);
+            TerraBaseItem baseItem = TerraBukkitAdapter.itemAdapt(item);
             if (!(baseItem instanceof TerraEdible edible)) return;
 
             Player player = event.getPlayer();
@@ -73,8 +73,8 @@ public class TerraItemListener implements Listener {
 
             /* 获取光标物品和被点击物品 */
             ItemStack cursorItem = event.getCursor(), clickedItem = event.getCurrentItem();
-            TerraBaseItem cursorBaseItem = BukkitItemAdapter.itemAdapt(cursorItem);
-            TerraBaseItem clickedBaseItem = BukkitItemAdapter.itemAdapt(clickedItem);
+            TerraBaseItem cursorBaseItem = TerraBukkitAdapter.itemAdapt(cursorItem);
+            TerraBaseItem clickedBaseItem = TerraBukkitAdapter.itemAdapt(clickedItem);
 
             /* 宝石镶嵌 */
             if (cursorBaseItem instanceof TerraGem gem && clickedBaseItem instanceof TerraGemCarrier gemCarrier) {
@@ -99,7 +99,7 @@ public class TerraItemListener implements Listener {
                         PDCAPI.setGems(clickedItem, newGems);
                         cursorItem.setAmount(cursorItem.getAmount() - 1);
                         player.sendMessage("§a镶嵌成功!");
-                        TerraEvents.call(new TerraItemUpdateEvent(player, clickedItem));
+                        TerraEvents.call(new TerraItemUpdateEvent(player, clickedBaseItem, clickedItem));
                     }
                 }
                 player.sendMessage("§e此物品无法镶嵌");
@@ -129,13 +129,13 @@ public class TerraItemListener implements Listener {
                         if (template.isFailedLevelDown()) {
                             PDCAPI.setLevel(clickedItem, Math.max(lvl - 1, template.getBegin()));
                             res += ", 物品降级";
-                            TerraEvents.call(new TerraItemUpdateEvent(player, clickedItem));
+                            TerraEvents.call(new TerraItemUpdateEvent(player, clickedBaseItem, clickedItem));
                         }
                         player.sendMessage(res);
                     } else {
                         PDCAPI.setLevel(clickedItem, lvl + 1);
                         player.sendMessage("§a强化成功!");
-                        TerraEvents.call(new TerraItemUpdateEvent(player, clickedItem));
+                        TerraEvents.call(new TerraItemUpdateEvent(player, clickedBaseItem, clickedItem));
                     }
                     cursorItem.setAmount(cursorItem.getAmount() - 1);
                 });
@@ -146,8 +146,13 @@ public class TerraItemListener implements Listener {
         // TODO 物品重铸需要使用指令
 
         /* 物品更新 */
-        // TODO (先判断hash再更新lore)
         TerraEvents.subscribe(TerraItemUpdateEvent.class).handler(event -> {
+            ItemStack pre = event.getItemStack();
+            /* hash不等则先更新底层 */
+            if (PDCAPI.getCode(pre) != event.getTerraBaseItem().getHashCode()) {
+
+            }
+            // TODO 更新lore
 
         }).register();
     }

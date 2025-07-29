@@ -5,14 +5,15 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.events.TerraCalculableMetaLoadEvent;
+import io.github.tanice.terraCraft.bukkit.events.calculate.TerraEnchantMetaLoadEvent;
+import io.github.tanice.terraCraft.bukkit.events.calculate.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-public final class BukkitItemAdapter {
+public final class TerraBukkitAdapter {
 
     /**
      * 通过Bukkit物品获取插件物品实例
@@ -40,10 +41,23 @@ public final class BukkitItemAdapter {
                 })
                 .orElseGet(() ->{
                     /* 是否为其他插件物品并创建对应的计算属性 */
-                    TerraCalculableMetaLoadEvent event = TerraEvents.callAndReturn(new TerraCalculableMetaLoadEvent(item));
+                    TerraItemMetaLoadEvent event = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
                     if (event.getMeta().getActiveSection() != AttributeActiveSection.INNER) return event.getMeta();
                     /* TODO 返回原版属性 */
                     return null;
                 });
+    }
+
+    /**
+     * 将原版附魔转变为计算属性
+     * @param enchantName 附魔的名称
+     * @return 计算属性
+     */
+    public static TerraCalculableMeta metaAdapt(String enchantName) {
+        if (enchantName == null) return null;
+        TerraEnchantMetaLoadEvent event = TerraEvents.callAndReturn(new TerraEnchantMetaLoadEvent(enchantName));
+        if (event.getMeta().getActiveSection() != AttributeActiveSection.INNER) return event.getMeta();
+        /* TODO 查询原版属性 */
+        return null;
     }
 }

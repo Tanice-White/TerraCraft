@@ -24,8 +24,6 @@ public interface TerraPlugin {
 
     TerraJSEngineManager getJSEngineManager();
 
-    TerraCacheService getCacheService();
-
     TerraDatabaseManager getDatabaseManager();
 
     TerraEntityAttributeManager getEntityAttributeManager();

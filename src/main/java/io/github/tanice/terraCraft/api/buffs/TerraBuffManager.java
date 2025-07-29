@@ -32,6 +32,13 @@ public interface TerraBuffManager {
     Collection<String> filterBuffs(Collection<String> buffNames, String name);
 
     /**
+     * 删除目标实体的所有buff
+     *
+     * @param entity 目标实体
+     */
+    void unregister(LivingEntity entity);
+
+    /**
      * 从数据库加载玩家buff
      * @param player 玩家实体
      */
@@ -50,37 +57,37 @@ public interface TerraBuffManager {
 
     /**
      * 为实体激活非永久的对应buff
+     *
      * @param entity 目标实体
      * @param buff buff实体
-     * @return 是否激活成功（根据buff的激活概率返回是否激活）
      */
-    boolean activateBuff(LivingEntity entity, TerraBaseBuff buff);
+    void activateBuff(LivingEntity entity, TerraBaseBuff buff);
 
     /**
      * 为实体激活对应buff
-     * @param entity 目标实体
-     * @param buff buff实体
+     *
+     * @param entity      目标实体
+     * @param buff        buff实体
      * @param isPermanent 此buff是否是永久的
-     * @return 是否激活成功
      */
-    boolean activateBuff(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent);
+    void activateBuff(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent);
 
     /**
      * 为玩家激活一组非永久的buff
+     *
      * @param entity 目标实体
-     * @param buffs buff实体集合
-     * @return 是否有成功激活的buff
+     * @param buffs  buff实体集合
      */
-    boolean activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs);
+    void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs);
 
     /**
      * 为玩家激活一组buff
-     * @param entity 目标实体
-     * @param buffs buff实体集合
+     *
+     * @param entity      目标实体
+     * @param buffs       buff实体集合
      * @param isPermanent 此组buff是否都是是永久的
-     * @return 是否有成功激活的buff
      */
-    boolean activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean isPermanent);
+    void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean isPermanent);
 
     /**
      * 让实体的buff集合失效

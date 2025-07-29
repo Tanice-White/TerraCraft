@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.events;
 
+import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -11,10 +12,12 @@ public class TerraItemUpdateEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
+    private final TerraBaseItem terraBaseItem;
     private final ItemStack pre;
 
-    public TerraItemUpdateEvent(Player player, ItemStack pre) {
+    public TerraItemUpdateEvent(Player player, TerraBaseItem baseItem,ItemStack pre) {
         this.player = player;
+        this.terraBaseItem = baseItem;
         this.pre = pre;
     }
 
@@ -27,6 +30,10 @@ public class TerraItemUpdateEvent extends Event {
 
     public Player getPlayer() {
         return this.player;
+    }
+
+    public TerraBaseItem getTerraBaseItem() {
+        return this.terraBaseItem;
     }
 
     public ItemStack getItemStack() {

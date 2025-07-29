@@ -2,20 +2,24 @@ package io.github.tanice.terraCraft.core.skills;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
+import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
-import io.github.tanice.terraCraft.api.service.TerraCacheService;
-import io.github.tanice.terraCraft.api.service.TerraCached;
+import io.github.tanice.terraCraft.api.skills.TerraSkillCarrier;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.skills.Trigger;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.items.Item;
+import io.github.tanice.terraCraft.bukkit.events.entity.TerraSkillUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
+import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.skills.helper.mythicmobs.MMHelper;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -65,9 +69,12 @@ public final class SkillManager implements TerraSkillManager {
         this.dirtyFlags = new ConcurrentHashMap<>();
         this.playerSkillMap = new ConcurrentHashMap<>();
         this.playerSkillCooldowns = new ConcurrentHashMap<>();
-
-        TerraSchedulers.async().repeat(this::cleanupExpiredRecords, 2, CLEAN_UP_CD);
         this.loadResourceFiles();
+
+        TerraSchedulers.async().repeat(this::cleanup, 2, CLEAN_UP_CD);
+        TerraEvents.subscribe(TerraSkillUpdateEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
+            this.updateAvailableSkills(event.getEntity());
+        }).register();
     }
 
     public void reload() {
@@ -181,16 +188,11 @@ public final class SkillManager implements TerraSkillManager {
     }
 
     /**
-     * 更新玩家可用技能  与玩家属性同步更新(相对滞后)
+     * 更新玩家可用技能
      */
     private void updateAvailableSkills(Player player) {
         UUID uuid = player.getUniqueId();
         try {
-            TerraCached cached = TerraCraftBukkit.inst().getCacheService().get(uuid);
-            if (cached == null) {
-                playerSkillMap.remove(uuid);
-                return;
-            }
             /* 计算前清除脏标记 */
             dirtyFlags.get(uuid).set(false);
             EnumMap<Trigger, Set<SkillRowData>> tsm = playerSkillMap.computeIfAbsent(
@@ -201,8 +203,10 @@ public final class SkillManager implements TerraSkillManager {
 
             SkillRowData skillRowData;
             Trigger trigger;
-            for (Item item : EquipmentUtil.getActiveEquipmentItem(player)) {
-                for (String skillName : item.getSkills()) {
+            for (TerraItem item : EquipmentUtil.getActiveEquipmentItem(player)) {
+                if (!(item instanceof TerraSkillCarrier skillCarrier)) continue;
+
+                for (String skillName : skillCarrier.getSkillNames()) {
                     SkillMeta skillMeta = skillMap.get(skillName);
                     if (skillMeta == null) continue;
 
@@ -239,13 +243,11 @@ public final class SkillManager implements TerraSkillManager {
     /**
      * 定期清理过期记录
      */
-    private void cleanupExpiredRecords() {
+    private void cleanup() {
         long expiredThreshold = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(REMAIN_TIME);
-        TerraCacheService cacheService = TerraCraftBukkit.inst().getCacheService();
-        // 遍历所有玩家
         playerSkillCooldowns.forEach((uuid, skillMap) -> {
-            TerraCached cached = cacheService.get(uuid);
-            if (cached == null || !cached.isValid()) {
+            Entity e = Bukkit.getEntity(uuid);
+            if (e == null || !e.isValid()) {
                 playerSkillCooldowns.remove(uuid, skillMap);
                 return;
             }

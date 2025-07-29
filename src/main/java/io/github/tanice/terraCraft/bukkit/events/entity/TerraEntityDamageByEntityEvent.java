@@ -13,7 +13,7 @@ import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.items.Item;
-import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitItemAdapter;
+import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import org.bukkit.Bukkit;
@@ -54,7 +54,7 @@ public class TerraEntityDamageByEntityEvent extends TerraEntityDamageEvent {
         EntityEquipment equipment = attacker.getEquipment();
         if (equipment != null) {
             ItemStack mainHandItem = equipment.getItemInMainHand();
-            TerraBaseItem bit = BukkitItemAdapter.itemAdapt(mainHandItem);
+            TerraBaseItem bit = TerraBukkitAdapter.itemAdapt(mainHandItem);
             if (bit instanceof Item it) {
                 weaponDamageType = it.getDamageType();
                 isTerraItem = true;
@@ -142,17 +142,14 @@ public class TerraEntityDamageByEntityEvent extends TerraEntityDamageEvent {
     protected void activateBuffForAttackerAndDefender(LivingEntity attacker, LivingEntity defender) {
         TerraBuffManager buffManager = TerraCraftBukkit.inst().getBuffManager();
         /* attacker 给 defender 增加 buff */
-        boolean fa = false, fb = false;
         for (TerraItem i : EquipmentUtil.getActiveEquipmentItem(attacker)){
-            fa |= buffManager.activateBuffs(attacker, i.getAttackBuffsForSelf());
-            fb |= buffManager.activateBuffs(defender, i.getAttackBuffsForOther());
+            buffManager.activateBuffs(attacker, i.getAttackBuffsForSelf());
+            buffManager.activateBuffs(defender, i.getAttackBuffsForOther());
         }
         /* defender 给 attacker 增加 buff */
         for (TerraItem i : EquipmentUtil.getActiveEquipmentItem(defender)){
-            fb |= buffManager.activateBuffs(defender, i.getDefenseBuffsForSelf());
-            fa |= buffManager.activateBuffs(attacker, i.getDefenseBuffsForOther());
+            buffManager.activateBuffs(defender, i.getDefenseBuffsForSelf());
+            buffManager.activateBuffs(attacker, i.getDefenseBuffsForOther());
         }
-        if (fa) Bukkit.getPluginManager().callEvent(new TerraAttributeUpdateEvent(attacker));
-        if (fb) Bukkit.getPluginManager().callEvent(new TerraAttributeUpdateEvent(defender));
     }
 }

@@ -1,6 +1,5 @@
 package io.github.tanice.terraCraft.bukkit.events.entity;
 
-import io.github.tanice.terraCraft.bukkit.events.AbstractTerraEvent;
 import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nullable;

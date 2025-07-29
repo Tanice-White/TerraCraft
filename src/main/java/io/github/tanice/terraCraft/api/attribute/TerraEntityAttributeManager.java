@@ -18,6 +18,13 @@ public interface TerraEntityAttributeManager {
     void updateAttribute(LivingEntity entity);
 
     /**
+     * 取消实体属性计算
+     *
+     * @param entity 目标实体
+     */
+    void unregister(LivingEntity entity);
+
+    /**
      * 获取服务器中计算过属性的实体数量
      * @return 服务器中计算过属性的实体数量
      */

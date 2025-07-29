@@ -8,7 +8,6 @@ import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
-import io.github.tanice.terraCraft.api.service.TerraCacheService;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
@@ -20,7 +19,6 @@ import io.github.tanice.terraCraft.core.buffs.BuffManager;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.items.ItemManager;
 import io.github.tanice.terraCraft.core.players.PlayerDataManager;
-import io.github.tanice.terraCraft.core.service.EntityCacheService;
 import io.github.tanice.terraCraft.core.skills.SkillManager;
 import io.github.tanice.terraCraft.core.utils.database.DatabaseManager;
 import io.github.tanice.terraCraft.core.utils.js.JSEngineManager;
@@ -35,7 +33,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private BuffManager buffManager;
     private ItemManager itemManager;
 
-    private EntityCacheService cacheService;
     private EntityAttributeManager entityAttributeManager;
     private SkillManager skillManager;
     private PlayerDataManager playerDataManager;
@@ -53,8 +50,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         buffManager = new BuffManager(this);
         itemManager = new ItemManager(this);
         skillManager = new SkillManager(this);
-
-        cacheService = new EntityCacheService();
 
         entityAttributeManager = new EntityAttributeManager();
         playerDataManager = new PlayerDataManager();
@@ -75,7 +70,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         playerDataManager.unload();
         TerraSchedulers.shutdown();
         databaseManager.unload();
-        cacheService.unload();
         particleListener.unload();
     }
 
@@ -83,7 +77,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     public void reload() {
         configManager.reload();
         databaseManager.reload();
-        cacheService.reload();
 
         jsEngineManager.reload();
         buffManager.reload();
@@ -117,11 +110,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     @Override
     public TerraJSEngineManager getJSEngineManager() {
         return this.jsEngineManager;
-    }
-
-    @Override
-    public TerraCacheService getCacheService() {
-        return this.cacheService;
     }
 
     @Override

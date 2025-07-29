@@ -5,11 +5,12 @@ import io.github.tanice.terraCraft.api.players.TerraPlayerData;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.attributes.AttributeAPI;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -30,8 +31,7 @@ public class PlayerData implements TerraPlayerData, Cloneable {
     /** 玩家蓝量回复速度 每tick */
     private double manaRecoverySpeed;
     /** 玩家所食用物品 */
-    @Nullable
-    private Map<String, Integer> ate;
+    private final Map<String, Integer> ate;
 
     public PlayerData(String uuid, double health, double maxHealth, double mana, double maxMana, double manaRecoverySpeed, Map<String, Integer> ate) {
         this.uuid = uuid;
@@ -55,24 +55,11 @@ public class PlayerData implements TerraPlayerData, Cloneable {
                 cm.getOriginalMaxMana(),
                 cm.getOriginalMaxMana(),
                 cm.getOriginalManaRecoverySpeed(),
-                new HashMap<>()
+                new HashMap<>(0)
         );
     }
 
-    public static PlayerData from(Player player) {
-        // TODO 在 EntityAttribute 中获取 没有则在 数据库中获取
-        return new PlayerData(
-                player.getUniqueId().toString(),
-                player.getHealth(),
-                AttributeAPI.getOriBaseAttr(player, Attribute.MAX_HEALTH),
-                mana,
-                max_mana,
-                mana_recovery_speed,
-                ate
-        );
-    }
-
-    public static PlayerData from(ConfigurationSection cfg) {
+    public static PlayerData newFrom(ConfigurationSection cfg) {
         return new PlayerData(
                 null,
                 cfg.getDouble(HEALTH, 0D),
@@ -80,19 +67,8 @@ public class PlayerData implements TerraPlayerData, Cloneable {
                 cfg.getDouble(MANA, 0D),
                 cfg.getDouble(MAX_MANA, 0D),
                 cfg.getDouble(MANA_RECOVERY_SPEED, 0D),
-                null
+                new HashMap<>(0)
         );
-    }
-
-    /**
-     * 合并两个PlayerData，即属性改变
-     */
-    public void merge(TerraPlayerData playerData) {
-        this.health += playerData.getHealth();
-        this.maxHealth += playerData.getMaxHealth();
-        this.mana += playerData.getMana();
-        this.maxMana += playerData.getMaxMana();
-        this.manaRecoverySpeed += playerData.getManaRecoverySpeed();
     }
 
     /**
@@ -100,8 +76,8 @@ public class PlayerData implements TerraPlayerData, Cloneable {
      */
     @Override
     public void apply() {
-        Player player = (Player) TerraCraftBukkit.inst().getCacheService().get(UUID.fromString(uuid)).getEntity();
-        if (player == null) {
+        Entity e = Bukkit.getEntity(UUID.fromString(uuid));
+        if (!(e instanceof Player player) || !e.isValid()) {
             TerraCraftLogger.error("Player " + uuid + " does not exist, cancelling PlayerData synchronization");
             return;
         }
@@ -122,6 +98,18 @@ public class PlayerData implements TerraPlayerData, Cloneable {
         /* TODO 蓝条显示 */
     }
 
+    /**
+     * 合并两个PlayerData，即属性改变
+     */
+    @Override
+    public void merge(TerraPlayerData playerData) {
+        this.health += playerData.getHealth();
+        this.maxHealth += playerData.getMaxHealth();
+        this.mana += playerData.getMana();
+        this.maxMana += playerData.getMaxMana();
+        this.manaRecoverySpeed += playerData.getManaRecoverySpeed();
+    }
+
     @Override
     public UUID getId() {
         return UUID.fromString(uuid);
@@ -140,6 +128,11 @@ public class PlayerData implements TerraPlayerData, Cloneable {
     @Override
     public double getMana() {
         return this.mana;
+    }
+
+    @Override
+    public void setMana(double mana) {
+        this.mana = Math.min(maxMana, mana);
     }
 
     @Override

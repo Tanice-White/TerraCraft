@@ -6,8 +6,6 @@ import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffRecord;
 import io.github.tanice.terraCraft.api.buffs.TerraRunnableBuff;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
-import io.github.tanice.terraCraft.api.service.TerraCacheService;
-import io.github.tanice.terraCraft.api.service.TerraCached;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
@@ -17,8 +15,10 @@ import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.buffs.impl.AttributeBuff;
 import io.github.tanice.terraCraft.core.buffs.impl.BuffRecord;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -37,6 +37,7 @@ import static io.github.tanice.terraCraft.core.constants.DataFolders.BUFF_FOLDER
 public final class BuffManager implements TerraBuffManager {
     private static final int BUFF_RUN_CD = 2;
     private static final int BUFF_MIN_NUM = 50;
+    private static final int CLEAN_UP_CD = 7;
 
     private final Random random;
     private final TerraPlugin plugin;
@@ -63,6 +64,8 @@ public final class BuffManager implements TerraBuffManager {
         this.eventQueue = new LinkedBlockingQueue<>();
         TerraSchedulers.async().repeat(this::processBuffCycle, 1, BUFF_RUN_CD);
         TerraSchedulers.sync().repeat(this::doBuffEffects, 1, BUFF_RUN_CD);
+
+        TerraSchedulers.async().repeat(this::cleanup, 3, CLEAN_UP_CD);
     }
 
     public void reload() {
@@ -100,10 +103,11 @@ public final class BuffManager implements TerraBuffManager {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 需要延迟添加
-     * 玩家登录后从数据库初始化对应的信息
-     */
+    @Override
+    public void unregister(LivingEntity entity) {
+        entityBuffs.remove(entity.getUniqueId());
+    }
+
     @Override
     public void loadPlayerBuffs(Player player) {
         if (!TerraCraftBukkit.inst().getConfigManager().useMysql()) return;
@@ -126,9 +130,6 @@ public final class BuffManager implements TerraBuffManager {
         TerraEvents.call(new TerraAttributeUpdateEvent(player));
     }
 
-    /**
-     * 玩家退出时清理所有Timer Buff任务
-     */
     @Override
     public void SaveAndClearPlayerBuffs(Player player) {
         if (TerraCraftBukkit.inst().getConfigManager().useMysql()) {
@@ -145,43 +146,26 @@ public final class BuffManager implements TerraBuffManager {
         entityBuffs.remove(player.getUniqueId());
     }
 
-    /**
-     * 储存所有的玩家记录
-     * 非玩家的记录不保存
-     */
     @Override
     public void saveAllPlayerRecords() {
-        TerraCacheService cacheService = TerraCraftBukkit.inst().getCacheService();
         TerraDatabaseManager databaseManager = TerraCraftBukkit.inst().getDatabaseManager();
-
+        Entity e;
         for (Map.Entry<UUID, ConcurrentMap<String, TerraBuffRecord>> entry : entityBuffs.entrySet()) {
-            if (cacheService.get(entry.getKey()).isPlayer())
-                databaseManager.saveBuffRecords(entry.getValue().values());
+            e = Bukkit.getEntity(entry.getKey());
+            if (e instanceof Player && e.isValid()) databaseManager.saveBuffRecords(entry.getValue().values());
         }
     }
 
-    /**
-     * 为实体增加 buff
-     * 完成后请触发 EntityAttributeChangeEvent 事件
-     * @return  buff 是否被触发
-     */
     @Override
-    public boolean activateBuff(LivingEntity entity, TerraBaseBuff buff) {
-        return activateBuff(entity,buff, false);
+    public void activateBuff(LivingEntity entity, TerraBaseBuff buff) {
+        activateBuff(entity,buff, false);
     }
 
-    /**
-     * 为实体增加 buff
-     * 完成后请触发 EntityAttributeChangeEvent 事件
-     */
     @Override
-    public boolean activateBuff(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent) {
-        if (random.nextDouble() > buff.getChance()) return false;
-        UUID uuid = entity.getUniqueId();
-        if (TerraCraftBukkit.inst().getCacheService().get(uuid) == null) return false;
+    public void activateBuff(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent) {
+        if (!entity.isValid() || random.nextDouble() > buff.getChance()) return;
 
-        ConcurrentMap<String, TerraBuffRecord> ebs = this.entityBuffs.computeIfAbsent(uuid, id -> new ConcurrentHashMap<>(BUFF_MIN_NUM));
-
+        ConcurrentMap<String, TerraBuffRecord> ebs = this.entityBuffs.computeIfAbsent(entity.getUniqueId(), id -> new ConcurrentHashMap<>(BUFF_MIN_NUM));
         /* 创建或更新 Buff 记录 */
         ebs.compute(buff.getName(), (name, existingRecord) -> {
             if (existingRecord != null) {
@@ -190,33 +174,23 @@ public final class BuffManager implements TerraBuffManager {
 
             } else return new BuffRecord(entity, buff, isPermanent);
         });
-        return true;
+        TerraEvents.call(new TerraAttributeUpdateEvent(entity));
     }
 
-    /**
-     * 为实体激活一组非永久的 buff
-     * 完成后请触发 EntityAttributeChangeEvent 事件
-     * @return 是否有 buff 被触发
-     */
     @Override
-    public boolean activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs) {
-        return activateBuffs(entity, buffs, false);
+    public void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs) {
+        activateBuffs(entity, buffs, false);
     }
 
-    /**
-     * 为实体激活一组 buff
-     * 完成后请触发 EntityAttributeChangeEvent 事件
-     */
     @Override
-    public boolean activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean isPermanent) {
-        UUID uuid = entity.getUniqueId();
-        if (TerraCraftBukkit.inst().getCacheService().get(uuid) == null) return false;
+    public void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean isPermanent) {
+        if (!entity.isValid()) return;
 
         ConcurrentMap<String, TerraBuffRecord> entityBuffs;
         boolean flag = isPermanent;
         for (TerraBaseBuff bPDC : buffs) {
             if (!isPermanent && random.nextDouble() > bPDC.getChance()) continue;
-            entityBuffs = this.entityBuffs.computeIfAbsent(uuid, id -> new ConcurrentHashMap<>(BUFF_MIN_NUM));
+            entityBuffs = this.entityBuffs.computeIfAbsent(entity.getUniqueId(), id -> new ConcurrentHashMap<>(BUFF_MIN_NUM));
             /* 创建或更新 Buff 记录 */
             entityBuffs.compute(bPDC.getName(), (name, existingRecord) -> {
                 if (existingRecord != null) {
@@ -227,36 +201,27 @@ public final class BuffManager implements TerraBuffManager {
             });
             flag = true;
         }
-        return flag;
+        if (flag) TerraEvents.call(new TerraAttributeUpdateEvent(entity));
     }
 
-    /**
-     * 批量清除实体的 buff 效果
-     * 完成后请触发 EntityAttributeChangeEvent 事件
-     */
     @Override
     public void deactivateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs) {
-        UUID uuid = entity.getUniqueId();
-        TerraCacheService cacheService = TerraCraftBukkit.inst().getCacheService();
+        if (!entity.isValid() || buffs == null || buffs.isEmpty()) return;
 
-        TerraCached cached = cacheService.get(uuid);
-        if (cached == null || !cached.isValid()) {
-            entityBuffs.remove(uuid);
-            return;
-        }
-        ConcurrentMap<String, TerraBuffRecord> ebs = this.entityBuffs.get(uuid);
-        if (ebs == null || ebs.isEmpty()) return;
-
-        for (TerraBaseBuff baseBuff : buffs) ebs.remove(baseBuff.getName());
+        entityBuffs.computeIfPresent(entity.getUniqueId(), (uuid, ebs) -> {
+            for (TerraBaseBuff baseBuff : buffs) ebs.remove(baseBuff.getName());
+            TerraEvents.callSync(new TerraAttributeUpdateEvent(entity));
+            return ebs;
+        });
     }
 
-    /**
-     * 去除实体的所有 buff
-     * 完成后请触发 EntityAttributeChangeEvent 事件
-     */
     @Override
     public void deactivateEntityBuffs(LivingEntity entity) {
-        entityBuffs.remove(entity.getUniqueId());
+        entityBuffs.computeIfPresent(entity.getUniqueId(), (uuid, ebs) -> {
+            ebs.clear();
+            TerraEvents.callSync(new TerraAttributeUpdateEvent(entity));
+            return ebs;
+        });
     }
 
     /**
@@ -264,17 +229,12 @@ public final class BuffManager implements TerraBuffManager {
      */
     @Override
     public List<TerraCalculableMeta> getEntityActiveBuffs(LivingEntity entity) {
-        UUID uuid = entity.getUniqueId();
-        TerraCacheService cacheService = TerraCraftBukkit.inst().getCacheService();
-        TerraCached cached = cacheService.get(uuid);
+        if (!entity.isValid()) return List.of();
 
-        if (cached == null || !cached.isValid()) return List.of();
+        ConcurrentMap<String, TerraBuffRecord> records = entityBuffs.get(entity.getUniqueId());
+        if (records == null || records.isEmpty()) return List.of();
 
-        ConcurrentMap<String, TerraBuffRecord> records = entityBuffs.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>(BUFF_MIN_NUM));
-        if (records.isEmpty()) return List.of();
-
-        List<TerraCalculableMeta> res = new ArrayList<>(records.size() * 2);
-
+        List<TerraCalculableMeta> res = new ArrayList<>(records.size());
         for (TerraBuffRecord r : records.values()) {
             if (!r.isRunnable()) res.add(((AttributeBuff) r.getBuff()).getMeta());
         }
@@ -288,24 +248,21 @@ public final class BuffManager implements TerraBuffManager {
         List<TerraBuffRecord> buffsToExecute = new ArrayList<>();
         List<LivingEntity> attributeToChange = new ArrayList<>();
 
-        TerraCacheService cacheService = TerraCraftBukkit.inst().getCacheService();
         TerraJSEngineManager engineManager = TerraCraftBukkit.inst().getJSEngineManager();
 
         /* 主线程执行buff效果 可以设置负载，过高则分给下 RUN_CD - 1 个tick */
         buffTaskQueue.drainTo(buffsToExecute);
-        TerraCached cached;
+        Entity e;
         TerraBaseBuff baseBuff;
         for (TerraBuffRecord record : buffsToExecute) {
-            cached = cacheService.get(record.getId());
-            if (cached == null) continue;
-            if (cached.isValid()) {
-                baseBuff = record.getBuff();
-                if (baseBuff instanceof TerraRunnableBuff b) engineManager.executeFunction(b.getFileName(), cached.getEntity());
-            }
+            e = Bukkit.getEntity(record.getId());
+            if (e == null || !e.isValid()) continue;
+            baseBuff = record.getBuff();
+            if (baseBuff instanceof TerraRunnableBuff b) engineManager.executeFunction(b.getFileName(), (LivingEntity) e);
         }
-        /* 唤起事件 - 改变玩家属性 */
+        /* 改变玩家属性 */
         eventQueue.drainTo(attributeToChange);
-        for (LivingEntity e : attributeToChange) TerraEvents.call(new TerraAttributeUpdateEvent(e));
+        for (LivingEntity en : attributeToChange) TerraEvents.call(new TerraAttributeUpdateEvent(en));
     }
 
 
@@ -313,29 +270,23 @@ public final class BuffManager implements TerraBuffManager {
      * 处理 buff 生命周期
      */
     private void processBuffCycle() {
-        Map.Entry<UUID, ConcurrentMap<String, TerraBuffRecord>> buffMapEntry;
-        UUID uid;
+
+        UUID uuid;
+        Entity e;
         ConcurrentMap<String, TerraBuffRecord> entityBuffs;
         TerraBuffRecord record;
         boolean changed;
-        TerraCacheService cacheService = TerraCraftBukkit.inst().getCacheService();
 
-        for (Iterator<Map.Entry<UUID, ConcurrentMap<String, TerraBuffRecord>>> it = this.entityBuffs.entrySet().iterator(); it.hasNext(); ) {
-            /* 初始化 */
-            buffMapEntry = it.next();
-            uid = buffMapEntry.getKey();
+        for (Map.Entry<UUID, ConcurrentMap<String, TerraBuffRecord>> buffMapEntry : this.entityBuffs.entrySet()) {
+            uuid = buffMapEntry.getKey();
+            e = Bukkit.getEntity(uuid);
+            if (!(e instanceof LivingEntity entity && e.isValid())) continue;
+
             entityBuffs = buffMapEntry.getValue();
-            changed = false;
-
-            /* 检查实体有效性 */
-            TerraCached cached = cacheService.get(uid);
-            if (cached == null || !cached.isValid()) {
-                it.remove();
-                continue;
-            }
-
             if (entityBuffs == null || entityBuffs.isEmpty()) continue;
-            for (Iterator<TerraBuffRecord> innerIt = entityBuffs.values().iterator(); innerIt.hasNext();) {
+
+            changed = false;
+            for (Iterator<TerraBuffRecord> innerIt = entityBuffs.values().iterator(); innerIt.hasNext(); ) {
                 record = innerIt.next();
 
                 /* 执行冷却 永久类不会减少 duration */
@@ -352,7 +303,7 @@ public final class BuffManager implements TerraBuffManager {
                     else TerraCraftLogger.error("buffTaskQueue overflow!");
                 }
             }
-            if (changed) eventQueue.offer(cached.getEntity());
+            if (changed) eventQueue.offer(entity);
         }
     }
 
@@ -383,6 +334,20 @@ public final class BuffManager implements TerraBuffManager {
             TerraCraftLogger.success("Loaded " + provider.getTotal() + " buffs in total, including " + provider.getValid() + " valid buffs and " + provider.getOther() + " invalid active_section buffs.");
         } catch (IOException e) {
             TerraCraftLogger.error("Failed to load buffs from " + buffDir.toAbsolutePath() + " " + e.getMessage());
+        }
+    }
+
+    private void cleanup() {
+        Iterator<Map.Entry<UUID, ConcurrentMap<String, TerraBuffRecord>>> it = entityBuffs.entrySet().iterator();
+        Map.Entry<UUID, ConcurrentMap<String, TerraBuffRecord>> entry;
+        UUID uuid;
+        Entity e;
+        while (it.hasNext()) {
+            entry = it.next();
+            uuid = entry.getKey();
+            e = Bukkit.getEntity(uuid);
+            if (e != null && e.isValid()) continue;
+            entityBuffs.remove(uuid);
         }
     }
 }

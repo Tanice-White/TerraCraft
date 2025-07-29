@@ -1,7 +1,9 @@
 package io.github.tanice.terraCraft.core.items;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.bukkit.events.TerraItemSpawnEvent;
 import io.github.tanice.terraCraft.bukkit.utils.MiniMessageUtil;
+import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Material;
@@ -152,7 +154,10 @@ public abstract class AbstractItem implements TerraBaseItem {
 
     @Override
     public ItemStack getBukkitItem() {
-        return item.clone();
+        ItemStack res = item.clone();
+        TerraItemSpawnEvent event = TerraEvents.callAndReturn(new TerraItemSpawnEvent(this, res));
+        if (event.isCancelled()) return new ItemStack(Material.AIR);
+        return res;
     }
 
     @Override
@@ -193,6 +198,7 @@ public abstract class AbstractItem implements TerraBaseItem {
 
         attachCustomNBT(meta);
         PDCAPI.setCode(meta, hashCode);
+
         item.setItemMeta(meta);
     }
 

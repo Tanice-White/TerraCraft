@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface TerraSkillCarrier {
 
-    public List<String> getSkillNames();
+    List<String> getSkillNames();
 }

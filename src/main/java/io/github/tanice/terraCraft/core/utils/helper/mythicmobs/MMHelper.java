@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.core.skills.helper.mythicmobs;
+package io.github.tanice.terraCraft.core.utils.helper.mythicmobs;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.entity.Player;

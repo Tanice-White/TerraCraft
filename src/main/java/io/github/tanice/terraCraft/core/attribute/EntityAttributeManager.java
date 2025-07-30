@@ -6,7 +6,7 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraAttributeUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
-import io.github.tanice.terraCraft.core.attribute.calculator.EntityAttributeCalculator;
+import io.github.tanice.terraCraft.core.calculator.EntityAttributeCalculator;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -42,7 +42,7 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
 
         TerraEvents.subscribe(TerraAttributeUpdateEvent.class)
                 .ignoreCancelled(true)
-                .priority(EventPriority.HIGH).handler(event -> this.updateAttribute(event.getEntity()))
+                .priority(EventPriority.MONITOR).handler(event -> this.updateAttribute(event.getEntity()))
                 .register();
     }
 

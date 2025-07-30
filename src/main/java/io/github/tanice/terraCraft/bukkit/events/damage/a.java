@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.events.entity;
+package io.github.tanice.terraCraft.bukkit.events.damage;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
@@ -16,7 +16,6 @@ import io.github.tanice.terraCraft.bukkit.items.Item;
 import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -26,12 +25,12 @@ import java.util.Collections;
 import java.util.List;
 
 @NonnullByDefault
-public class TerraEntityDamageByEntityEvent extends TerraEntityDamageEvent {
+public class a extends TerraEntityDamageEvent {
     /** 攻击方 */
 
     protected LivingEntity attacker;
 
-    public TerraEntityDamageByEntityEvent(LivingEntity attacker, LivingEntity defender, double oriDamage, boolean critical) {
+    public a(LivingEntity attacker, LivingEntity defender, double oriDamage, boolean critical) {
         super(defender, oriDamage);
         this.attacker = attacker;
         this.critical = critical;

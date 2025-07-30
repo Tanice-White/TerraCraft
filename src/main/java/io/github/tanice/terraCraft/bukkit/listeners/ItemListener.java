@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.bukkit.listeners;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.TerraEdible;
 import io.github.tanice.terraCraft.api.items.TerraGem;
+import io.github.tanice.terraCraft.api.items.TerraItemManager;
 import io.github.tanice.terraCraft.api.items.gems.TerraGemCarrier;
 import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
@@ -14,7 +15,6 @@ import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -27,10 +27,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.Random;
 
-public class TerraItemListener implements Listener {
+public class ItemListener {
     private final Random random;
 
-    public TerraItemListener() {
+    public ItemListener() {
         random = new Random();
 
         /* 可食用物 */
@@ -50,10 +50,10 @@ public class TerraItemListener implements Listener {
                         int currentTimes = playerData.getAte().get(edible.getName());
                         if (edible.getTimes() < 0 || edible.getTimes() > currentTimes) {
                             playerData.getAte().put(edible.getName(), currentTimes + 1);
-                            edible.apply(player);
-                            item.setAmount(item.getAmount() - 1);
-                            player.setCooldown(item, edible.getCd());
-
+                            if (edible.apply(player)) {
+                                item.setAmount(item.getAmount() - 1);
+                                player.setCooldown(item, edible.getCd());
+                            }
                         } else {
                             player.sendMessage("§c有股神秘的力量在阻止你吃下它");
                         }
@@ -146,11 +146,21 @@ public class TerraItemListener implements Listener {
         // TODO 物品重铸需要使用指令
 
         /* 物品更新 */
-        TerraEvents.subscribe(TerraItemUpdateEvent.class).handler(event -> {
+        TerraEvents.subscribe(TerraItemUpdateEvent.class).priority(EventPriority.MONITOR).handler(event -> {
+            TerraItemManager itemManager = TerraCraftBukkit.inst().getItemManager();
+
             ItemStack pre = event.getItemStack();
             /* hash不等则先更新底层 */
             if (PDCAPI.getCode(pre) != event.getTerraBaseItem().getHashCode()) {
-
+                TerraBaseItem baseItem = event.getTerraBaseItem();
+                Player player = event.getPlayer();;
+                for (String gemName : baseItem.selfUpdate(pre))
+                    itemManager.getItem(gemName).ifPresentOrElse(gem -> {
+                        player.getInventory().addItem(gem.getBukkitItem());
+                    }, () -> {
+                        TerraCraftLogger.warning("Gem " + gemName + " does not exist when updating item: " + pre.getItemMeta().getDisplayName() + "for player" + player.getName());
+                        player.sendMessage("§c物品: " + pre.getItemMeta().getDisplayName() + "更新，宝石获取错误，请联系管理员");
+                    });
             }
             // TODO 更新lore
 

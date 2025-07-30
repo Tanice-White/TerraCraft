@@ -69,6 +69,7 @@ public final class BuffManager implements TerraBuffManager {
     }
 
     public void reload() {
+        saveAllPlayerRecords();
         buffs.clear();
         entityBuffs.clear();
         buffTaskQueue.clear();
@@ -76,6 +77,7 @@ public final class BuffManager implements TerraBuffManager {
     }
 
     public void unload() {
+        saveAllPlayerRecords();
         buffs.clear();
         entityBuffs.clear();
         buffTaskQueue.clear();

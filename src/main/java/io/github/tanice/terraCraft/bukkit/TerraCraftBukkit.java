@@ -12,7 +12,7 @@ import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.listeners.GenericParticleListener;
-import io.github.tanice.terraCraft.bukkit.listeners.TerraItemListener;
+import io.github.tanice.terraCraft.bukkit.listeners.ItemListener;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
 import io.github.tanice.terraCraft.core.buffs.BuffManager;
@@ -21,6 +21,7 @@ import io.github.tanice.terraCraft.core.items.ItemManager;
 import io.github.tanice.terraCraft.core.players.PlayerDataManager;
 import io.github.tanice.terraCraft.core.skills.SkillManager;
 import io.github.tanice.terraCraft.core.utils.database.DatabaseManager;
+import io.github.tanice.terraCraft.core.utils.helper.asm.ASMHelper;
 import io.github.tanice.terraCraft.core.utils.js.JSEngineManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,7 +39,12 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private PlayerDataManager playerDataManager;
 
     private GenericParticleListener particleListener;
-    private TerraItemListener itemListener;
+    private ItemListener itemListener;
+
+    /* 更改finalDamage方法 */
+    static {
+        ASMHelper.applyModification();
+    }
 
     @Override
     public void onEnable() {
@@ -54,7 +60,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         entityAttributeManager = new EntityAttributeManager();
         playerDataManager = new PlayerDataManager();
 
-        itemListener = new TerraItemListener();
+        itemListener = new ItemListener();
         particleListener = new GenericParticleListener();
         PacketEvents.getAPI().getEventManager().registerListener(particleListener, PacketListenerPriority.NORMAL);
     }

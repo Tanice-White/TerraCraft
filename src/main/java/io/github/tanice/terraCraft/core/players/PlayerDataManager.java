@@ -35,7 +35,7 @@ public class PlayerDataManager implements TerraPlayerDataManager {
         TerraSchedulers.async().repeat(this::cleanup, 1, CLEAN_UP_CD);
 
         TerraEvents.subscribe(TerraPlayerDataLimitChangeEvent.class)
-                .priority(EventPriority.HIGH)
+                .priority(EventPriority.MONITOR)
                 .handler( event -> this.changePlayerDataLimit(event.getEntity(), event.getDeltaPlayerData()))
                 .register();
     }

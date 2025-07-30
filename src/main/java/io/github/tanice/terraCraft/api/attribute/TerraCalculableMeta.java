@@ -10,8 +10,8 @@ public interface TerraCalculableMeta {
 
     /**
      * 按照k倍合并目标同类属性值（相乘）和同类伤害类型值到自身
-     * @param meta
-     * @param k
+     * @param meta 目标属性
+     * @param k 倍率
      */
     void multiply(TerraCalculableMeta meta, int k);
 

@@ -5,7 +5,6 @@ import io.github.tanice.terraCraft.api.buffs.TerraBuffManager;
 import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
-import io.github.tanice.terraCraft.api.service.TerraCacheService;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;

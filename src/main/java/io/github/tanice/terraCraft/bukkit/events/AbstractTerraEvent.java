@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.events.entity;
+package io.github.tanice.terraCraft.bukkit.events;
 
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import org.bukkit.entity.LivingEntity;

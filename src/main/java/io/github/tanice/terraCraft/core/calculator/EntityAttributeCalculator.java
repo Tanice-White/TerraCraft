@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.core.attribute.calculator;
+package io.github.tanice.terraCraft.core.calculator;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public abstract class AbstractAttributeCalculator implements TerraAttributeCalculator {
+public class EntityAttributeCalculator implements TerraAttributeCalculator {
     /** 是否使用玩家减伤平衡算法 */
     protected boolean useDamageReductionBalance;
 
@@ -32,7 +32,7 @@ public abstract class AbstractAttributeCalculator implements TerraAttributeCalcu
      */
     protected EnumMap<AttributeActiveSection, TerraCalculableMeta> transformTmp;
 
-    public AbstractAttributeCalculator(LivingEntity livingEntity) {
+    public EntityAttributeCalculator(LivingEntity livingEntity) {
         this.useDamageReductionBalance = TerraCraftBukkit.inst().getConfigManager().useDamageReductionBalanceForPlayer();
         this.transformTmp = new EnumMap<>(AttributeActiveSection.class);
         this.beforeList = new ArrayList<>();

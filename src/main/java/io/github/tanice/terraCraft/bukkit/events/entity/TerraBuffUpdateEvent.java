@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.events.entity;
 
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
+import io.github.tanice.terraCraft.bukkit.events.AbstractTerraEvent;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import org.bukkit.entity.LivingEntity;
 

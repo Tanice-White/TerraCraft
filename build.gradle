@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT")
     // js引擎, 运行时需要使用
     implementation("org.graalvm.js:js:22.3.1")
     implementation("org.graalvm.js:js-scriptengine:22.3.1")
@@ -32,6 +32,9 @@ dependencies {
     implementation ("com.fasterxml.jackson.core:jackson-databind:2.15.2")
     // MiniMessage
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
+    // asm
+    implementation("org.ow2.asm:asm:9.8")
+
     // mm
     compileOnly("io.lumine:Mythic-Dist:5.9.0")
     // packageEvents

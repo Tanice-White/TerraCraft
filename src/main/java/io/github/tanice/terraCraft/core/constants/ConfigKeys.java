@@ -50,7 +50,6 @@ public final class ConfigKeys {
     public static final String LEVEL_DOWN_WHEN_FAILED = "level_down_when_failed";
 
     public static final String WEIGHT = "weight";
-    public static final String OPERATION = "op";
 
     public static final String QUALITY = "quality";
     public static final String BASE_DAMAGE = "attack_damage";

@@ -6,14 +6,15 @@ import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skills.TerraSkillCarrier;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
-import io.github.tanice.terraCraft.api.skills.Trigger;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraSkillUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
-import io.github.tanice.terraCraft.core.skills.helper.mythicmobs.MMHelper;
+import io.github.tanice.terraCraft.core.utils.helper.mythicmobs.MMHelper;
+import io.github.tanice.terraCraft.core.utils.helper.mythicmobs.TerraDamageMechanic;
+import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -59,8 +60,6 @@ public final class SkillManager implements TerraSkillManager {
     /** 玩家ID -> 技能对象 -> 下一次可释放的时间戳(毫秒) */
     private final ConcurrentMap<UUID, ConcurrentMap<String, Long>> playerSkillCooldowns;
 
-    // TODO mana恢复和PlayerData维护
-
 
     public SkillManager(TerraPlugin plugin) {
         this.plugin = plugin;
@@ -72,7 +71,16 @@ public final class SkillManager implements TerraSkillManager {
         this.loadResourceFiles();
 
         TerraSchedulers.async().repeat(this::cleanup, 2, CLEAN_UP_CD);
-        TerraEvents.subscribe(TerraSkillUpdateEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
+
+        /* mm */
+        TerraEvents.subscribe(MythicMechanicLoadEvent.class).priority(EventPriority.HIGH).handler(event -> {
+            if (event.getMechanicName().equalsIgnoreCase("terraDamage") || event.getEventName().equalsIgnoreCase("td")) {
+                event.register(new TerraDamageMechanic(event.getConfig()));
+            }
+        }).register();
+
+        /* 可用技能更新 */
+        TerraEvents.subscribe(TerraSkillUpdateEvent.class).priority(EventPriority.MONITOR).ignoreCancelled(true).handler(event -> {
             this.updateAvailableSkills(event.getEntity());
         }).register();
     }

@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Map;
 
+// TODO Component化
 public interface TerraBaseItem {
 
     List<String> selfUpdate(ItemStack old);

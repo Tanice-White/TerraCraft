@@ -123,3 +123,6 @@ runs/
 bin
 build
 gradle
+gradle.properties
+gradlew
+gradlew.bat

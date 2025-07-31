@@ -72,10 +72,10 @@ public abstract class AbstractItem implements TerraBaseItem {
         ItemMeta oldMeta = old.getItemMeta();
         if (oldMeta == null) return List.of();
 
-        oldMeta.setDisplayName(MiniMessageUtil.serialize(displayName).toString());
+        oldMeta.displayName(MiniMessageUtil.serialize(displayName)); /* paper */
         oldMeta.setMaxStackSize(maxStackSize);
         oldMeta.setUnbreakable(unbreakable);
-        if (customModelData != 0) oldMeta.setCustomModelData(customModelData);
+        if (customModelData != 0) oldMeta.setCustomModelData(customModelData);  /* paper */
         for (String f : hideFlags) oldMeta.addItemFlags(ItemFlag.valueOf("HIDE_" + f.toUpperCase()));
         if (!color.isEmpty() && oldMeta instanceof LeatherArmorMeta lMeta){
             lMeta.setColor(MiniMessageUtil.gethexColor(color));
@@ -180,7 +180,7 @@ public abstract class AbstractItem implements TerraBaseItem {
             return;
         }
 
-        meta.setDisplayName(MiniMessageUtil.serialize(displayName).toString());
+        meta.displayName(MiniMessageUtil.serialize(displayName));
         meta.setMaxStackSize(maxStackSize);
         meta.setUnbreakable(unbreakable);
         if (customModelData != 0) meta.setCustomModelData(customModelData);

@@ -4,7 +4,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.TerraEdible;
 import io.github.tanice.terraCraft.api.items.TerraGem;
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
-import io.github.tanice.terraCraft.api.items.gems.TerraGemCarrier;
+import io.github.tanice.terraCraft.api.items.gems.TerraGemHolder;
 import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
@@ -77,7 +77,7 @@ public class ItemListener {
             TerraBaseItem clickedBaseItem = TerraBukkitAdapter.itemAdapt(clickedItem);
 
             /* 宝石镶嵌 */
-            if (cursorBaseItem instanceof TerraGem gem && clickedBaseItem instanceof TerraGemCarrier gemCarrier) {
+            if (cursorBaseItem instanceof TerraGem gem && clickedBaseItem instanceof TerraGemHolder gemCarrier) {
                 int limit = gemCarrier.getGemStackNumber();
                 String[] gems = PDCAPI.getGems(clickedItem);
                 if ((gems == null && limit > 0) || (gems != null && gems.length < limit)) {

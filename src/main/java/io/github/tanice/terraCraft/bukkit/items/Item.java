@@ -5,10 +5,10 @@ import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.items.TerraItem;
-import io.github.tanice.terraCraft.api.items.gems.TerraGemCarrier;
+import io.github.tanice.terraCraft.api.items.gems.TerraGemHolder;
 import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
 import io.github.tanice.terraCraft.api.items.qualities.TerraQualitative;
-import io.github.tanice.terraCraft.api.skills.TerraSkillCarrier;
+import io.github.tanice.terraCraft.api.skills.TerraSkillHolder;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
@@ -28,7 +28,7 @@ import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
  * 插件中的武器、护甲
  */
 @NonnullByDefault
-public class Item extends AbstractItem implements TerraItem, TerraQualitative, TerraLeveled, TerraSkillCarrier, TerraGemCarrier {
+public class Item extends AbstractItem implements TerraItem, TerraQualitative, TerraLeveled, TerraSkillHolder, TerraGemHolder {
     /** 技能组名 */
     private final List<String> skills;
     /** 可选品质组组名 */

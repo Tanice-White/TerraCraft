@@ -4,7 +4,7 @@ import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
-import io.github.tanice.terraCraft.api.skills.TerraSkillCarrier;
+import io.github.tanice.terraCraft.api.skills.TerraSkillHolder;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraSkillUpdateEvent;
@@ -212,7 +212,7 @@ public final class SkillManager implements TerraSkillManager {
             SkillRowData skillRowData;
             Trigger trigger;
             for (TerraItem item : EquipmentUtil.getActiveEquipmentItem(player)) {
-                if (!(item instanceof TerraSkillCarrier skillCarrier)) continue;
+                if (!(item instanceof TerraSkillHolder skillCarrier)) continue;
 
                 for (String skillName : skillCarrier.getSkillNames()) {
                     SkillMeta skillMeta = skillMap.get(skillName);

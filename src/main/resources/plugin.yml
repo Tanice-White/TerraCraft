@@ -2,5 +2,16 @@ name: TerraCraft
 version: '1.0-SNAPSHOT'
 main: io.github.tanice.terraCraft.bukkit.TerraCraftBukkit
 api-version: '1.21.8'
+description: 'RPG item manager and buff manager with mm skills'
+author: TaniceWhite
+website: 'https://github.com/Tanice-White/TerraCraft'
+load: STARTUP
 
-depend: ["packetevents"]
+prefix: TerraCraft
+depend: [packetevents]
+softdepend: [MythicMobs]
+loadbefore: [MythicMobs]
+
+commands:
+  terracraft:
+    aliases: [tc, terra]

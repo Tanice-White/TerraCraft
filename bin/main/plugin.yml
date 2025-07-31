@@ -1,6 +1,0 @@
-name: TerraCraft
-version: '1.0-SNAPSHOT'
-main: io.github.tanice.terraCraft.bukkit.TerraCraftBukkit
-api-version: '1.21'
-
-depend: ["PlaceholderAPI"]

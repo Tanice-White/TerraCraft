@@ -12,8 +12,6 @@ public interface TerraItem extends TerraBaseItem {
 
     boolean isLoseWhenBreak();
 
-    boolean isSoulBind();
-
     String getSetName();
 
     DamageFromType getDamageType();

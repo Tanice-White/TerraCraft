@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * cmd 条件组
  */
-public interface TerraCustomModelDataComponent extends TerraComponent {
+public interface TerraCustomModelDataComponent extends TerraPaperComponent {
 
     List<Integer> getCustomModelData();
 

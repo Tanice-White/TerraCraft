@@ -43,4 +43,12 @@ public class DamageListener {
 
         }).register();
     }
+
+    public void reload() {
+
+    }
+
+    public void unload() {
+
+    }
 }

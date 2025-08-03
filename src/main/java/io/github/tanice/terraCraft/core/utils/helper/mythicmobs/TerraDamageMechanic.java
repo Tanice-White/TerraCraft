@@ -47,6 +47,7 @@ public class TerraDamageMechanic implements ITargetedEntitySkill {
         Entity entityDefender = target.getBukkitEntity();
 
         if (entityAttacker instanceof LivingEntity attacker && entityDefender instanceof LivingEntity defender) {
+            // TODO 直接计算伤害并damage
             SkillDamageData skillDamageData = new SkillDamageData(
                     damageK.get(data, target),
                     damage.get(data, target),

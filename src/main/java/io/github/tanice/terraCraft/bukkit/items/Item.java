@@ -39,8 +39,6 @@ public class Item extends AbstractItem implements TerraItem, TerraQualitative, T
     private final boolean cancelDamage;
     /** 耐久消失是否销毁物品 */
     private final boolean loseWhenBreak;
-    /** 是否进行灵魂绑定 */
-    private final boolean soulBind;
     /** 宝石槽数量 */
     private final Integer gemStackNumber;
 
@@ -69,7 +67,6 @@ public class Item extends AbstractItem implements TerraItem, TerraQualitative, T
         this.qualityGroupName = cfg.getString(QUALITY_GROUPS, "");
         this.cancelDamage = cfg.getBoolean(CANCEL_DAMAGE, false);
         this.loseWhenBreak = cfg.getBoolean(LOSE_WHEN_BREAK, false);
-        this.soulBind = cfg.getBoolean(SOUL_BIND, false);
         this.levelTemplateName = cfg.getString(LEVEL_TEMPLATE_NAME, "");
         this.gemStackNumber = cfg.getInt(GEM_STACK_NUMBER, 0);
         this.setName = cfg.getString(EQUIPMENT_SET, "");
@@ -118,11 +115,6 @@ public class Item extends AbstractItem implements TerraItem, TerraQualitative, T
     @Override
     public boolean isLoseWhenBreak() {
         return this.loseWhenBreak;
-    }
-
-    @Override
-    public boolean isSoulBind() {
-        return this.soulBind;
     }
 
     @Override

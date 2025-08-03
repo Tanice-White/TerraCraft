@@ -7,45 +7,50 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.CustomModelData;
 import org.bukkit.Color;
-import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
+import static io.github.tanice.terraCraft.bukkit.utils.StringUtil.splitByComma;
+import static io.github.tanice.terraCraft.core.constants.ComponentKeys.*;
 
 /**
- * 1.21.6 +
+ * paper 1.21.6 +
  */
 public class BukkitCustomModelDataComponent implements TerraCustomModelDataComponent {
 
-    private final List<Integer> cmds;
-    private final List<String> strings;
-    private final List<Color> colors;
+    private List<Integer> cmds;
+    private List<String> strings;
+    private List<Color> colors;
 
-    public BukkitCustomModelDataComponent(@Nullable List<Integer> cmds, @Nullable List<String> strings, @Nullable List<Color> colors) {
-        this.cmds = cmds;
-        this.strings = strings;
-        this.colors = colors;
+    public BukkitCustomModelDataComponent(ConfigurationSection cfg) {
+        if (cfg == null) return;
+        ConfigurationSection section = cfg.getConfigurationSection(CUSTOM_MODEL_DATA_COMPONENT);
+        if (section == null) return;
+        this.cmds = splitByComma(section.getString(CMDS)).stream().map(Integer::parseInt).toList();
+        this.strings = splitByComma(section.getString(STRINGS));
+        this.colors = splitByComma(section.getString(COLORS)).stream().map(Integer::parseInt).map(Color::fromRGB).toList();
     }
 
     @Override
-    public void apply(ItemMeta meta) {
-        Objects.requireNonNull(meta, "meta should not be null");
-        if (cmds == null || cmds.isEmpty()) return;
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_6)) {
-            ItemStack item = new ItemStack(Material.AIR);
-            item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData()
-                    .addFloats(cmds.stream().filter(Objects::nonNull).map(Integer::floatValue).collect(Collectors.toList()))
-                    .addStrings(strings).addColors(colors));
+            CustomModelData.Builder builder = CustomModelData.customModelData();
+            if (cmds != null && !cmds.isEmpty()) builder.addFloats(cmds.stream().filter(Objects::nonNull).map(Integer::floatValue).toList());
+            if (strings != null && !strings.isEmpty()) builder.addStrings(strings);
+            if (colors != null && !colors.isEmpty()) builder.addColors(colors);
+            item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, builder);
 
-        } else meta.setCustomModelData(cmds.getFirst());
+        } else {
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null || cmds == null || cmds.isEmpty()) return;
+            meta.setCustomModelData(cmds.getFirst());
+        }
     }
-
 
     @Override
     public List<Integer> getCustomModelData() {

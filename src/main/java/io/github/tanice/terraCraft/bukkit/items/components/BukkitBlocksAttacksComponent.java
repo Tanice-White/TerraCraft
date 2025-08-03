@@ -4,8 +4,9 @@ import io.github.tanice.terraCraft.api.items.components.TerraBlocksAttacksCompon
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.BlocksAttacks;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
@@ -15,12 +16,10 @@ import java.util.Objects;
 public class BukkitBlocksAttacksComponent implements TerraBlocksAttacksComponent {
 
 
-
     @Override
-    public void apply(ItemMeta meta) {
-        Objects.requireNonNull(meta, "meta should not be null");
+    public void apply(ItemStack item) {
+        Objects.requireNonNull(item, "meta should not be null");
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_6)) {
-            BlocksAttacks blocksAttacks = meta.getBlocksAttacks();
 
         } else TerraCraftLogger.error("BlocksAttacksComponent requires Minecraft version 1.21.6+");
     }

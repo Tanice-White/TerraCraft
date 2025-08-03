@@ -150,7 +150,11 @@ public final class EquipmentUtil {
     /**
      * 遍历目标的饰品
      */
-    public static List<TerraCalculableMeta> getEffectiveAccessoryAttributePDC(LivingEntity entity) {
+    public static List<TerraCalculableMeta> getEffectiveAccessoryMeta(LivingEntity entity) {
+        return List.of();
+    }
+
+    public static List<TerraItem> getEffectiveAccessories(LivingEntity entity) {
         return List.of();
     }
 

@@ -33,15 +33,11 @@ public final class DamageCalculator {
 
     private static final TerraEntityAttributeManager attributeManager = TerraCraftBukkit.inst().getEntityAttributeManager();
     private static final TerraJSEngineManager jsEngine = TerraCraftBukkit.inst().getJSEngineManager();
+    private static final TerraConfigManager configManager = TerraCraftBukkit.inst().getConfigManager();
     private static final Random rand = new Random();
 
     /** 非生物来源的伤害 */
     public static double calculate(LivingEntity defender, double oriDamage) {
-        TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
-        TerraCalculableMeta defenderMeta = defenderCalculator.getMeta();
-
-        DamageFromType type = getDamageType(null);
-        TerraDamageProtocol protocol = new TerraDamageProtocol(null, defender, null, defenderCalculator, type);
     }
 
     /** 生物来源的伤害 */
@@ -83,8 +79,9 @@ public final class DamageCalculator {
             return protocol.getFinalDamage();
         }
 
-        // 6. 应用防御方减免计算
-        finalDamage = applyDefenseReductions(context, finalDamage);
+        /* 防御方减免计算 */
+        damage = applyDefenseReductions(protocol, damage);
+        protocol.setFinalDamage(damage);
 
         /* 防后Buff处理 */
         if (!processAfterBuffs(protocol)) {
@@ -121,16 +118,10 @@ public final class DamageCalculator {
 
     private static double applyCriticalAndFloatDamage(TerraDamageProtocol protocol, double damage) {
         TerraAttributeCalculator ac = protocol.getAttackerCalculator();
-        TerraConfigManager configManager = TerraCraftBukkit.inst().getConfigManager();
-        if (ac != null) {
-            // 暴击计算
-            if (rand.nextDouble() < ac.getMeta().get(AttributeType.CRITICAL_STRIKE_CHANCE)) {
-                critical = true;
-                double critDamage = ac.getMeta().get(AttributeType.CRITICAL_STRIKE_DAMAGE);
-                damage *= Math.max(1, critDamage);
-            } else {
-                critical = false;
-            }
+        // 暴击计算
+        if (ac != null && rand.nextDouble() < ac.getMeta().get(AttributeType.CRITICAL_STRIKE_CHANCE)) {
+            double critDamage = ac.getMeta().get(AttributeType.CRITICAL_STRIKE_DAMAGE);
+            damage *= Math.max(1, critDamage);
         }
 
         if (configManager.isDamageFloatEnabled()) {
@@ -181,7 +172,7 @@ public final class DamageCalculator {
 
     private static double applyDefenseReductions(TerraDamageProtocol protocol, double damage) {
         damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.PRE_ARMOR_REDUCTION));
-        damage -= protocol.getDefenderCalculator().getMeta().get(AttributeType.ARMOR) * worldK;
+        damage -= protocol.getDefenderCalculator().getMeta().get(AttributeType.ARMOR) * configManager.getWorldK();
         damage = Math.max(0, damage);
         damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.AFTER_ARMOR_REDUCTION));
         return damage;

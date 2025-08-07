@@ -2,7 +2,6 @@ package io.github.tanice.terraCraft.core.calculator;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
-import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
 import io.github.tanice.terraCraft.api.buffs.BuffActiveCondition;
@@ -18,6 +17,7 @@ import io.github.tanice.terraCraft.bukkit.items.Item;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
+import io.github.tanice.terraCraft.core.skills.SkillDamageMeta;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -36,60 +36,81 @@ public final class DamageCalculator {
     private static final TerraConfigManager configManager = TerraCraftBukkit.inst().getConfigManager();
     private static final Random rand = new Random();
 
-    /** 非生物来源的伤害 */
-    public static double calculate(LivingEntity defender, double oriDamage) {
+    /** 非生物来源的物理伤害 */
+    public static TerraDamageProtocol calculate(LivingEntity defender, double oriDamage) {
+        return calculate(null, defender, oriDamage);
     }
 
-    /** 生物来源的伤害 */
-    public static double calculate(LivingEntity attacker, LivingEntity defender, @Nullable ItemStack weapon, @Nullable ItemStack projectile, double oriDamage) {
-    }
-
-    /** 生物来源的技能伤害 */
-    public static double calculate(LivingEntity attacker, LivingEntity defender, TerraSkillMeta skillMeta) {
-
-    }
-
-    private static double calculate(LivingEntity attacker, LivingEntity defender, TerraSkillMeta skillMeta, double oriDamage) {
-
-    }
-
-    private static double calculate(LivingEntity attacker, LivingEntity defender, double oriDamage) {
-        TerraAttributeCalculator attackerCalculator = attributeManager.getAttributeCalculator(attacker);
+    /** 物理攻击伤害 */
+    private static TerraDamageProtocol calculate(@Nullable LivingEntity attacker, LivingEntity defender, double oriDamage) {
+        TerraAttributeCalculator attackerCalculator = attacker == null ? null : attributeManager.getAttributeCalculator(attacker);
         TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
 
         DamageFromType type = getDamageType(attacker);
         TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, oriDamage);
 
         /* 前置Buff处理 */
-        if (!processBeforeBuffs(protocol)) {
+        if (!processBeforeBuffs(protocol, false)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol.getFinalDamage();
+            return protocol;
         }
 
         /* 计算基础伤害（含武器特性、攻击冷却等） */
-        double damage = protocol.getFinalDamage();
-        damage = calculateBaseDamage(protocol, type, damage);
+        calculateBaseDamage(protocol, type);
         /* 处理暴击和伤害浮动 */
-        damage = applyCriticalAndFloatDamage(protocol, damage);
-        protocol.setFinalDamage(damage);
+        applyCriticalDamage(protocol);
+        applyFloatDamage(protocol);
 
         /* 中间（防御前）Buff处理 */
-        if (!processBetweenBuffs(protocol)) {
+        if (!processBetweenBuffs(protocol, false)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol.getFinalDamage();
+            return protocol;
         }
 
         /* 防御方减免计算 */
-        damage = applyDefenseReductions(protocol, damage);
-        protocol.setFinalDamage(damage);
+        applyDefenseReductions(protocol);
 
         /* 防后Buff处理 */
-        if (!processAfterBuffs(protocol)) {
+        if (!processAfterBuffs(protocol, false)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol.getFinalDamage();
+            return protocol;
         }
 
-        return protocol.getFinalDamage();
+        return protocol;
+    }
+
+    /** 技能伤害 */
+    private static TerraDamageProtocol calculate(LivingEntity attacker, LivingEntity defender, SkillDamageMeta skillMeta) {
+        TerraAttributeCalculator attackerCalculator = attributeManager.getAttributeCalculator(attacker);
+        TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
+
+        DamageFromType type = getDamageType(attacker);
+        TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, 0);
+        /* 前置Buff处理 */
+        if (!processBeforeBuffs(protocol, true)) {
+            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
+            return protocol;
+        }
+        /* 伤害浮动 */
+        if(skillMeta.getDamage() < 0) {
+            protocol.setFinalDamage(skillMeta.getDamageK() * attackerCalculator.getMeta().get(AttributeType.ATTACK_DAMAGE));
+        } else protocol.setFinalDamage(skillMeta.getDamage());
+        /* 暴击和伤害浮动 */
+        applyCriticalDamage(protocol, skillMeta);
+        applyFloatDamage(protocol);
+        /* 中间（防御前）Buff处理 */
+        if (!processBetweenBuffs(protocol, true)) {
+            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
+            return protocol;
+        }
+        /* 防御方减免计算 */
+        applyDefenseReductions(protocol, skillMeta);
+        /* 防后Buff处理 */
+        if (!processAfterBuffs(protocol, false)) {
+            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
+            return protocol;
+        }
+        return protocol;
     }
 
     private static DamageFromType getDamageType(@Nullable LivingEntity attacker) {
@@ -105,40 +126,65 @@ public final class DamageCalculator {
         return DamageFromType.OTHER;
     }
 
-    private static double calculateBaseDamage(TerraDamageProtocol protocol, DamageFromType type, double oriDamage) {
-        double v = oriDamage;
+    private static void calculateBaseDamage(TerraDamageProtocol protocol, DamageFromType type) {
         TerraAttributeCalculator ac = protocol.getAttackerCalculator();
+        double oriDamage = protocol.getFinalDamage();
         if (type != DamageFromType.OTHER && ac != null) {
-            v =  ac.getMeta().get(AttributeType.ATTACK_DAMAGE);
-            if (protocol.getAttacker() instanceof Player player) v *= 0.15 + player.getAttackCooldown() * 0.85;
-            v *= (1 + ac.getMeta().get(protocol.getWeaponDamageType()));
+            oriDamage =  ac.getMeta().get(AttributeType.ATTACK_DAMAGE);
+            if (protocol.getAttacker() instanceof Player player) oriDamage *= 0.15 + player.getAttackCooldown() * 0.85;
+            oriDamage *= (1 + ac.getMeta().get(protocol.getWeaponDamageType()));
         }
-        return v;
+        protocol.setFinalDamage(oriDamage);
     }
 
-    private static double applyCriticalAndFloatDamage(TerraDamageProtocol protocol, double damage) {
+    private static void applyCriticalDamage(TerraDamageProtocol protocol) {
         TerraAttributeCalculator ac = protocol.getAttackerCalculator();
+        double damage = protocol.getFinalDamage();
         // 暴击计算
         if (ac != null && rand.nextDouble() < ac.getMeta().get(AttributeType.CRITICAL_STRIKE_CHANCE)) {
             double critDamage = ac.getMeta().get(AttributeType.CRITICAL_STRIKE_DAMAGE);
             damage *= Math.max(1, critDamage);
         }
+        protocol.setFinalDamage(damage);
+    }
 
+    private static void applyCriticalDamage(TerraDamageProtocol protocol, SkillDamageMeta skillMeta) {
+        if (!skillMeta.canCritical()) return;
+        TerraAttributeCalculator ac = protocol.getAttackerCalculator();
+        if (ac == null) return;
+
+        double v = ac.getMeta().get(AttributeType.CRITICAL_STRIKE_CHANCE);
+        // 暴击计算
+        if (skillMeta.getCriticalChance() < 0) v *= skillMeta.getCriticalK();
+        else v = skillMeta.getCriticalChance();
+
+        if (rand.nextDouble() < v) {
+            double damage = protocol.getFinalDamage();
+            damage *= Math.max(1, ac.getMeta().get(AttributeType.CRITICAL_STRIKE_DAMAGE));
+            protocol.setFinalDamage(damage);
+        }
+    }
+
+    private static void applyFloatDamage(TerraDamageProtocol protocol) {
+        double damage = protocol.getFinalDamage();
         if (configManager.isDamageFloatEnabled()) {
             double r = configManager.getDamageFloatRange();
             damage *= rand.nextDouble(1 - r, 1 + r);
         }
-        return damage;
+        protocol.setFinalDamage(damage);
     }
 
-    private static boolean processBeforeBuffs(TerraDamageProtocol context) {
-        List<TerraRunnableBuff> bd = context.getDefenderCalculator().getOrderedBeforeList(BuffActiveCondition.DEFENDER);
-        if (context.getAttackerCalculator() != null) bd.addAll(context.getAttackerCalculator().getOrderedBeforeList(BuffActiveCondition.ATTACKER));
+    private static boolean processBeforeBuffs(TerraDamageProtocol protocol, boolean isSkill) {
+        BuffActiveCondition a = isSkill ? BuffActiveCondition.ATTACKER_SKILL : BuffActiveCondition.ATTACKER;
+        BuffActiveCondition b = isSkill ? BuffActiveCondition.DEFENDER_SKILL : BuffActiveCondition.DEFENDER;
+
+        List<TerraRunnableBuff> bd = protocol.getDefenderCalculator().getOrderedBeforeList(b);
+        if (protocol.getAttackerCalculator() != null) bd.addAll(protocol.getAttackerCalculator().getOrderedBeforeList(a));
         Collections.sort(bd);
         boolean answer;
 
         for (TerraRunnableBuff buff : bd) {
-            answer = jsEngine.executeFunction(buff.getFileName(), context);
+            answer = jsEngine.executeFunction(buff.getFileName(), protocol);
             /* 返回false表示后续不执行 */
             if (!answer) return false;
         }
@@ -146,49 +192,68 @@ public final class DamageCalculator {
         return true;
     }
 
-    private static boolean processBetweenBuffs(TerraDamageProtocol context) {
-        List<TerraRunnableBuff> bd = context.getDefenderCalculator().getOrderedBetweenList(BuffActiveCondition.DEFENDER);
-        if (context.getAttackerCalculator() != null) bd.addAll(context.getAttackerCalculator().getOrderedBetweenList(BuffActiveCondition.ATTACKER));
+    private static boolean processBetweenBuffs(TerraDamageProtocol protocol, boolean isSkill) {
+        BuffActiveCondition a = isSkill ? BuffActiveCondition.ATTACKER_SKILL : BuffActiveCondition.ATTACKER;
+        BuffActiveCondition b = isSkill ? BuffActiveCondition.DEFENDER_SKILL : BuffActiveCondition.DEFENDER;
+
+        List<TerraRunnableBuff> bd = protocol.getDefenderCalculator().getOrderedBetweenList(b);
+        if (protocol.getAttackerCalculator() != null) bd.addAll(protocol.getAttackerCalculator().getOrderedBetweenList(a));
         Collections.sort(bd);
         boolean answer;
         for (TerraRunnableBuff buff : bd) {
-            answer = jsEngine.executeFunction(buff.getFileName(), context);
+            answer = jsEngine.executeFunction(buff.getFileName(), protocol);
             if (!answer) return false;
         }
         return true;
     }
 
-    private static boolean processAfterBuffs(TerraDamageProtocol context) {
-        List<TerraRunnableBuff> bd = context.getDefenderCalculator().getOrderedAfterList(BuffActiveCondition.DEFENDER);
-        if (context.getAttackerCalculator() != null) bd.addAll(context.getAttackerCalculator().getOrderedAfterList(BuffActiveCondition.ATTACKER));
+    private static boolean processAfterBuffs(TerraDamageProtocol protocol, boolean isSkill) {
+        BuffActiveCondition a = isSkill ? BuffActiveCondition.ATTACKER_SKILL : BuffActiveCondition.ATTACKER;
+        BuffActiveCondition b = isSkill ? BuffActiveCondition.DEFENDER_SKILL : BuffActiveCondition.DEFENDER;
+
+        List<TerraRunnableBuff> bd = protocol.getDefenderCalculator().getOrderedAfterList(b);
+        if (protocol.getAttackerCalculator() != null) bd.addAll(protocol.getAttackerCalculator().getOrderedAfterList(a));
         Collections.sort(bd);
         boolean answer;
         for (TerraRunnableBuff buff : bd) {
-            answer = jsEngine.executeFunction(buff.getFileName(), context);
+            answer = jsEngine.executeFunction(buff.getFileName(), protocol);
             if (!answer) return false;
         }
         return true;
     }
 
-    private static double applyDefenseReductions(TerraDamageProtocol protocol, double damage) {
+    private static void applyDefenseReductions(TerraDamageProtocol protocol) {
+        double damage = protocol.getFinalDamage();
         damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.PRE_ARMOR_REDUCTION));
         damage -= protocol.getDefenderCalculator().getMeta().get(AttributeType.ARMOR) * configManager.getWorldK();
         damage = Math.max(0, damage);
         damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.AFTER_ARMOR_REDUCTION));
-        return damage;
+        protocol.setFinalDamage(damage);
     }
 
-    private static void activateBuffForAttackerAndDefender(LivingEntity attacker, LivingEntity defender) {
+    private static void applyDefenseReductions(TerraDamageProtocol protocol, SkillDamageMeta skillMeta) {
+        double damage = protocol.getFinalDamage();
+        damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.PRE_ARMOR_REDUCTION));
+        if (!skillMeta.isIgnoreArmor())
+            damage -= protocol.getDefenderCalculator().getMeta().get(AttributeType.ARMOR) * configManager.getWorldK();
+        damage = Math.max(0, damage);
+        damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.AFTER_ARMOR_REDUCTION));
+        protocol.setFinalDamage(damage);
+    }
+
+    private static void activateBuffForAttackerAndDefender(@Nullable LivingEntity attacker, LivingEntity defender) {
         TerraBuffManager buffManager = TerraCraftBukkit.inst().getBuffManager();
         /* attacker 给 defender 增加 buff */
-        for (TerraItem i : EquipmentUtil.getActiveEquipmentItem(attacker)){
-            buffManager.activateBuffs(attacker, i.getAttackBuffsForSelf());
-            buffManager.activateBuffs(defender, i.getAttackBuffsForOther());
+        if (attacker != null) {
+            for (TerraItem i : EquipmentUtil.getActiveEquipmentItem(attacker)){
+                buffManager.activateBuffs(attacker, i.getAttackBuffsForSelf());
+                buffManager.activateBuffs(defender, i.getAttackBuffsForOther());
+            }
         }
         /* defender 给 attacker 增加 buff */
         for (TerraItem i : EquipmentUtil.getActiveEquipmentItem(defender)){
             buffManager.activateBuffs(defender, i.getDefenseBuffsForSelf());
-            buffManager.activateBuffs(attacker, i.getDefenseBuffsForOther());
+            if (attacker != null) buffManager.activateBuffs(attacker, i.getDefenseBuffsForOther());
         }
     }
 }

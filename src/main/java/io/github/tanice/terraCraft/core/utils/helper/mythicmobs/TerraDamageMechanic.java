@@ -2,6 +2,7 @@ package io.github.tanice.terraCraft.core.utils.helper.mythicmobs;
 
 import io.github.tanice.terraCraft.bukkit.events.damage.TerraSkillDamageEvent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
+import io.github.tanice.terraCraft.core.skills.SkillDamageMeta;
 import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.ITargetedEntitySkill;
@@ -28,11 +29,11 @@ public class TerraDamageMechanic implements ITargetedEntitySkill {
 
     public TerraDamageMechanic(MythicLineConfig mlc) {
         this.damageK = mlc.getPlaceholderDouble(new String[]{"damageK", "dk"}, 1D);
-        this.damage = mlc.getPlaceholderDouble(new String[]{"damage", "d"}, 0D);
+        this.damage = mlc.getPlaceholderDouble(new String[]{"damage", "d"}, -1D);
         this.powerByDamageType = mlc.getPlaceholderBoolean(new String[]{"powerByDamageType", "p"}, true);
         this.canCritical = mlc.getPlaceholderBoolean(new String[]{"critical", "c"}, true);
         this.criticalK = mlc.getPlaceholderDouble(new String[]{"criticalK", "ck"}, 1D);
-        this.criticalChance = mlc.getPlaceholderDouble(new String[]{"criticalChance", "cc"}, 0D);
+        this.criticalChance = mlc.getPlaceholderDouble(new String[]{"criticalChance", "cc"}, -1D);
         this.ignoreArmor = mlc.getPlaceholderBoolean(new String[]{"ignoreArmor", "ia"}, false);
         this.preventKnockback = mlc.getPlaceholderBoolean(new String[]{"preventKnockback", "pk"}, false);
         this.preventImmunity = mlc.getPlaceholderBoolean(new String[]{"preventImmunity", "pi"}, false);
@@ -48,7 +49,7 @@ public class TerraDamageMechanic implements ITargetedEntitySkill {
 
         if (entityAttacker instanceof LivingEntity attacker && entityDefender instanceof LivingEntity defender) {
             // TODO 直接计算伤害并damage
-            SkillDamageData skillDamageData = new SkillDamageData(
+            SkillDamageMeta skillDamageData = new SkillDamageMeta(
                     damageK.get(data, target),
                     damage.get(data, target),
                     powerByDamageType.get(data, target),

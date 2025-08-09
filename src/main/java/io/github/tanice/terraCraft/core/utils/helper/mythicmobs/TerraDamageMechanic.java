@@ -1,7 +1,6 @@
 package io.github.tanice.terraCraft.core.utils.helper.mythicmobs;
 
-import io.github.tanice.terraCraft.bukkit.events.damage.TerraSkillDamageEvent;
-import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
+import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
 import io.github.tanice.terraCraft.core.skills.SkillDamageMeta;
 import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.config.MythicLineConfig;
@@ -48,7 +47,6 @@ public class TerraDamageMechanic implements ITargetedEntitySkill {
         Entity entityDefender = target.getBukkitEntity();
 
         if (entityAttacker instanceof LivingEntity attacker && entityDefender instanceof LivingEntity defender) {
-            // TODO 直接计算伤害并damage
             SkillDamageMeta skillDamageData = new SkillDamageMeta(
                     damageK.get(data, target),
                     damage.get(data, target),
@@ -61,7 +59,7 @@ public class TerraDamageMechanic implements ITargetedEntitySkill {
                     preventImmunity.get(data, target),
                     ignoreInvulnerability.get(data, target)
             );
-            TerraEvents.call(new TerraSkillDamageEvent(attacker, defender, false));
+            target.damage((float) DamageCalculator.calculate(attacker, defender, skillDamageData).getFinalDamage());
         }
         return SkillResult.SUCCESS;
     }

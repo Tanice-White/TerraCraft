@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.bukkit.listeners;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -10,10 +11,26 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 
 public class SkillTriggerListener {
 
+    private static final String MM = "MythicMobs";
+
+    private boolean registered = false;
+
     public SkillTriggerListener() {
+
+        TerraEvents.subscribe(PluginEnableEvent.class).priority(EventPriority.HIGHEST).handler(event -> {
+            if (event.getPlugin().getName().equals(MM) && !registered) {
+                triggerRegister();
+                registered = true;
+                TerraCraftLogger.success("MythicMobs detected, skills available");
+            }
+        }).register();
+    }
+
+    private void triggerRegister() {
         /* 下蹲 */
         TerraEvents.subscribe(PlayerToggleSneakEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
             Player player = event.getPlayer();

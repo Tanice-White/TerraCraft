@@ -11,8 +11,10 @@ import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
+import io.github.tanice.terraCraft.bukkit.listeners.DamageListener;
 import io.github.tanice.terraCraft.bukkit.listeners.GenericParticleListener;
 import io.github.tanice.terraCraft.bukkit.listeners.ItemListener;
+import io.github.tanice.terraCraft.bukkit.listeners.SkillTriggerListener;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
 import io.github.tanice.terraCraft.core.buffs.BuffManager;
@@ -38,8 +40,10 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private SkillManager skillManager;
     private PlayerDataManager playerDataManager;
 
+    private DamageListener damageListener;
     private GenericParticleListener particleListener;
     private ItemListener itemListener;
+    private SkillTriggerListener skillTriggerListener;
 
     /* 更改finalDamage方法 */
     static {
@@ -61,6 +65,8 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         playerDataManager = new PlayerDataManager();
 
         itemListener = new ItemListener();
+        damageListener = new DamageListener();
+        skillTriggerListener = new SkillTriggerListener();
         particleListener = new GenericParticleListener();
         PacketEvents.getAPI().getEventManager().registerListener(particleListener, PacketListenerPriority.NORMAL);
     }

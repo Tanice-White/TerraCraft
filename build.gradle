@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id 'com.github.johnrengelman.shadow' version '8.1.1' // 打包自带依赖
 }
 
 group = 'io.github.tanice'
@@ -18,13 +19,19 @@ repositories {
     }
     // mm
     maven { url = "https://mvn.lumine.io/repository/maven-public/" }
+    // nbt-api
+    maven {
+        name = "CodeMC"
+        url = uri("https://repo.codemc.io/repository/maven-public/")
+    }
     // packageEvents
     maven { url = "https://repo.codemc.io/repository/maven-releases/" }
     maven { url = "https://repo.codemc.io/repository/maven-snapshots/" }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
+
     // js引擎, 运行时需要使用
     implementation("org.graalvm.js:js:22.3.1")
     implementation("org.graalvm.js:js-scriptengine:22.3.1")
@@ -35,11 +42,27 @@ dependencies {
     // asm
     implementation("org.ow2.asm:asm:9.8")
 
+    // nbt-api
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.1")
     // mm
     compileOnly("io.lumine:Mythic-Dist:5.9.0")
     // packageEvents
     compileOnly("com.github.retrooper:packetevents-spigot:2.9.3")
 }
+
+shadowJar {
+    // 重定位依赖包，避免与其他插件冲突
+    relocate 'com.fasterxml.jackson', 'io.github.tanice.terracraft.libs.jackson'
+    relocate 'org.graalvm', 'io.github.tanice.terracraft.libs.graalvm'
+    relocate 'net.kyori', 'io.github.tanice.terracraft.libs.kyori'
+    relocate 'org.ow2.asm', 'io.github.tanice.terracraft.libs.asm'
+
+    // 输出的 JAR 文件名
+    archiveFileName.set("TerraCraft-${version}-shadow.jar")
+}
+
+// 让构建任务依赖阴影任务，确保打包完整
+build.dependsOn(shadowJar)
 
 tasks {
     runServer {
@@ -47,6 +70,8 @@ tasks {
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.21.4")
+        // 运行服务器时使用阴影 JAR
+        pluginJars.from(shadowJar)
     }
 }
 

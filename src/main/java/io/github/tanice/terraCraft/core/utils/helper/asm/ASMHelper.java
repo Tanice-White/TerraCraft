@@ -1,7 +1,6 @@
 package io.github.tanice.terraCraft.core.utils.helper.asm;
 
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.*;
 
 import java.io.ByteArrayOutputStream;
@@ -78,7 +77,7 @@ public class ASMHelper {
         }
     }
 
-    private static byte @NotNull [] readAllBytes(@NotNull InputStream inputStream) throws IOException {
+    private static byte[] readAllBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         byte[] data = new byte[4096];
         int bytesRead;

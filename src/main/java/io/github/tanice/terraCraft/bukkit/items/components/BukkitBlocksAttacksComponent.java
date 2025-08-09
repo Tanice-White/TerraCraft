@@ -4,8 +4,6 @@ import io.github.tanice.terraCraft.api.items.components.TerraBlocksAttacksCompon
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
-import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.BlocksAttacks;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;

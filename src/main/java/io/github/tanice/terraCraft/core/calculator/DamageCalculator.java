@@ -2,6 +2,7 @@ package io.github.tanice.terraCraft.core.calculator;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
+import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
 import io.github.tanice.terraCraft.api.buffs.BuffActiveCondition;
@@ -42,7 +43,7 @@ public final class DamageCalculator {
     }
 
     /** 物理攻击伤害 */
-    private static TerraDamageProtocol calculate(@Nullable LivingEntity attacker, LivingEntity defender, double oriDamage) {
+    public static TerraDamageProtocol calculate(@Nullable LivingEntity attacker, LivingEntity defender, double oriDamage) {
         TerraAttributeCalculator attackerCalculator = attacker == null ? null : attributeManager.getAttributeCalculator(attacker);
         TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
 
@@ -80,7 +81,7 @@ public final class DamageCalculator {
     }
 
     /** 技能伤害 */
-    private static TerraDamageProtocol calculate(LivingEntity attacker, LivingEntity defender, SkillDamageMeta skillMeta) {
+    public static TerraDamageProtocol calculate(LivingEntity attacker, LivingEntity defender, SkillDamageMeta skillMeta) {
         TerraAttributeCalculator attackerCalculator = attributeManager.getAttributeCalculator(attacker);
         TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
 
@@ -106,7 +107,7 @@ public final class DamageCalculator {
         /* 防御方减免计算 */
         applyDefenseReductions(protocol, skillMeta);
         /* 防后Buff处理 */
-        if (!processAfterBuffs(protocol, false)) {
+        if (!processAfterBuffs(protocol, true)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
             return protocol;
         }
@@ -224,20 +225,24 @@ public final class DamageCalculator {
 
     private static void applyDefenseReductions(TerraDamageProtocol protocol) {
         double damage = protocol.getFinalDamage();
-        damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.PRE_ARMOR_REDUCTION));
-        damage -= protocol.getDefenderCalculator().getMeta().get(AttributeType.ARMOR) * configManager.getWorldK();
+        TerraCalculableMeta dMeta = protocol.getDefenderCalculator().getMeta();
+
+        damage *= (1 - dMeta.get(AttributeType.PRE_ARMOR_REDUCTION));
+        damage -= dMeta.get(AttributeType.ARMOR) * configManager.getWorldK();
         damage = Math.max(0, damage);
-        damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.AFTER_ARMOR_REDUCTION));
+        damage *= (1 - dMeta.get(AttributeType.AFTER_ARMOR_REDUCTION));
         protocol.setFinalDamage(damage);
     }
 
     private static void applyDefenseReductions(TerraDamageProtocol protocol, SkillDamageMeta skillMeta) {
         double damage = protocol.getFinalDamage();
-        damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.PRE_ARMOR_REDUCTION));
+        TerraCalculableMeta dMeta = protocol.getDefenderCalculator().getMeta();
+
+        damage *= (1 - dMeta.get(AttributeType.PRE_ARMOR_REDUCTION));
         if (!skillMeta.isIgnoreArmor())
-            damage -= protocol.getDefenderCalculator().getMeta().get(AttributeType.ARMOR) * configManager.getWorldK();
+            damage -= dMeta.get(AttributeType.ARMOR) * configManager.getWorldK();
         damage = Math.max(0, damage);
-        damage *= (1 - protocol.getDefenderCalculator().getMeta().get(AttributeType.AFTER_ARMOR_REDUCTION));
+        damage *= (1 - dMeta.get(AttributeType.AFTER_ARMOR_REDUCTION));
         protocol.setFinalDamage(damage);
     }
 

@@ -29,7 +29,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
     public DatabaseManager(TerraPlugin plugin) {
         this.plugin = plugin;
         if (!plugin.getConfigManager().useMysql()) {
-            TerraCraftLogger.log("Data synchronization without database.");
+            TerraCraftLogger.info("Data synchronization without database.");
             return;
         }
         this.init();
@@ -44,7 +44,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                TerraCraftLogger.log("Database connection closed successfully");
+                TerraCraftLogger.info("Database connection closed successfully");
             }
         } catch (SQLException e) {
             TerraCraftLogger.error("Failed to close database connection: " + e.getMessage());

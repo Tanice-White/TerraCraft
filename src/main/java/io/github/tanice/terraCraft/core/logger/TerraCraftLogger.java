@@ -13,30 +13,30 @@ public final class TerraCraftLogger {
     }
 
     public static void warning(String message) {
-        TerraCraftLogger.log(Level.WARNING, message + ConsoleColor.RESET);
+        TerraCraftLogger.info(Level.WARNING, message + ConsoleColor.RESET);
     }
 
     public static void error(String message) {
-        TerraCraftLogger.log(Level.WARNING, ConsoleColor.RED + message + ConsoleColor.RESET);
+        TerraCraftLogger.info(Level.WARNING, ConsoleColor.RED + message + ConsoleColor.RESET);
     }
 
     public static void debug(DebugLevel level, String message) {
-        TerraCraftLogger.log(Level.INFO, ConsoleColor.BLUE + "[" +  level.name() + "]" + message + ConsoleColor.RESET);
+        TerraCraftLogger.info(Level.INFO, ConsoleColor.BLUE + "[" +  level.name() + "]" + message + ConsoleColor.RESET);
     }
 
-    public static void log(String message) {
+    public static void info(String message) {
         TerraCraftBukkit.inst().getLogger().log(Level.INFO, message + ConsoleColor.RESET);
     }
 
-    public static void log(String message, Object ... params) {
+    public static void info(String message, Object ... params) {
         TerraCraftBukkit.inst().getLogger().log(Level.INFO, message + ConsoleColor.RESET, params);
     }
 
-    public static void log(Level level, String message) {
+    public static void info(Level level, String message) {
         TerraCraftBukkit.inst().getLogger().log(level, message + ConsoleColor.RESET);
     }
 
-    public static void log(Level level, String message, Object ... params) {
+    public static void info(Level level, String message, Object ... params) {
         TerraCraftBukkit.inst().getLogger().log(level, message + ConsoleColor.RESET, params);
     }
 

@@ -5,6 +5,8 @@ import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Set;
+
 import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
 
 /**
@@ -27,6 +29,12 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     protected BuffActiveCondition buffActiveCondition;
     /** buff 属性计算区 */
     protected AttributeActiveSection attributeActiveSection;
+
+//    /** buff 冲突和免疫 */
+//    protected final int buffId;
+//    protected final Set<Integer> conflicts;      // 冲突的Buff集合
+//    protected final Set<Integer> immuneTo;       // 可免疫的Buff集合
+//    protected final Set<Integer> immunizedBy;    // 可免疫当前Buff的集合
 
     public AbstractBuff(String name, String displayName, boolean enable, int priority, double chance, int duration, BuffActiveCondition bac, AttributeActiveSection aas) {
         this.name = name;

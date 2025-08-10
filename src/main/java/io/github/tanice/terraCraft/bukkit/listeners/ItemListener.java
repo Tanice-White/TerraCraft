@@ -156,7 +156,7 @@ public class ItemListener {
                 Player player = event.getPlayer();;
                 for (String gemName : baseItem.selfUpdate(pre))
                     itemManager.getItem(gemName).ifPresentOrElse(gem -> {
-                        player.getInventory().addItem(gem.getBukkitItem());
+                        player.getInventory().addItem(gem.getBukkitItem().clone());
                     }, () -> {
                         TerraCraftLogger.warning("Gem " + gemName + " does not exist when updating item: " + pre.getItemMeta().getDisplayName() + "for player" + player.getName());
                         player.sendMessage("§c物品: " + pre.getItemMeta().getDisplayName() + "更新，宝石获取错误，请联系管理员");

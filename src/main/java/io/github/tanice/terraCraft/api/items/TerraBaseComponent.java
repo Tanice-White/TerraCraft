@@ -3,6 +3,8 @@ package io.github.tanice.terraCraft.api.items;
 public interface TerraBaseComponent {
 
     String MINECRAFT_PREFIX = "minecraft:";
+
+    String COMPONENT_KEY = "components";
     /**
      * 将组件附加到物品上
      *

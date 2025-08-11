@@ -1,30 +1,12 @@
 package io.github.tanice.terraCraft.api.items.components;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
-import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitAttribute;
-import io.github.tanice.terraCraft.bukkit.utils.slots.TerraEquipmentSlot;
-import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespace;
-import net.kyori.adventure.text.TextComponent;
 
 import javax.annotation.Nullable;
 
 import java.util.HashMap;
 
 public interface TerraAttributeModifiers extends TerraBaseComponent {
-
-    TerraNamespace getNamespace();
-
-    BukkitAttribute getAttributeType();
-
-    double getAmount();
-
-    Operation getOperation();
-
-    TerraEquipmentSlot getSlot();
-
-    DisplayType getDisplayType();
-
-    TextComponent getExtraValue();
 
     enum Operation {
         ADD(0),

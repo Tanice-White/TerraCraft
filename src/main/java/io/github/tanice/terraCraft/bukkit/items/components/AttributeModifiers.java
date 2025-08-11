@@ -8,14 +8,14 @@ import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitAttribute;
 import io.github.tanice.terraCraft.bukkit.utils.slots.TerraEquipmentSlot;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
-import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespace;
+import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.UUID;
 
 public class AttributeModifiers implements TerraAttributeModifiers {
 
-    private final TerraNamespace namespace;
+    private final TerraNamespaceKey namespace;
 
     private final BukkitAttribute attributeType;
     private final double amount;
@@ -34,12 +34,12 @@ public class AttributeModifiers implements TerraAttributeModifiers {
     }
 
     public AttributeModifiers(String namespaceKey, BukkitAttribute attribute, double amount, Operation op, TerraEquipmentSlot slot, DisplayType displayType, TextComponent extraValue) {
-        this.namespace = new TerraNamespace(namespaceKey);
+        this.namespace = new TerraNamespaceKey(namespaceKey);
         this.attributeType = attribute;
         this.amount = amount;
         this.op = op;
         this.slot = slot;
-        this. displayType = displayType;
+        this.displayType = displayType;
         this.extraValue = extraValue;
     }
 
@@ -48,7 +48,6 @@ public class AttributeModifiers implements TerraAttributeModifiers {
         boolean isOldVersion = ServerVersion.isBeforeOrEq(MinecraftVersions.v1_20_4);
         boolean isAnySlot = slot == TerraEquipmentSlot.ANY;
 
-        // 处理槽位逻辑：ANY槽位直接处理，否则循环处理每个槽位
         if (isAnySlot) {
             modifyNbtComponent(item, isOldVersion, null);
         } else {
@@ -76,7 +75,7 @@ public class AttributeModifiers implements TerraAttributeModifiers {
                 component.setString("Operation", "Op" + op.getOperation());
                 component.setUUID("UUID", UUID.randomUUID());
             } else {
-                component = nbt.getOrCreateCompound("components").getCompoundList(MINECRAFT_PREFIX + "attribute_modifiers").addCompound();
+                component = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "attribute_modifiers").addCompound();
                 component.setDouble("amount", amount);
                 component.setString("type", attributeType.getBukkitAttribute().name());
                 component.setString("id", namespace.get());
@@ -90,45 +89,10 @@ public class AttributeModifiers implements TerraAttributeModifiers {
                 }
             }
 
-            // 设置槽位（非ANY时）
+            // 设置槽位
             if (slotName != null) {
                 component.setString(isOldVersion ? "Slot" : "slot", slotName);
             }
         });
-    }
-
-    @Override
-    public TerraNamespace getNamespace() {
-        return this.namespace;
-    }
-
-    @Override
-    public BukkitAttribute getAttributeType() {
-        return this.attributeType;
-    }
-
-    @Override
-    public double getAmount() {
-        return this.amount;
-    }
-
-    @Override
-    public Operation getOperation() {
-        return this.op;
-    }
-
-    @Override
-    public TerraEquipmentSlot getSlot() {
-        return this.slot;
-    }
-
-    @Override
-    public DisplayType getDisplayType() {
-        return this.displayType;
-    }
-
-    @Override
-    public TextComponent getExtraValue() {
-        return this.extraValue;
     }
 }

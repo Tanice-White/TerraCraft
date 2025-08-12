@@ -2,6 +2,7 @@ package io.github.tanice.terraCraft.bukkit.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Color;
 
 import java.util.regex.Matcher;
@@ -29,6 +30,13 @@ public final class MiniMessageUtil {
     public static String deserialize (Component component) {
         if (component == null) return "";
         return miniMessage.serialize(component);
+    }
+
+    /**
+     * 将 component 化成 nbt json
+     */
+    public static String toNBTJson(Component component) {
+        return GsonComponentSerializer.gson().serialize(component);
     }
 
     public static String stripAllTags(String message) {

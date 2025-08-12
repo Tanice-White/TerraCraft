@@ -1,7 +1,0 @@
-package io.github.tanice.terraCraft.api.items.components;
-
-import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
-
-public interface TerraEnchantmentGlintOverride extends TerraBaseComponent {
-    // 接口方法声明
-}

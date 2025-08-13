@@ -14,27 +14,25 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import net.kyori.adventure.text.Component;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
+/**
+ * 原版属性
+ */
 public class AttributeModifiersComponent implements TerraAttributeModifiersComponent {
-
     private final double amount;
-    @Nonnull
     private final TerraNamespaceKey id;
-    @Nonnull
     private final BukkitAttribute attributeType;
-    @Nonnull
     private final Operation op;
+    @Nullable
     private final TerraEquipmentSlot slot;
-    @Nonnull
     private final DisplayType displayType;
-    @Nonnull
     private final Component extraValue;
 
-    public AttributeModifiersComponent(@Nonnull String id, @Nonnull BukkitAttribute attribute, double amount, @Nonnull String op, String slot, DisplayType displayType, Component extraValue) {
+    public AttributeModifiersComponent(String id, BukkitAttribute attribute, double amount, String op, @Nullable String slot, @Nullable DisplayType displayType, @Nullable Component extraValue) {
         this.id = new TerraNamespaceKey(id);
         this.attributeType = attribute;
         this.amount = amount;

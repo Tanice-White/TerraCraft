@@ -21,6 +21,15 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     /** 计算区枚举 */
     private AttributeActiveSection activeSection;
 
+    /**
+     * from NBT
+     */
+    public CalculableMeta(double[] attributeModifiers, double[] damageTypeModifiers, AttributeActiveSection activeSection) {
+        this.attributeModifiers = attributeModifiers;
+        this.damageTypeModifiers = damageTypeModifiers;
+        this.activeSection = activeSection;
+    }
+
     public CalculableMeta() {
         this.attributeModifiers = new double[ATTRIBUTE_TYPE_COUNT];
         this.damageTypeModifiers = new double[DAMAGE_TYPE_COUNT];

@@ -8,17 +8,18 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
-import java.util.Arrays;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Repairable + RepairCost
  */
 public class RepairComponent implements TerraRepairComponent {
-
+    @Nullable
     private final Integer cost;
-    private final TerraNamespaceKey[] items;
+    private final List<TerraNamespaceKey> items;
 
-    public RepairComponent(Integer cost, TerraNamespaceKey[] items) {
+    public RepairComponent(@Nullable Integer cost, List<TerraNamespaceKey> items) {
         this.cost = cost;
         this.items = items;
     }
@@ -33,12 +34,12 @@ public class RepairComponent implements TerraRepairComponent {
             } else TerraCraftLogger.warning("Repair cost component is only supported in Minecraft 1.20.5 or newer versions");
         }
 
-        if (item != null && items.length > 0) {
+        if (item != null && !items.isEmpty()) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
                 NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                     nbt.getOrCreateCompound(COMPONENT_KEY)
                             .getOrCreateCompound(MINECRAFT_PREFIX + "repairable")
-                            .getStringList("items").addAll(Arrays.stream(items).map(TerraNamespaceKey::get).toList());
+                            .getStringList("items").addAll(items.stream().map(TerraNamespaceKey::get).toList());
                 });
             } else TerraCraftLogger.warning("Repairable component is only supported in Minecraft 1.21.2 or newer versions");
         }

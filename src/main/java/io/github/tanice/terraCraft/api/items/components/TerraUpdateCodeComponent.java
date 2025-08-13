@@ -2,5 +2,5 @@ package io.github.tanice.terraCraft.api.items.components;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
 
-public interface TerraGemHolderComponent extends TerraBaseComponent {
+public interface TerraUpdateCodeComponent extends TerraBaseComponent {
 }

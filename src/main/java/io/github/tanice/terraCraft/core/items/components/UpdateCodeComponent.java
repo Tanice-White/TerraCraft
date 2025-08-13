@@ -1,13 +1,9 @@
 package io.github.tanice.terraCraft.core.items.components;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.components.TerraLevelComponent;
+import io.github.tanice.terraCraft.api.items.components.TerraUpdateCodeComponent;
 
-/**
- * 等级模板扩展
- */
-public class levelComponent implements TerraLevelComponent {
-
+public class UpdateCodeComponent implements TerraUpdateCodeComponent {
     @Override
     public void apply(TerraBaseItem item) {
 

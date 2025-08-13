@@ -8,16 +8,21 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
+import javax.annotation.Nullable;
+
 /**
  * 融合 damage + maxDamage + unbreakable
  */
 public class DamageComponent implements TerraDamageComponent {
 
+    @Nullable
     private final Integer damage;
+    @Nullable
     private final Integer maxDamage;
+    @Nullable
     private final Boolean unbreakable;
 
-    public DamageComponent(Integer damage, Integer maxDamage, Boolean unbreakable) {
+    public DamageComponent(@Nullable Integer damage, @Nullable Integer maxDamage, @Nullable Boolean unbreakable) {
         this.damage = damage;
         this.maxDamage = maxDamage;
         this.unbreakable = unbreakable;

@@ -8,12 +8,15 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
-public class WeaponComponent implements TerraWeaponComponent {
+import javax.annotation.Nullable;
 
+public class WeaponComponent implements TerraWeaponComponent {
+    @Nullable
     private final Float disableBlockingForSeconds;
+    @Nullable
     private final Integer itemDamagePerAttack;
 
-    public WeaponComponent(Float disableBlockingForSeconds, Integer itemDamagePerAttack) {
+    public WeaponComponent(@Nullable Float disableBlockingForSeconds, @Nullable Integer itemDamagePerAttack) {
         this.disableBlockingForSeconds = disableBlockingForSeconds;
         this.itemDamagePerAttack = itemDamagePerAttack;
     }

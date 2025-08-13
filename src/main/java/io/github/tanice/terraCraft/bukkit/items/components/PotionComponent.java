@@ -10,23 +10,29 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * PotionContents + PotionDurationScale
  */
 public class PotionComponent implements TerraPotionComponent {
+    @Nullable
     private final Integer color;
+
     private final List<NBTPotion> potions;
     /* 控制外观*/
+    @Nullable
     private final String customName; /* 1.21.2 */
+    @Nullable
     private final String potionId;
-
+    @Nullable
     private final Float durationScale; /* 1.21.5 */
 
-    public PotionComponent(Integer color, List<NBTPotion> potions, String customName, String potionId, Float durationScale) {
+    public PotionComponent(@Nullable Integer color, @Nullable String customName, @Nullable String potionId, @Nullable Float durationScale) {
         this.color = color;
-        this.potions = potions;
+        this.potions = new ArrayList<>();
         this.customName = customName;
         this.potionId = potionId;
         this.durationScale = durationScale;
@@ -39,7 +45,7 @@ public class PotionComponent implements TerraPotionComponent {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "potion_contents");
                 if (color != null) component.setInteger("custom_color", color);
-                if (potions != null && !potions.isEmpty()) {
+                if (!potions.isEmpty()) {
                     ReadWriteNBTCompoundList compoundList = component.getCompoundList("custom_effects");
                     for (NBTPotion potion : potions) potion.addToCompound(compoundList.addCompound());
                 }
@@ -53,5 +59,13 @@ public class PotionComponent implements TerraPotionComponent {
             });
 
         } else TerraCraftLogger.warning("Potion contents component is only supported in Minecraft 1.20.5 or newer versions");
+    }
+
+    public void addPotion(NBTPotion potion) {
+        this.potions.add(potion);
+    }
+
+    public void addPotions(List<NBTPotion> potions) {
+        this.potions.addAll(potions);
     }
 }

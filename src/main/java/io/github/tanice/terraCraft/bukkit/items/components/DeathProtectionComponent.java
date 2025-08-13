@@ -37,8 +37,12 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
         } else TerraCraftLogger.warning("death protection component is only supported in Minecraft 1.21.2 or newer versions");
     }
 
-    @Override
+
     public void addEffect(NBTEffect effect) {
         this.effects.add(effect);
+    }
+
+    public void addEffects(List<NBTEffect> effects) {
+        this.effects.addAll(effects);
     }
 }

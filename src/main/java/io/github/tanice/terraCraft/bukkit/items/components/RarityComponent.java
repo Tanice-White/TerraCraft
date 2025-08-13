@@ -7,21 +7,24 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
+import javax.annotation.Nullable;
+
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 public class RarityComponent implements TerraRarityComponent {
-
+    @Nullable
     private final Rarity rarity;
 
-    public RarityComponent(String rarity) {
-        this.rarity = safeValueOf(Rarity.class, rarity, Rarity.COMMON);
+    public RarityComponent(@Nullable String rarity) {
+        if (rarity == null) this.rarity = null;
+        else this.rarity = safeValueOf(Rarity.class, rarity, Rarity.COMMON);
     }
 
     @Override
     public void apply(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "rarity", rarity.name().toLowerCase());
+                if (rarity != null) nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "rarity", rarity.name().toLowerCase());
             });
         } else TerraCraftLogger.warning("Rarity contents component is only supported in Minecraft 1.20.5 or newer versions");
 

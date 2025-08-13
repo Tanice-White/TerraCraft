@@ -5,6 +5,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Color;
 
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ public final class MiniMessageUtil {
     /**
      * 将 String 打包成为 Component
      */
-    public static Component serialize(String message) {
+    public static Component serialize(@Nullable String message) {
         if (message == null || message.isEmpty()) return Component.empty();
         return miniMessage.deserialize(message);
     }
@@ -27,7 +28,7 @@ public final class MiniMessageUtil {
     /**
      * 解 Component 成 String
      */
-    public static String deserialize (Component component) {
+    public static String deserialize (@Nullable Component component) {
         if (component == null) return "";
         return miniMessage.serialize(component);
     }
@@ -39,7 +40,7 @@ public final class MiniMessageUtil {
         return GsonComponentSerializer.gson().serialize(component);
     }
 
-    public static String stripAllTags(String message) {
+    public static String stripAllTags(@Nullable String message) {
         if (message == null) return "";
         return miniMessage.stripTags(message);
     }
@@ -64,7 +65,7 @@ public final class MiniMessageUtil {
         return new String[]{"", ""};
     }
 
-    public static Color gethexColor(String color) {
+    public static Color gethexColor(@Nullable String color) {
         if (color == null || !color.startsWith("#")) return null;
         int red = Integer.valueOf(color.substring(1, 3), 16);
         int green = Integer.valueOf(color.substring(3, 5), 16);

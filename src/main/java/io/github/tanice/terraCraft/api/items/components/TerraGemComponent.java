@@ -3,4 +3,20 @@ package io.github.tanice.terraCraft.api.items.components;
 import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
 
 public interface TerraGemComponent extends TerraBaseComponent {
+
+    float getInlaySuccessChance();
+
+    void setInlaySuccessChance(float chance);
+
+    float getDismantleSuccessChance();
+
+    void setDismantleSuccessChance(float chance);
+
+    boolean isInlayFailLoss();
+
+    void setInlayFailLoss(boolean loss);
+
+    boolean isDismantleFailLoss();
+
+    void setDismantleFailLoss(boolean loss);
 }

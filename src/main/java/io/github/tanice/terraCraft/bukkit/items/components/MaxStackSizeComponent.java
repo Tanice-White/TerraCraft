@@ -7,10 +7,13 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
-public class MaxStackSizeComponent implements TerraMaxStackSizeComponent {
-    private final int size;
+import javax.annotation.Nullable;
 
-    public MaxStackSizeComponent(int size) {
+public class MaxStackSizeComponent implements TerraMaxStackSizeComponent {
+    @Nullable
+    private final Integer size;
+
+    public MaxStackSizeComponent(@Nullable Integer size) {
         this.size = size;
     }
 
@@ -18,7 +21,7 @@ public class MaxStackSizeComponent implements TerraMaxStackSizeComponent {
     public void apply(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).setInteger(MINECRAFT_PREFIX + "max_stack_size", size);
+                if (size != null) nbt.getOrCreateCompound(COMPONENT_KEY).setInteger(MINECRAFT_PREFIX + "max_stack_size", size);
             });
         } else TerraCraftLogger.warning("Modifying max stack size is not supported in this Minecraft version. This feature requires 1.20.5 or later.");
     }

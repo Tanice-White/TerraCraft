@@ -10,17 +10,26 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
+import javax.annotation.Nullable;
+
 /**
  * Enchantable + Enchantments + EnchantmentGlintOverride
  */
 public class EnchantComponent implements TerraEnchantComponent {
 
     private final int enchantmentValue; /* Enchantable 1.21.2 加入 */
+    @Nullable
     private final Boolean glint;
+    @Nullable
     private final TerraNamespaceKey[] enchantments;
+    @Nullable
     private final int[] levels;
 
-    public EnchantComponent(int enchantmentValue, Boolean glint, TerraNamespaceKey[] enchantments, int[] levels) {
+    public EnchantComponent(@Nullable Boolean glint, @Nullable TerraNamespaceKey[] enchantments, @Nullable int[] levels) {
+        this(0, glint, enchantments, levels);
+    }
+
+    public EnchantComponent(int enchantmentValue, @Nullable Boolean glint, @Nullable TerraNamespaceKey[] enchantments, @Nullable int[] levels) {
         this.enchantmentValue = enchantmentValue;
         this.glint = glint;
         this.enchantments = enchantments;
@@ -39,7 +48,7 @@ public class EnchantComponent implements TerraEnchantComponent {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                if (enchantmentValue >= 0) {
+                if (enchantmentValue > 0) {
                     if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
                         component.getOrCreateCompound(MINECRAFT_PREFIX + "enchantable").setInteger("value", enchantmentValue);
                     }

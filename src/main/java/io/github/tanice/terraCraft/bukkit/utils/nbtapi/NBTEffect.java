@@ -2,11 +2,9 @@ package io.github.tanice.terraCraft.bukkit.utils.nbtapi;
 
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public class NBTEffect {
-    @Nonnull
     private final String type;
     private final float probability;
     private NBTPotion[] effects;
@@ -14,19 +12,19 @@ public class NBTEffect {
     private String[] effectsToBeRemoved;
     private float diameter;
 
-    public NBTEffect(float probability, @Nonnull NBTPotion[] effects) {
+    public NBTEffect(float probability, NBTPotion[] effects) {
         this.type = "apply_effects";
         this.probability = probability;
         this.effects = effects;
     }
 
-    public NBTEffect(float probability, @Nonnull NBTSound sound) {
+    public NBTEffect(float probability, NBTSound sound) {
         this.type = "play_sound";
         this.probability = probability;
         this.sound = sound;
     }
 
-    public NBTEffect(float probability, @Nonnull String[] effectsToBeRemoved) {
+    public NBTEffect(float probability, String[] effectsToBeRemoved) {
         this.type = "remove_effects";
         this.probability = probability;
         this.effectsToBeRemoved = effectsToBeRemoved;
@@ -43,7 +41,6 @@ public class NBTEffect {
         this.diameter = diameter;
     }
 
-    @Nonnull
     public String getType() {
         return this.type;
     }

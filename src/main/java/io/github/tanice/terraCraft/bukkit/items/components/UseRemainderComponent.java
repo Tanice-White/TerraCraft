@@ -9,16 +9,17 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class UseRemainderComponent implements TerraUseRemainderComponent {
 
-    @Nonnull
     private final TerraNamespaceKey itemId;
+    @Nullable
     private final ReadWriteNBT component;
+    @Nullable
     private final Integer counts;
 
-    public UseRemainderComponent(@Nonnull TerraNamespaceKey itemId, ReadWriteNBT component, Integer counts) {
+    public UseRemainderComponent(TerraNamespaceKey itemId, @Nullable ReadWriteNBT component, @Nullable Integer counts) {
         this.itemId = itemId;
         this.component = component;
         this.counts = counts;

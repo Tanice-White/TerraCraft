@@ -10,18 +10,20 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
-import javax.annotation.Nonnull;
-import java.util.Arrays;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ToolComponent implements TerraToolComponent {
-
+    @Nullable
     private final Boolean canDestroyInCreative;
+    @Nullable
     private final Integer damagePerBlock;
+    @Nullable
     private final Float defaultMiningSpeed;
-    @Nonnull
-    private final DigConfig[] rules;
 
-    public ToolComponent(Boolean canDestroyInCreative, Integer damagePerBlock, Float defaultMiningSpeed, DigConfig[] rules) {
+    private final List<DigConfig> rules;
+
+    public ToolComponent(@Nullable Boolean canDestroyInCreative, @Nullable Integer damagePerBlock, @Nullable Float defaultMiningSpeed, List<DigConfig> rules) {
         this.canDestroyInCreative = canDestroyInCreative;
         this.damagePerBlock = damagePerBlock;
         this.defaultMiningSpeed = defaultMiningSpeed;
@@ -43,7 +45,7 @@ public class ToolComponent implements TerraToolComponent {
                 ReadWriteNBT subCompound;
                 for (DigConfig rule : rules) {
                     subCompound = compoundList.addCompound();
-                    subCompound.getStringList("blocks").addAll(Arrays.stream(rule.items()).map(TerraNamespaceKey::get).toList());
+                    subCompound.getStringList("blocks").addAll(rule.items().stream().map(TerraNamespaceKey::get).toList());
                     if (rule.speed() != null) subCompound.setFloat("speed", rule.speed());
                     if (rule.correctForDrops() != null) subCompound.setBoolean("correct_for_drops", rule.correctForDrops());
                 }
@@ -51,9 +53,9 @@ public class ToolComponent implements TerraToolComponent {
         } else TerraCraftLogger.warning("Tool component is only supported in Minecraft 1.20.5 or newer versions");
     }
 
-    public record DigConfig(@Nonnull TerraNamespaceKey[] items, Boolean correctForDrops, Float speed) {
+    public record DigConfig(List<TerraNamespaceKey> items, @Nullable Boolean correctForDrops, @Nullable Float speed) {
     @Override
-    public TerraNamespaceKey[] items() {
+    public List<TerraNamespaceKey> items() {
             return this.items;
         }
     }

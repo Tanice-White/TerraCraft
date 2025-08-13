@@ -3,5 +3,4 @@ package io.github.tanice.terraCraft.api.items.components.vanilla;
 import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
 
 public interface TerraWeaponComponent extends TerraBaseComponent {
-    // 接口方法声明
 }

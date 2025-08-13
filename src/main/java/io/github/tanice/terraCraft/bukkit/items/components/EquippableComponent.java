@@ -11,24 +11,34 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class EquippableComponent implements TerraEquippableComponent {
+    @Nullable
     private final List<TerraNamespaceKey> allowedEntities;
+    @Nullable
     private final TerraNamespaceKey assetId;
+    @Nullable
     private final TerraNamespaceKey cameraOverlay;
+    @Nullable
     private final Boolean canBeSheared; /* 1.21.6 */
+    @Nullable
     private final Boolean damageOnHurt;
+    @Nullable
     private final Boolean equipOnInteract; /* 1.21.5 */
+    @Nullable
     private final NBTSound equipSound;
+    @Nullable
     private final Boolean dispensable;
+    @Nullable
     private final NBTSound shearingSound; /* 1.21.6 */
-    @Nonnull
+
     private final TerraEquipmentSlot slot;
+    @Nullable
     private final Boolean swappable;
 
-    public EquippableComponent(List<TerraNamespaceKey> allowedEntities, TerraNamespaceKey assetId, TerraNamespaceKey cameraOverlay, Boolean canBeSheared, Boolean damageOnHurt, Boolean equipOnInteract, NBTSound equipSound, Boolean dispensable, NBTSound shearingSound, @Nonnull TerraEquipmentSlot slot, Boolean swappable) {
+    public EquippableComponent(@Nullable List<TerraNamespaceKey> allowedEntities, @Nullable TerraNamespaceKey assetId, @Nullable TerraNamespaceKey cameraOverlay, @Nullable Boolean canBeSheared, @Nullable Boolean damageOnHurt, @Nullable Boolean equipOnInteract, @Nullable NBTSound equipSound, @Nullable Boolean dispensable, @Nullable NBTSound shearingSound, TerraEquipmentSlot slot, @Nullable Boolean swappable) {
         this.allowedEntities = allowedEntities;
         this.assetId = assetId;
         this.cameraOverlay = cameraOverlay;

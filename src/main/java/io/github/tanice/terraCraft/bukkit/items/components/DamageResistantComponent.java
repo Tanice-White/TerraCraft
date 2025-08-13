@@ -8,14 +8,11 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
-import javax.annotation.Nonnull;
-
 public class DamageResistantComponent implements TerraDamageResistantComponent {
 
-    @Nonnull
     private final TerraNamespaceKey resistantType;
 
-    public DamageResistantComponent(@Nonnull TerraNamespaceKey resistantType) {
+    public DamageResistantComponent(TerraNamespaceKey resistantType) {
         this.resistantType = resistantType;
     }
 

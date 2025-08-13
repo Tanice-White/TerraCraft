@@ -1,25 +1,32 @@
 package io.github.tanice.terraCraft.bukkit.utils.nbtapi;
 
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class NBTSound {
+    @Nullable
     protected final Float range;
-    @Nonnull
-    protected final TerraNamespaceKey SoundNamespaceKey;
+    protected final TerraNamespaceKey soundNamespaceKey;
 
-    public NBTSound(Float range, @Nonnull TerraNamespaceKey SoundNamespaceKey) {
+    public NBTSound(@Nullable Float range, TerraNamespaceKey SoundNamespaceKey) {
         this.range = range;
-        this.SoundNamespaceKey = SoundNamespaceKey;
+        this.soundNamespaceKey = SoundNamespaceKey;
     }
 
+    public void addToCompound(ReadWriteNBT compound) {
+        if (range != null) compound.setFloat("range", range);
+        compound.setString("sound_id", soundNamespaceKey.get());
+    }
+
+    @Nullable
     public Float getRange() {
         return this.range;
     }
 
     public String getId() {
-        return this.SoundNamespaceKey.get();
+        return this.soundNamespaceKey.get();
     }
 }

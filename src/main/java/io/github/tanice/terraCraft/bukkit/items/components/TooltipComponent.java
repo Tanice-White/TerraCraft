@@ -8,18 +8,21 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
-import java.util.Arrays;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * TooltipDisplay + TooltipStyle
  */
 public class TooltipComponent implements TerraTooltipComponent {
-
+    @Nullable
     private final Boolean hideTooltip; /* 1.21.5 */
-    private final String[] hiddenComponents; /* 1.21.5 */
+    @Nullable
+    private final List<String> hiddenComponents; /* 1.21.5 */
+    @Nullable
     private final String tooltipStyle; /* 1.21.2 */
 
-    public TooltipComponent(Boolean hideTooltip, String[] hiddenComponents, String tooltipStyle) {
+    public TooltipComponent(@Nullable Boolean hideTooltip, @Nullable List<String> hiddenComponents, @Nullable String tooltipStyle) {
         this.hideTooltip = hideTooltip;
         this.hiddenComponents = hiddenComponents;
         this.tooltipStyle = tooltipStyle;
@@ -33,7 +36,7 @@ public class TooltipComponent implements TerraTooltipComponent {
                 NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                     ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "tooltip_display");
                     if (hideTooltip != null) component.setBoolean("hide_tooltip", hideTooltip);
-                    if (hiddenComponents != null) component.getStringList("hidden_components").addAll(Arrays.asList(hiddenComponents));
+                    if (hiddenComponents != null) component.getStringList("hidden_components").addAll(hiddenComponents);
                 });
             } else TerraCraftLogger.warning("Tooltip display component is only supported in Minecraft 1.20.5 or newer versions");
         }

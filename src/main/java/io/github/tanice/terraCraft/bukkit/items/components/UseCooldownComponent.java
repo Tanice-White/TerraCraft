@@ -9,12 +9,14 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
-public class UseCooldownComponent implements TerraUseCooldownComponent {
+import javax.annotation.Nullable;
 
+public class UseCooldownComponent implements TerraUseCooldownComponent {
+    @Nullable
     private final TerraNamespaceKey group;
     private final float seconds;
 
-    public UseCooldownComponent(TerraNamespaceKey group, float seconds) {
+    public UseCooldownComponent(@Nullable TerraNamespaceKey group, float seconds) {
         this.group = group;
         this.seconds = seconds;
     }

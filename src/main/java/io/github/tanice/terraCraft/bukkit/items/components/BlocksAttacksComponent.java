@@ -11,16 +11,21 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
-
+    @Nullable
     private final Float blockDelaySeconds;
+    @Nullable
     private final NBTSound blockSound;
+    @Nullable
     private final TerraNamespaceKey canPass;
     private final List<DamageReduction> damageReductions;
+    @Nullable
     private final Float disableCooldownScale;
+    @Nullable
     private final NBTSound disabledSound;
     private final float base;
     private final float factor;
@@ -38,7 +43,7 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
      * @param factor 应被阻挡的伤害比例
      * @param threshold （值≥0）攻击对此物品造成的最低耐久度损耗
      */
-    public BlocksAttacksComponent(Float blockDelaySeconds, NBTSound blockSound, TerraNamespaceKey canPass, Float disableCooldownScale, NBTSound disabledSound, float base, float factor, float threshold) {
+    public BlocksAttacksComponent(@Nullable Float blockDelaySeconds, @Nullable NBTSound blockSound, @Nullable TerraNamespaceKey canPass, @Nullable Float disableCooldownScale, @Nullable NBTSound disabledSound, float base, float factor, float threshold) {
         this.blockDelaySeconds = blockDelaySeconds;
         this.blockSound = blockSound;
         this.canPass = canPass;
@@ -93,8 +98,7 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
         } else TerraCraftLogger.warning("Blocks attacks component is only supported in Minecraft 1.21.5 or newer versions");
     }
 
-    @Override
-    public void addDamageReduction(float base, float factor, float horizontalBlockingAngle, TerraNamespaceKey[] types) {
+    public void addDamageReduction(float base, float factor, @Nullable Float horizontalBlockingAngle, @Nullable TerraNamespaceKey[] types) {
         damageReductions.add(new DamageReduction(base, factor, horizontalBlockingAngle, types));
     }
 
@@ -104,7 +108,7 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
      * @param horizontalBlockingAngle （值>0，角度制，默认为90）在水平方向上，以当前玩家视角的水平分量向量为基准，如果受伤害方向与基准方向夹角小于此角度则伤害可被阻挡，否则不能阻挡。任何无来源伤害均被视为需要180度才能阻挡。
      * @param types                   可阻挡的伤害类型列表
      */
-    private record DamageReduction(float base, float factor, Float horizontalBlockingAngle, TerraNamespaceKey[] types) {
+    private record DamageReduction(float base, float factor, @Nullable Float horizontalBlockingAngle, @Nullable TerraNamespaceKey[] types) {
 
     }
 }

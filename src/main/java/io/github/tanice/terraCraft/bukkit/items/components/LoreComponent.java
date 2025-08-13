@@ -10,14 +10,21 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import net.kyori.adventure.text.Component;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class LoreComponent implements TerraLoreComponent {
 
-    List<Component> lore;
+    @Nullable
+    private final List<Component> lore;
+
+    public LoreComponent(@Nullable List<Component> lore) {
+        this.lore = lore;
+    }
 
     @Override
     public void apply(TerraBaseItem item) {
+        if (lore == null) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
                 ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "lore");

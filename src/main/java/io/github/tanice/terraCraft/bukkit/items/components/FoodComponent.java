@@ -8,13 +8,16 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
+import javax.annotation.Nullable;
+
 public class FoodComponent implements TerraFoodComponent {
+    @Nullable
     private final Boolean canAlwaysEat;
     private final int nutrition;
     private final float saturation;
 
     // 构造方法，初始化食物属性
-    public FoodComponent(Boolean canAlwaysEat, int nutrition, float saturation) {
+    public FoodComponent(@Nullable Boolean canAlwaysEat, int nutrition, float saturation) {
         this.canAlwaysEat = canAlwaysEat;
         this.nutrition = nutrition;
         this.saturation = saturation;

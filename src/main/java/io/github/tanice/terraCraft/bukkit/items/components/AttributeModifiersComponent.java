@@ -3,7 +3,8 @@ package io.github.tanice.terraCraft.bukkit.items.components;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.components.TerraAttributeModifiersComponent;
+
+import io.github.tanice.terraCraft.api.items.components.vanilla.TerraAttributeModifiersComponent;
 import io.github.tanice.terraCraft.bukkit.utils.MiniMessageUtil;
 import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitAttribute;
 import io.github.tanice.terraCraft.core.utils.slots.TerraEquipmentSlot;

@@ -3,7 +3,7 @@ package io.github.tanice.terraCraft.bukkit.items.components;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.components.TerraBreakSoundComponent;
+import io.github.tanice.terraCraft.api.items.components.vanilla.TerraBreakSoundComponent;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;

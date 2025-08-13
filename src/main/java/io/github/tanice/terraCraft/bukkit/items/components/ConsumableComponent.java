@@ -4,7 +4,7 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.components.TerraConsumableComponent;
+import io.github.tanice.terraCraft.api.items.components.vanilla.TerraConsumableComponent;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTEffect;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;

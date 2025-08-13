@@ -3,7 +3,7 @@ package io.github.tanice.terraCraft.bukkit.items.components;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.components.TerraDamageComponent;
+import io.github.tanice.terraCraft.api.items.components.vanilla.TerraDamageComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -33,9 +33,11 @@ public class DamageComponent implements TerraDamageComponent {
                 if (unbreakable != null && unbreakable) component.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");
             });
         } else {
-            if (unbreakable != null && unbreakable) NBT.modify(item.getBukkitItem(), nbt -> {nbt.getOrCreateCompound(TAG_KEY).setBoolean("Unbreakable", true);});
-            if (damage != null) NBT.modify(item.getBukkitItem(), nbt -> {nbt.getOrCreateCompound(TAG_KEY).setInteger("Damage", damage);});
-            if (maxDamage != null) TerraCraftLogger.warning("Versions before 1.20.5 do not support setting max_damage. Only damage is configurable. Max damage uses default.");
+            NBT.modify(item.getBukkitItem(), nbt -> {
+                if (unbreakable != null && unbreakable) nbt.getOrCreateCompound(TAG_KEY).setBoolean("Unbreakable", true);
+                if (damage != null) nbt.getOrCreateCompound(TAG_KEY).setInteger("Damage", damage);
+                if (maxDamage != null) TerraCraftLogger.warning("Versions before 1.20.5 do not support setting max_damage. Only damage is configurable. Max damage uses default.");
+            });
         }
     }
 }

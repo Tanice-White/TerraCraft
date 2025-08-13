@@ -90,7 +90,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
             if (acs == AttributeActiveSection.ERROR) continue;
             /* 具体 */
             if (acs == AttributeActiveSection.BEFORE_DAMAGE) beforeList.add((TerraRunnableBuff) meta);
-            else if (acs == AttributeActiveSection.BETWEEN_DAMAGE_ADN_DEFENCE) betweenList.add((TerraRunnableBuff) meta);
+            else if (acs == AttributeActiveSection.BETWEEN_DAMAGE_AND_DEFENCE) betweenList.add((TerraRunnableBuff) meta);
             else if (acs == AttributeActiveSection.AFTER_DAMAGE) afterList.add((TerraRunnableBuff) meta);
             /* BASE ADD MULTIPLY FIX */
             else {
@@ -106,14 +106,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         double[] dmgMods = meta.getDamageTypeModifierArray();
 
         for (AttributeActiveSection acs : transformTmp.keySet()) {
-            /* 排除 */
-            if (
-                    acs == AttributeActiveSection.BEFORE_DAMAGE ||
-                    acs == AttributeActiveSection.AFTER_DAMAGE ||
-                    acs == AttributeActiveSection.ERROR ||
-                    acs == AttributeActiveSection.TIMER ||
-                    acs == AttributeActiveSection.BETWEEN_DAMAGE_ADN_DEFENCE
-            ) continue;
+            if (!acs.canCalculateInMeta()) continue;
 
             calculableMeta = transformTmp.get(acs);
             /* 属性加成相加 */

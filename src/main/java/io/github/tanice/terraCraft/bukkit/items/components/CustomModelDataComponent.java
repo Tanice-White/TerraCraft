@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.bukkit.items.components;
 
 import de.tr7zw.nbtapi.NBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.components.TerraCustomModelDataComponent;
+import io.github.tanice.terraCraft.api.items.components.vanilla.TerraCustomModelDataComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 

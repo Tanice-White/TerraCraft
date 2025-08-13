@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.api.items.components;
+package io.github.tanice.terraCraft.api.items.components.vanilla;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTEffect;

@@ -4,6 +4,7 @@ import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
+import io.github.tanice.terraCraft.core.utils.TerraUtil;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
@@ -14,9 +15,9 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     private static final int DAMAGE_TYPE_COUNT = DamageFromType.values().length;
 
     /** 索引对应AttributeType的ordinal() */
-    private final double[] attributeModifiers;
+    private double[] attributeModifiers;
     /** 索引对应DamageFromType的ordinal() */
-    private final double[] damageTypeModifiers;
+    private double[] damageTypeModifiers;
     /** 计算区枚举 */
     private AttributeActiveSection activeSection;
 
@@ -50,15 +51,28 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     public void add(TerraCalculableMeta another, int k) {
         double[] otherAttrMods = another.getAttributeModifierArray();
         double[] otherDamageMods = another.getDamageTypeModifierArray();
+
+        int maxAttrLength = Math.max(this.attributeModifiers.length, (otherAttrMods != null ? otherAttrMods.length : 0));
+        this.attributeModifiers = TerraUtil.extendArray(this.attributeModifiers, maxAttrLength);
+        double[] extendedOtherAttr = TerraUtil.extendArray(otherAttrMods, maxAttrLength);
+
+        int maxDamageLength = Math.max(this.damageTypeModifiers.length, (otherDamageMods != null ? otherDamageMods.length : 0));
+        this.damageTypeModifiers = TerraUtil.extendArray(this.damageTypeModifiers, maxDamageLength);
+        double[] extendedOtherDamage = TerraUtil.extendArray(otherDamageMods, maxDamageLength);
+
         int index;
         for (AttributeType type : AttributeType.values()) {
             index = type.ordinal();
-            this.attributeModifiers[index] += otherAttrMods[k] * k;
+            if (index < this.attributeModifiers.length && index < extendedOtherAttr.length) {
+                this.attributeModifiers[index] += extendedOtherAttr[k] * k;
+            }
         }
 
         for (DamageFromType type : DamageFromType.values()) {
             index = type.ordinal();
-            this.damageTypeModifiers[index] += otherDamageMods[k] * k;
+            if (index < this.damageTypeModifiers.length && index < extendedOtherDamage.length) {
+                this.damageTypeModifiers[index] += extendedOtherDamage[k] * k;
+            }
         }
     }
 
@@ -66,15 +80,29 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     public void multiply(TerraCalculableMeta another, int k) {
         double[] otherAttrMods = another.getAttributeModifierArray();
         double[] otherDamageMods = another.getDamageTypeModifierArray();
+
+        int maxAttrLength = Math.max(this.attributeModifiers.length, (otherAttrMods != null ? otherAttrMods.length : 0));
+        this.attributeModifiers = TerraUtil.extendArray(this.attributeModifiers, maxAttrLength);
+        double[] extendedOtherAttr = TerraUtil.extendArray(otherAttrMods, maxAttrLength);
+
+        int maxDamageLength = Math.max(this.damageTypeModifiers.length, (otherDamageMods != null ? otherDamageMods.length : 0));
+        this.damageTypeModifiers = TerraUtil.extendArray(this.damageTypeModifiers, maxDamageLength);
+        double[] extendedOtherDamage = TerraUtil.extendArray(otherDamageMods, maxDamageLength);
+
+
         int index;
         for (AttributeType type : AttributeType.values()) {
             index = type.ordinal();
-            this.attributeModifiers[index] *= 1 + otherAttrMods[k] * k;
+            if (index < this.attributeModifiers.length && index < extendedOtherAttr.length) {
+                this.attributeModifiers[index] *= 1 + extendedOtherAttr[k] * k;
+            }
         }
 
         for (DamageFromType type : DamageFromType.values()) {
             index = type.ordinal();
-            this.damageTypeModifiers[index] *= 1 + otherDamageMods[k] * k;
+            if (index < this.damageTypeModifiers.length && index < extendedOtherDamage.length) {
+                this.damageTypeModifiers[index] *= 1 + extendedOtherDamage[k] * k;
+            }
         }
     }
 

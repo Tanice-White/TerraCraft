@@ -2,5 +2,5 @@ package io.github.tanice.terraCraft.api.items.components;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
 
-public interface TerraRepairableComponent extends TerraBaseComponent {
+public interface TerraDyedColor extends TerraBaseComponent {
 }

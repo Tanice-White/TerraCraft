@@ -16,16 +16,17 @@ import java.util.List;
  * PotionContents + PotionDurationScale
  */
 public class PotionComponent implements TerraPotionComponent {
-    private final Integer customColor;
-    private final List<NBTPotion> customEffects;
-    private final String customName;
+    private final Integer color;
+    private final List<NBTPotion> potions;
+    /* 控制外观*/
+    private final String customName; /* 1.21.2 */
     private final String potionId;
 
     private final Float durationScale; /* 1.21.5 */
 
-    public PotionComponent(Integer customColor, List<NBTPotion> customEffects, String customName, String potionId, Float durationScale) {
-        this.customColor = customColor;
-        this.customEffects = customEffects;
+    public PotionComponent(Integer color, List<NBTPotion> potions, String customName, String potionId, Float durationScale) {
+        this.color = color;
+        this.potions = potions;
         this.customName = customName;
         this.potionId = potionId;
         this.durationScale = durationScale;
@@ -37,14 +38,13 @@ public class PotionComponent implements TerraPotionComponent {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "potion_contents");
-                if (customColor != null) component.setInteger("custom_color", customColor);
-                if (customEffects != null && !customEffects.isEmpty()) {
+                if (color != null) component.setInteger("custom_color", color);
+                if (potions != null && !potions.isEmpty()) {
                     ReadWriteNBTCompoundList compoundList = component.getCompoundList("custom_effects");
-                    for (NBTPotion potion : customEffects) {
-                        potion.addToCompound(compoundList.addCompound());
-                    }
+                    for (NBTPotion potion : potions) potion.addToCompound(compoundList.addCompound());
                 }
-                if (customName != null) component.setString("custom_name", customName);
+                if (customName != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) component.setString("custom_name", customName);
+                else TerraCraftLogger.warning("custom name in Potion contents component is only supported in Minecraft 1.21.2 or newer versions");
                 if (potionId != null) component.setString("potion", potionId);
                 if (durationScale != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
                     nbt.getOrCreateCompound(COMPONENT_KEY).setFloat(MINECRAFT_PREFIX + "potion_duration_scale", durationScale);

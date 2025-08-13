@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.utils.slots;
+package io.github.tanice.terraCraft.core.utils.slots;
 
 import java.util.Arrays;
 import java.util.Objects;

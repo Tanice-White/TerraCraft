@@ -22,15 +22,14 @@ public class LoreComponent implements TerraLoreComponent {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
                 ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "lore");
                 for (Component c : lore) {
-                    compoundList.addCompound().setString("text", MiniMessageUtil.toNBTJson(c));
+                    // TODO ？
+                    compoundList.addCompound().mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(c)));
                 }
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt ->{
                 ReadWriteNBTList<String> loreList = nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").getStringList("lore");
-                for (Component c : lore) {
-                    loreList.add(MiniMessageUtil.toNBTJson(c));
-                }
+                for (Component c : lore) loreList.add(MiniMessageUtil.toNBTJson(c));
             });
         }
     }

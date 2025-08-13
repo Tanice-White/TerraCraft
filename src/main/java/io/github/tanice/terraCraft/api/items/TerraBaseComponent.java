@@ -8,8 +8,6 @@ public interface TerraBaseComponent {
     String TAG_KEY = "tag";
     /**
      * 将组件附加到物品上
-     *
-     * @param item bukkit物品
      */
     void apply(TerraBaseItem item);
 }

@@ -26,7 +26,7 @@ public class ConsumableComponent implements TerraConsumableComponent {
     public ConsumableComponent(Animation animation, float consumeSeconds, boolean hasConsumeParticles, NBTSound sound) {
         this.animation = animation;
         this.consumeSeconds = consumeSeconds;
-        this. hasConsumeParticles = hasConsumeParticles;
+        this.hasConsumeParticles = hasConsumeParticles;
         this.onConsumeEffects = new ArrayList<>();
         this.sound = sound;
     }
@@ -36,18 +36,26 @@ public class ConsumableComponent implements TerraConsumableComponent {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "consumable");
-                component.setString("animation", animation.name().toLowerCase());
+
+                if (animation != null) {
+                    if (animation == Animation.BUNDLE) {
+                        if (ServerVersion.isBefore(MinecraftVersions.v1_21_4)) {
+                            TerraCraftLogger.warning("bundle value in animation is only supported in Minecraft 1.21.4 or newer versions. Use eat as default");
+                            component.setString("animation", Animation.EAT.name().toLowerCase());
+                        }
+                    } else component.setString("animation", animation.name().toLowerCase());
+                }
                 component.setFloat("consume_seconds", consumeSeconds);
                 component.setBoolean("has_consume_particles", hasConsumeParticles);
 
                 ReadWriteNBTCompoundList compoundList = component.getCompoundList("on_consume_effects");
-                for (NBTEffect ce : onConsumeEffects) {
-                    ce.addToCompound(compoundList.addCompound());
+                for (NBTEffect ce : onConsumeEffects) ce.addToCompound(compoundList.addCompound());
+                if (sound != null) {
+                    ReadWriteNBT sComponent;
+                    sComponent = component.getOrCreateCompound("sound");
+                    sComponent.setFloat("range", sound.getRange());
+                    sComponent.setString("sound_id", sound.getId());
                 }
-                ReadWriteNBT sComponent;
-                sComponent = component.getOrCreateCompound("sound");
-                sComponent.setFloat("range", sound.getRange());
-                sComponent.setString("sound_id", sound.getId());
             });
 
         } else TerraCraftLogger.warning("Consumable component is only supported in Minecraft 1.21.2 or newer versions");

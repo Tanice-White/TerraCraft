@@ -6,7 +6,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.TerraAttributeModifiersComponent;
 import io.github.tanice.terraCraft.bukkit.utils.MiniMessageUtil;
 import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitAttribute;
-import io.github.tanice.terraCraft.bukkit.utils.slots.TerraEquipmentSlot;
+import io.github.tanice.terraCraft.core.utils.slots.TerraEquipmentSlot;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -51,8 +51,13 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "attribute_modifiers").addCompound();
                 component.setDouble("amount", amount);
                 component.setString("type", attributeType.getBukkitAttribute().name());
-                component.setString("id", id.get());
                 component.setString("operation", "Op" + op.getOperation());
+
+                if (ServerVersion.isBefore(MinecraftVersions.v1_21_1)) {
+                    component.setString("name", id.get());
+                    component.getIntArrayList("uuid");
+                }
+                else component.setString("id", id.get());
 
                 // 新版本处理display
                 if (displayType != DisplayType.DEFAULT) {

@@ -5,7 +5,7 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.TerraEquippableComponent;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
-import io.github.tanice.terraCraft.bukkit.utils.slots.TerraEquipmentSlot;
+import io.github.tanice.terraCraft.core.utils.slots.TerraEquipmentSlot;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -18,12 +18,12 @@ public class EquippableComponent implements TerraEquippableComponent {
     private final List<TerraNamespaceKey> allowedEntities;
     private final TerraNamespaceKey assetId;
     private final TerraNamespaceKey cameraOverlay;
-    private final Boolean canBeSheared;
+    private final Boolean canBeSheared; /* 1.21.6 */
     private final Boolean damageOnHurt;
-    private final Boolean equipOnInteract;
+    private final Boolean equipOnInteract; /* 1.21.5 */
     private final NBTSound equipSound;
     private final Boolean dispensable;
-    private final NBTSound shearingSound;
+    private final NBTSound shearingSound; /* 1.21.6 */
     @Nonnull
     private final TerraEquipmentSlot slot;
     private final Boolean swappable;
@@ -50,11 +50,16 @@ public class EquippableComponent implements TerraEquippableComponent {
 
                 if (allowedEntities != null && !allowedEntities.isEmpty())
                     component.getStringList("allowed_entities").addAll(allowedEntities.stream().map(TerraNamespaceKey::get).toList());
-                if (assetId != null) component.setString("asset_id", assetId.get());
+                if (assetId != null) {
+                    if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_4)) component.setString("asset_id", assetId.get());
+                    else component.setString("model", assetId.get());
+                }
                 if (cameraOverlay != null) component.setString("camera_overlay", cameraOverlay.get());
-                if (canBeSheared != null) component.setBoolean("can_be_sheared", canBeSheared);
                 if (damageOnHurt != null) component.setBoolean("damage_on_hurt", damageOnHurt);
-                if (equipOnInteract != null) component.setBoolean("equip_on_interact", equipOnInteract);
+                if (equipOnInteract != null) {
+                    if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) component.setBoolean("equip_on_interact", equipOnInteract);
+                    else TerraCraftLogger.warning("equip_on_interact in Equippable component is only supported in Minecraft 1.21.5 or newer versions");
+                }
                 ReadWriteNBT soundComponent;
                 if (equipSound != null) {
                     soundComponent = component.getOrCreateCompound("equip_sound");
@@ -62,11 +67,19 @@ public class EquippableComponent implements TerraEquippableComponent {
                     soundComponent.setString("sound_id", equipSound.getId());
                 }
                 component.setBoolean("dispensable", dispensable);
-                if (shearingSound != null) {
-                    soundComponent = component.getOrCreateCompound("shearing_sound");
-                    soundComponent.setFloat("range", shearingSound.getRange());
-                    soundComponent.setString("sound_id", shearingSound.getId());
+
+                if (canBeSheared != null){
+                    if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_6)) component.setBoolean("can_be_sheared", canBeSheared);
+                    else TerraCraftLogger.warning("can_be_sheared in Equippable component is only supported in Minecraft 1.21.6 or newer versions");
                 }
+                if (shearingSound != null) {
+                    if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_6)) {
+                        soundComponent = component.getOrCreateCompound("shearing_sound");
+                        soundComponent.setFloat("range", shearingSound.getRange());
+                        soundComponent.setString("sound_id", shearingSound.getId());
+                    } else TerraCraftLogger.warning("shearing_sound in Equippable component is only supported in Minecraft 1.21.6 or newer versions");
+                }
+
                 String[] slots = slot.getStandardEquippableName();
                 if (slots.length > 1)
                     TerraCraftLogger.warning("Slot in EquippableComponent is only supported on a single slot(not group). Use the first slot name" + slots[0] + "as default");

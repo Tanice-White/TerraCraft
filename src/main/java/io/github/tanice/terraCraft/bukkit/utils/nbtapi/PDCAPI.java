@@ -2,7 +2,6 @@ package io.github.tanice.terraCraft.bukkit.utils.nbtapi;
 
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;

@@ -61,9 +61,6 @@ shadowJar {
     archiveFileName.set("TerraCraft-${version}-shadow.jar")
 }
 
-// 让构建任务依赖阴影任务，确保打包完整
-build.dependsOn(shadowJar)
-
 tasks {
     runServer {
         // Configure the Minecraft version for our task.

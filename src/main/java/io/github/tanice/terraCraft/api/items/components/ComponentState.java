@@ -6,7 +6,7 @@ public class ComponentState {
     @Nullable
     protected Boolean original; /* 是否为初始值始自带 */
     @Nullable
-    protected Boolean modified; /* 是否被更改 */
+    protected Boolean modified; /* 是否被更改 -- 暂时不影响更新 */
     @Nullable
     protected Boolean updatable; /* 是否允许更新 */
 
@@ -23,15 +23,15 @@ public class ComponentState {
         this.updatable = updatable;
     }
 
-    public boolean getOriginal() {
+    public boolean isOriginal() {
         return original != null ? original : false;
     }
 
-    public boolean getModified() {
+    public boolean isModified() {
         return modified != null ? modified : false;
     }
 
-    public boolean getUpdatable() {
+    public boolean isUpdatable() {
         return updatable != null ? updatable : true;
     }
 
@@ -49,9 +49,9 @@ public class ComponentState {
 
     public Byte toNbtByte() {
         byte state = 0;
-        if (getOriginal()) state |= 0b001;
-        if (getModified()) state |= 0b010;
-        if (getUpdatable()) state |= 0b100;
+        if (isOriginal()) state |= 0b001;
+        if (isModified()) state |= 0b010;
+        if (isUpdatable()) state |= 0b100;
         return state;
     }
 }

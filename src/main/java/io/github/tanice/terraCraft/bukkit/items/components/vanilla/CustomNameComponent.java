@@ -2,6 +2,7 @@ package io.github.tanice.terraCraft.bukkit.items.components.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraCustomNameComponent;
 import io.github.tanice.terraCraft.bukkit.utils.MiniMessageUtil;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
@@ -16,7 +17,7 @@ import javax.annotation.Nullable;
 public class CustomNameComponent implements TerraCustomNameComponent {
 
     @Nullable
-    private final Component name;
+    private Component name;
 
     public CustomNameComponent(@Nullable String name) {
         this.name = MiniMessageUtil.serialize(name);
@@ -64,5 +65,10 @@ public class CustomNameComponent implements TerraCustomNameComponent {
                 nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").removeKey("Name");
             });
         }
+    }
+
+    @Override
+    public void updatePartialFrom(TerraBaseComponent old) {
+        this.name = ((CustomNameComponent) old).name;
     }
 }

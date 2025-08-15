@@ -4,6 +4,8 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.components.ComponentState;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.TerraQualityComponent;
 import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
@@ -18,23 +20,31 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     @Nullable
     private String quality;
 
-    public QualityComponent(@Nullable String quality, @Nullable String qualityGroup) {
+    public QualityComponent(@Nullable String quality, @Nullable String qualityGroup, boolean updatable) {
+        super(updatable);
         this.quality = quality;
         this.qualityGroup = qualityGroup;
     }
 
+    public QualityComponent(@Nullable String quality, @Nullable String qualityGroup, ComponentState state) {
+        super(state);
+        this.quality = quality;
+        this.qualityGroup = qualityGroup;
+    }
+
+    @Nullable
     public static QualityComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".quality");
                 if (data == null) return null;
-                return new QualityComponent(data.getString("quality"), data.getString("group"));
+                return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".quality");
                 if (data == null) return null;
-                return new QualityComponent(data.getString("quality"), data.getString("group"));
+                return fromNBT(data);
             });
         }
     }
@@ -44,16 +54,38 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".quality");
-                if (quality != null) data.setString("quality", quality);
-                if (qualityGroup != null) data.setString("group", qualityGroup);
+                addToCompound(data);
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".quality");
-                if (quality != null) data.setString("quality", quality);
-                if (qualityGroup != null) data.setString("group", qualityGroup);
+                addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void clear(TerraBaseItem item) {
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("quality");
+            });
+        } else {
+            NBT.modify(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("quality");
+            });
+        }
+    }
+
+    @Override
+    public void remove(TerraBaseItem item) {
+        this.clear(item);
+    }
+
+    @Override
+    public void updatePartialFrom(TerraBaseComponent old) {
+        QualityComponent oldComponent = (QualityComponent) old;
+        if (oldComponent.state.isModified()) this.quality = oldComponent.quality;
     }
 
     @Override
@@ -74,5 +106,19 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     @Override
     public void setQualityGroup(@Nullable String group) {
         this.qualityGroup = group;
+    }
+
+    private void addToCompound(ReadWriteNBT compound) {
+        if (quality != null) compound.setString("value", quality);
+        if (qualityGroup != null) compound.setString("group", qualityGroup);
+        compound.setByte("state", state.toNbtByte());
+    }
+
+    private static QualityComponent fromNBT(ReadableNBT nbt) {
+        return new QualityComponent(
+                nbt.getString("value"),
+                nbt.getString("group"),
+                new ComponentState(nbt.getByte("state"))
+        );
     }
 }

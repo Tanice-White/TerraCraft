@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraEnchantComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
@@ -19,9 +20,9 @@ public class EnchantComponent implements TerraEnchantComponent {
 
     private final int enchantmentValue; /* Enchantable 1.21.2 加入 */
     @Nullable
-    private final TerraNamespaceKey[] enchantments;
+    private TerraNamespaceKey[] enchantments;
     @Nullable
-    private final int[] levels;
+    private int[] levels;
 
     public EnchantComponent(@Nullable TerraNamespaceKey[] enchantments, @Nullable int[] levels) {
         this(0, enchantments, levels);
@@ -103,5 +104,11 @@ public class EnchantComponent implements TerraEnchantComponent {
                 nbt.getOrCreateCompound(TAG_KEY).removeKey("Enchantments");
             });
         }
+    }
+
+    @Override
+    public void updatePartialFrom(TerraBaseComponent old) {
+        this.enchantments = ((EnchantComponent) old).enchantments;
+        this.levels = ((EnchantComponent) old).levels;
     }
 }

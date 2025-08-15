@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.bukkit.items.components.vanilla;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraDamageComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
@@ -16,7 +17,7 @@ import javax.annotation.Nullable;
 public class DamageComponent implements TerraDamageComponent {
 
     @Nullable
-    private final Integer damage;
+    private Integer damage;
     @Nullable
     private final Integer maxDamage;
     @Nullable
@@ -81,5 +82,10 @@ public class DamageComponent implements TerraDamageComponent {
                 nbt.getOrCreateCompound(TAG_KEY).removeKey("Damage");
             });
         }
+    }
+
+    @Override
+    public void updatePartialFrom(TerraBaseComponent old) {
+        this.damage = ((DamageComponent) old).damage;
     }
 }

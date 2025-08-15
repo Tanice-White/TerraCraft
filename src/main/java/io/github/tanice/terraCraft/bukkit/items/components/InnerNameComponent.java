@@ -4,16 +4,15 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.TerraInnerNameComponent;
-import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
-public class InnerNameComponent extends AbstractItemComponent implements TerraInnerNameComponent {
+public class InnerNameComponent implements TerraInnerNameComponent {
 
-    private String name;
+    private final String name;
 
     public InnerNameComponent(String name) {
         this.name = name;
@@ -49,6 +48,20 @@ public class InnerNameComponent extends AbstractItemComponent implements TerraIn
         }
     }
 
+    @Override
+    public void clear(TerraBaseItem item) {
+        /* cannot clear or remove */
+    }
+
+    @Override
+    public void remove(TerraBaseItem item) {
+        /* cannot clear or remove */
+    }
+
+    @Override
+    public boolean canUpdate() {
+        return false;
+    }
 
     @Override
     public String getName() {
@@ -57,6 +70,6 @@ public class InnerNameComponent extends AbstractItemComponent implements TerraIn
 
     @Override
     public void setName(String name) {
-        this.name = name;
+
     }
 }

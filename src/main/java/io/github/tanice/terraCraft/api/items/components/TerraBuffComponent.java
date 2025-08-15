@@ -1,7 +1,5 @@
 package io.github.tanice.terraCraft.api.items.components;
 
-import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
-
 import javax.annotation.Nullable;
 import java.util.List;
 

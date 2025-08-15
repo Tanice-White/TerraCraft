@@ -5,6 +5,7 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.ComponentState;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.TerraDurabilityComponent;
 import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
@@ -82,10 +83,12 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     public void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("durability");
+                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "unbreakable");
+                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("durability");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
+                nbt.getOrCreateCompound(TAG_KEY).removeKey("Unbreakable");
                 nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("durability");
             });
         }
@@ -95,9 +98,8 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     public void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                component.removeKey(MINECRAFT_PREFIX + "unbreakable");
-                nbt.getOrCreateCompound(COMPONENT_KEY).resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("durability");
+                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "unbreakable");
+                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("durability");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
@@ -106,6 +108,11 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
                 nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("durability");
             });
         }
+    }
+
+    @Override
+    public void updatePartialFrom(TerraBaseComponent old) {
+        this.damage = ((DurabilityComponent) old).damage;
     }
 
     @Override

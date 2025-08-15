@@ -1,12 +1,16 @@
 package io.github.tanice.terraCraft.api.items.components.vanilla;
 
-import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
+import io.github.tanice.terraCraft.bukkit.utils.adapter.BukkitAttribute;
+import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nullable;
 
 import java.util.HashMap;
 
 public interface TerraAttributeModifiersComponent extends TerraBaseComponent {
+
+    void addAttributeModifier(String id, BukkitAttribute attribute, double amount, String op, @Nullable String slot, @Nullable DisplayType displayType, @Nullable Component extraValue);
 
     enum Operation {
         ADD(0),

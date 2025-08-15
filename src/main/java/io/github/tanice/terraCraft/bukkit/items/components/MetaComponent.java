@@ -7,6 +7,7 @@ import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.components.ComponentState;
 import io.github.tanice.terraCraft.api.items.components.TerraMetaComponent;
 import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
@@ -28,7 +29,13 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
 
     private TerraCalculableMeta meta;
 
-    public MetaComponent(TerraCalculableMeta meta) {
+    public MetaComponent(TerraCalculableMeta meta, boolean updatable) {
+        super(updatable);
+        this.meta = meta;
+    }
+
+    public MetaComponent(TerraCalculableMeta meta, ComponentState state) {
+        super(state);
         this.meta = meta;
     }
 
@@ -38,27 +45,13 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".meta");
                 if (data == null) return null;
-
-                AttributeActiveSection as = safeValueOf(AttributeActiveSection.class, data.getString("active_section"), AttributeActiveSection.ERROR);
-                List<Double> attributeList = data.getDoubleList("attribute").toListCopy();
-                double[] attributes = attributeList.stream().mapToDouble(Double::doubleValue).toArray();
-                List<Double> damageTypeList = data.getDoubleList("damage_type").toListCopy();
-                double[] damageTypes = damageTypeList.stream().mapToDouble(Double::doubleValue).toArray();
-
-                return new MetaComponent(new CalculableMeta(attributes, damageTypes, as));
+                return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".meta");
                 if (data == null) return null;
-
-                AttributeActiveSection as = safeValueOf(AttributeActiveSection.class, data.getString("active_section"), AttributeActiveSection.ERROR);
-                List<Double> attributeList = data.getDoubleList("attribute").toListCopy();
-                double[] attributes = attributeList.stream().mapToDouble(Double::doubleValue).toArray();
-                List<Double> damageTypeList = data.getDoubleList("damage_type").toListCopy();
-                double[] damageTypes = damageTypeList.stream().mapToDouble(Double::doubleValue).toArray();
-
-                return new MetaComponent(new CalculableMeta(attributes, damageTypes, as));
+                return fromNBT(data);
             });
         }
     }
@@ -68,26 +61,32 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".meta");
-                data.setString("active_section", meta.getActiveSection().name().toLowerCase());
-                ReadWriteNBTList<Double> doubleList = data.getDoubleList("attribute");
-                doubleList.clear();
-                doubleList.addAll(Arrays.stream(meta.getAttributeModifierArray()).boxed().toList());
-                doubleList = data.getDoubleList("damage_type");
-                doubleList.clear();
-                doubleList.addAll(Arrays.stream(meta.getDamageTypeModifierArray()).boxed().toList());
+                addToCompound(data);
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".meta");
-                data.setString("active_section", meta.getActiveSection().name().toLowerCase());
-                ReadWriteNBTList<Double> doubleList = data.getDoubleList("attribute");
-                doubleList.clear();
-                doubleList.addAll(Arrays.stream(meta.getAttributeModifierArray()).boxed().toList());
-                doubleList = data.getDoubleList("damage_type");
-                doubleList.clear();
-                doubleList.addAll(Arrays.stream(meta.getDamageTypeModifierArray()).boxed().toList());
+                addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void clear(TerraBaseItem item) {
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("meta");
+            });
+        } else {
+            NBT.modify(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("meta");
+            });
+        }
+    }
+
+    @Override
+    public void remove(TerraBaseItem item) {
+        this.clear(item);
     }
 
     public TerraCalculableMeta getMeta() {
@@ -96,5 +95,25 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
 
     public void setMeta(TerraCalculableMeta meta) {
         this.meta = meta;
+    }
+
+    private void addToCompound(ReadWriteNBT compound) {
+        compound.setString("active_section", meta.getActiveSection().name().toLowerCase());
+        ReadWriteNBTList<Double> doubleList = compound.getDoubleList("attribute");
+        doubleList.clear();
+        doubleList.addAll(Arrays.stream(meta.getAttributeModifierArray()).boxed().toList());
+        doubleList = compound.getDoubleList("damage_type");
+        doubleList.clear();
+        doubleList.addAll(Arrays.stream(meta.getDamageTypeModifierArray()).boxed().toList());
+        compound.setByte("state", state.toNbtByte());
+    }
+
+    private static MetaComponent fromNBT(ReadableNBT nbt) {
+        AttributeActiveSection as = safeValueOf(AttributeActiveSection.class, nbt.getString("active_section"), AttributeActiveSection.ERROR);
+        List<Double> attributeList = nbt.getDoubleList("attribute").toListCopy();
+        double[] attributes = attributeList.stream().mapToDouble(Double::doubleValue).toArray();
+        List<Double> damageTypeList = nbt.getDoubleList("damage_type").toListCopy();
+        double[] damageTypes = damageTypeList.stream().mapToDouble(Double::doubleValue).toArray();
+        return new MetaComponent(new CalculableMeta(attributes, damageTypes, as), new ComponentState(nbt.getByte("state")));
     }
 }

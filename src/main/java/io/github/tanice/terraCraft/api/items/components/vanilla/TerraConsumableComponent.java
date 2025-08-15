@@ -1,6 +1,6 @@
 package io.github.tanice.terraCraft.api.items.components.vanilla;
 
-import io.github.tanice.terraCraft.api.items.TerraBaseComponent;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTEffect;
 
 public interface TerraConsumableComponent extends TerraBaseComponent {

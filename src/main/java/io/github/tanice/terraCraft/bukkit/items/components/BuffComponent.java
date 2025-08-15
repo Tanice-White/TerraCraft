@@ -45,32 +45,19 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
         this.defense = defense;
     }
 
+    @Nullable
     public static BuffComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".buffs");
                 if (data == null) return null;
-                return new BuffComponent(
-                        data.getStringList("hold").toListCopy(),
-                        data.getStringList("attack_self").toListCopy(),
-                        data.getStringList("attack").toListCopy(),
-                        data.getStringList("defense_self").toListCopy(),
-                        data.getStringList("defense").toListCopy(),
-                        new ComponentState(data.getByte("state"))
-                );
+                return formNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".buffs");
                 if (data == null) return null;
-                return new BuffComponent(
-                        data.getStringList("hold").toListCopy(),
-                        data.getStringList("attack_self").toListCopy(),
-                        data.getStringList("attack").toListCopy(),
-                        data.getStringList("defense_self").toListCopy(),
-                        data.getStringList("defense").toListCopy(),
-                        new ComponentState(data.getByte("state"))
-                );
+                return formNBT(data);
             });
         }
     }
@@ -186,5 +173,16 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
             list.addAll(defense);
         }
         component.setByte("state", state.toNbtByte());
+    }
+
+    private static BuffComponent formNBT(ReadableNBT nbt) {
+        return new BuffComponent(
+                nbt.getStringList("hold").toListCopy(),
+                nbt.getStringList("attack_self").toListCopy(),
+                nbt.getStringList("attack").toListCopy(),
+                nbt.getStringList("defense_self").toListCopy(),
+                nbt.getStringList("defense").toListCopy(),
+                new ComponentState(nbt.getByte("state"))
+        );
     }
 }

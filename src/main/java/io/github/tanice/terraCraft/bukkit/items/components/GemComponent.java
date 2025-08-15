@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.components.ComponentState;
 import io.github.tanice.terraCraft.api.items.components.TerraGemComponent;
 import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
@@ -22,7 +23,16 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
     @Nullable
     private Boolean dismantleFailLoss;
 
-    public GemComponent(@Nullable Float inlaySuccessChance, @Nullable Boolean inlayFailLoss, @Nullable Float dismantleSuccessChance, @Nullable Boolean dismantleFailLoss) {
+    public GemComponent(@Nullable Float inlaySuccessChance, @Nullable Boolean inlayFailLoss, @Nullable Float dismantleSuccessChance, @Nullable Boolean dismantleFailLoss, boolean updatable) {
+        super(updatable);
+        this.inlaySuccessChance = inlaySuccessChance;
+        this.inlayFailLoss = inlayFailLoss;
+        this.dismantleSuccessChance = dismantleSuccessChance;
+        this.dismantleFailLoss = dismantleFailLoss;
+    }
+
+    public GemComponent(@Nullable Float inlaySuccessChance, @Nullable Boolean inlayFailLoss, @Nullable Float dismantleSuccessChance, @Nullable Boolean dismantleFailLoss, ComponentState state) {
+        super(state);
         this.inlaySuccessChance = inlaySuccessChance;
         this.inlayFailLoss = inlayFailLoss;
         this.dismantleSuccessChance = dismantleSuccessChance;
@@ -35,13 +45,13 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".gem");
                 if (data == null) return null;
-                return new GemComponent(data.getFloat("inlay_chance"), data.getBoolean("inlay_loss"), data.getFloat("dismantle_chance"), data.getBoolean("dismantle_loss"));
+                return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".gem");
                 if (data == null) return null;
-                return new GemComponent(data.getFloat("inlay_chance"), data.getBoolean("inlay_loss"), data.getFloat("dismantle_chance"), data.getBoolean("dismantle_loss"));
+                return fromNBT(data);
             });
         }
     }
@@ -51,20 +61,32 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + "." + "gem");
-                if (inlaySuccessChance != null) data.setFloat("inlay_chance", inlaySuccessChance);
-                if (inlayFailLoss != null) data.setBoolean("inlay_loss", inlayFailLoss);
-                if (dismantleSuccessChance != null) data.setFloat("dismantle_chance", dismantleSuccessChance);
-                if (dismantleFailLoss != null) data.setBoolean("dismantle_loss", dismantleFailLoss);
+                addToCompound(data);
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".gem");
-                if (inlaySuccessChance != null) data.setFloat("inlay_chance", inlaySuccessChance);
-                if (inlayFailLoss != null) data.setBoolean("inlay_loss", inlayFailLoss);
-                if (dismantleSuccessChance != null) data.setFloat("dismantle_chance", dismantleSuccessChance);
-                if (dismantleFailLoss != null) data.setBoolean("dismantle_loss", dismantleFailLoss);
+                addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void clear(TerraBaseItem item) {
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("gem");
+            });
+        } else {
+            NBT.modify(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("gem");
+            });
+        }
+    }
+
+    @Override
+    public void remove(TerraBaseItem item) {
+        this.clear(item);
     }
 
     @Override
@@ -105,5 +127,23 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
     @Override
     public void setDismantleFailLoss(boolean loss) {
         this.dismantleFailLoss = loss;
+    }
+
+    private void addToCompound(ReadWriteNBT compound) {
+        compound.setByte("state", state.toNbtByte());
+        if (inlaySuccessChance != null) compound.setFloat("inlay_chance", inlaySuccessChance);
+        if (inlayFailLoss != null) compound.setBoolean("inlay_loss", inlayFailLoss);
+        if (dismantleSuccessChance != null) compound.setFloat("dismantle_chance", dismantleSuccessChance);
+        if (dismantleFailLoss != null) compound.setBoolean("dismantle_loss", dismantleFailLoss);
+    }
+
+    private static GemComponent fromNBT(ReadableNBT nbt) {
+        return new GemComponent(
+                nbt.getFloat("inlay_chance"),
+                nbt.getBoolean("inlay_loss"),
+                nbt.getFloat("dismantle_chance"),
+                nbt.getBoolean("dismantle_loss"),
+                new ComponentState(nbt.getByte("state"))
+        );
     }
 }

@@ -4,6 +4,8 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import io.github.tanice.terraCraft.api.items.components.ComponentState;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.TerraLevelComponent;
 import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
@@ -21,7 +23,14 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     @Nullable
     private String levelTemplate;
 
-    public LevelComponent(@Nullable Integer level, @Nullable String levelTemplate) {
+    public LevelComponent(@Nullable Integer level, @Nullable String levelTemplate, boolean updatable) {
+        super(updatable);
+        this.level = level;
+        this.levelTemplate = levelTemplate;
+    }
+
+    public LevelComponent(@Nullable Integer level, @Nullable String levelTemplate, ComponentState state) {
+        super(state);
         this.level = level;
         this.levelTemplate = levelTemplate;
     }
@@ -32,13 +41,13 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");
                 if (data == null) return null;
-                return new LevelComponent(data.getInteger("lvl"), data.getString("template"));
+                return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".level");
                 if (data == null) return null;
-                return new LevelComponent(data.getInteger("lvl"), data.getString("template"));
+                return fromNBT(data);
             });
         }
     }
@@ -48,16 +57,37 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");
-                if (level != null) data.setInteger("lvl", level);
-                if (levelTemplate != null) data.setString("template", levelTemplate);
+                addToCompound(data);
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".level");
-                if (level != null) data.setInteger("lvl", level);
-                if (levelTemplate != null) data.setString("template", levelTemplate);
+                addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void clear(TerraBaseItem item) {
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("level");
+            });
+        } else {
+            NBT.modify(item.getBukkitItem(), nbt -> {
+                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("level");
+            });
+        }
+    }
+
+    @Override
+    public void remove(TerraBaseItem item) {
+        this.clear(item);
+    }
+
+    @Override
+    public void updatePartialFrom(TerraBaseComponent old) {
+        this.level = ((LevelComponent) old).level;
     }
 
     @Override
@@ -78,5 +108,15 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     @Override
     public void setTemplate(String template) {
         this.levelTemplate = template;
+    }
+
+    private void addToCompound(ReadWriteNBT compound) {
+        if (level != null) compound.setInteger("lvl", level);
+        if (levelTemplate != null) compound.setString("template", levelTemplate);
+        compound.setByte("state", state.toNbtByte());
+    }
+
+    private static LevelComponent fromNBT(ReadableNBT nbt) {
+        return new LevelComponent(nbt.getInteger("lvl"), nbt.getString("template"), new ComponentState(nbt.getByte("state")));
     }
 }

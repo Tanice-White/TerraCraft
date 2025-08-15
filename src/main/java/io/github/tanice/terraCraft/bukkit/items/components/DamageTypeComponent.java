@@ -12,6 +12,8 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
+
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 public class DamageTypeComponent extends AbstractItemComponent implements TerraDamageTypeComponent {
@@ -28,6 +30,7 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
         this.type = safeValueOf(DamageFromType.class, type, DamageFromType.OTHER);
     }
 
+    @Nullable
     public static DamageTypeComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {

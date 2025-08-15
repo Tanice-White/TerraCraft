@@ -1,8 +1,6 @@
-package io.github.tanice.terraCraft.api.items;
+package io.github.tanice.terraCraft.api.items.components;
 
-import io.github.tanice.terraCraft.api.items.components.ComponentState;
-
-import javax.annotation.Nullable;
+import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 
 public interface TerraBaseComponent {
 
@@ -26,19 +24,16 @@ public interface TerraBaseComponent {
     void remove(TerraBaseItem item);
 
     /**
-     * 组件更新
+     * 组件是否可更新
      */
-    void updateBy(TerraBaseComponent newer);
+    default boolean canUpdate() {
+        return true;
+    }
 
     /**
-     * 只有非原版NBT组件可以获取
+     * 更新时继承部分值
      */
-    default @Nullable ComponentState getState() {
-        return null;
-    }
-    /**
-     * 只有非原版NBT组件可以设置
-     */
-    default void setState(@Nullable ComponentState state) {
+    default void updatePartialFrom(TerraBaseComponent old) {
+        /* 默认不需要继承任何值 */
     }
 }

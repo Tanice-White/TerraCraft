@@ -24,8 +24,7 @@ public class JukeboxPlayable implements TerraJukeboxPlayable {
         } else TerraCraftLogger.warning("Jukebox playable component is only supported in Minecraft 1.21 or newer versions");
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "jukebox_playable");
@@ -33,8 +32,7 @@ public class JukeboxPlayable implements TerraJukeboxPlayable {
         }
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
+    public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "jukebox_playable");

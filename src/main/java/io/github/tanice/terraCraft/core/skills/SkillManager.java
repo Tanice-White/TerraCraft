@@ -4,7 +4,6 @@ import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
-import io.github.tanice.terraCraft.api.skills.TerraSkillHolder;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraSkillUpdateEvent;

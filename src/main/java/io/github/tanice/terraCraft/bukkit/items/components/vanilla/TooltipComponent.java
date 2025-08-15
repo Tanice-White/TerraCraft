@@ -47,8 +47,7 @@ public class TooltipComponent implements TerraTooltipComponent {
         } else TerraCraftLogger.warning("Tooltip style component is only supported in Minecraft 1.21.2 or newer versions");
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "tooltip_display");
@@ -61,8 +60,7 @@ public class TooltipComponent implements TerraTooltipComponent {
         }
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
+    public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "tooltip_display");

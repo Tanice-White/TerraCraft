@@ -60,8 +60,7 @@ public class PotionComponent implements TerraPotionComponent {
         } else TerraCraftLogger.warning("Potion contents component is only supported in Minecraft 1.20.5 or newer versions");
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "potion_contents");
@@ -70,8 +69,7 @@ public class PotionComponent implements TerraPotionComponent {
         }
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
+    public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "potion_contents");

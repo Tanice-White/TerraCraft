@@ -1,10 +1,8 @@
 package io.github.tanice.terraCraft.bukkit.utils.attributes;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.items.TerraGem;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
-import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;

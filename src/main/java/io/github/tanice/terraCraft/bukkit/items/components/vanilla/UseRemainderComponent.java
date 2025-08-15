@@ -37,8 +37,7 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
         } else TerraCraftLogger.warning("Use remainder component is only supported in Minecraft 1.21.2 or newer versions");
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "use_remainder");
@@ -46,8 +45,7 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
         }
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
+    public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "use_remainder");

@@ -5,10 +5,6 @@ import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.items.TerraItem;
-import io.github.tanice.terraCraft.api.items.gems.TerraGemHolder;
-import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
-import io.github.tanice.terraCraft.api.items.qualities.TerraQualitative;
-import io.github.tanice.terraCraft.api.skills.TerraSkillHolder;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
@@ -21,60 +17,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
-
-/**
- * 插件中的武器、护甲
- */
 @NonnullByDefault
-public class Item extends AbstractItem implements TerraItem, TerraQualitative, TerraLeveled, TerraSkillHolder, TerraGemHolder {
-    /** 技能组名 */
-    private final List<String> skills;
-    /** 可选品质组组名 */
-    private final String qualityGroupName;
-    /** 等级模板名 */
-    private final String levelTemplateName;
-    /** 是否取消伤害 */
-    private final boolean cancelDamage;
-    /** 耐久消失是否销毁物品 */
-    private final boolean loseWhenBreak;
-    /** 宝石槽数量 */
-    private final Integer gemStackNumber;
+public class Item extends AbstractItem implements TerraItem {
 
-    /** 所属套装 */
-    private final String setName;
-    /** 物品伤害类型 */
-    private final DamageFromType damageType;
-    /** 生效槽位 */
-    private final String slot;
-    /** 具体信息 */
-    private final TerraCalculableMeta meta;
-
-    /** 持有自带buff */
-    private final List<TerraBaseBuff> holdBuffs;
-    /** 攻击生效buff 0-给自己  1-给对方 */
-    private final List<List<TerraBaseBuff>> attackBuffs;
-    /** 受击生效buff 0-给自己  1-给对方 */
-    private final List<List<TerraBaseBuff>> defenseBuffs;
 
     /**
      * 依据内部名称和对应的config文件创建mc基础物品
      */
     public Item(String innerName, ConfigurationSection cfg, AttributeActiveSection aas) {
         super(innerName, cfg);
-        this.skills = cfg.getStringList(SKILLS);
-        this.qualityGroupName = cfg.getString(QUALITY_GROUPS, "");
-        this.cancelDamage = cfg.getBoolean(CANCEL_DAMAGE, false);
-        this.loseWhenBreak = cfg.getBoolean(LOSE_WHEN_BREAK, false);
-        this.levelTemplateName = cfg.getString(LEVEL_TEMPLATE_NAME, "");
-        this.gemStackNumber = cfg.getInt(GEM_STACK_NUMBER, 0);
-        this.setName = cfg.getString(EQUIPMENT_SET, "");
-        this.damageType = EnumUtil.safeValueOf(DamageFromType.class, cfg.getString(DAMAGE_TYPE), DamageFromType.OTHER);
-        this.slot = cfg.getString(SLOT, "any");
-        this.meta = new CalculableMeta(cfg.getConfigurationSection(ATTRIBUTE_SECTION), aas);
-        this.holdBuffs = initBuffList(HOLD_BUFF, cfg).get(1);
-        this.attackBuffs = initBuffList(ATTACK_BUFF, cfg);
-        this.defenseBuffs = initBuffList(DEFENCE_BUFF, cfg);
+
         // TODO 绑定原版属性
     }
 

@@ -67,8 +67,7 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
         }
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("level");
@@ -80,9 +79,8 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
         }
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
-        this.clear(item);
+    public static void remove(TerraBaseItem item) {
+        clear(item);
     }
 
     @Override

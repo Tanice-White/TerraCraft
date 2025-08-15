@@ -13,13 +13,11 @@ public class CustomDataComponent implements TerraCustomDataComponent {
 
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
 
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
+    public static void remove(TerraBaseItem item) {
 
     }
 }

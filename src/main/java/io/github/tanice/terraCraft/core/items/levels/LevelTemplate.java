@@ -2,13 +2,13 @@ package io.github.tanice.terraCraft.core.items.levels;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.items.levels.TerraLevel;
+import io.github.tanice.terraCraft.api.items.levels.TerraLevelTemplate;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import org.bukkit.configuration.ConfigurationSection;
 
 import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
 
-public class LevelTemplate implements TerraLevel {
+public class LevelTemplate implements TerraLevelTemplate {
     private final String name;
     private final int begin;
     private final int max;

@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.api.items.levels;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 
-public interface TerraLevel {
+public interface TerraLevelTemplate {
 
     String getName();
 

@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class UpdateCodeComponent implements TerraUpdateCodeComponent {
 
-    private final String code;
+    private String code;
 
     public UpdateCodeComponent(String code) {
         this.code = code;
@@ -46,16 +46,6 @@ public class UpdateCodeComponent implements TerraUpdateCodeComponent {
     }
 
     @Override
-    public void clear(TerraBaseItem item) {
-        /* cannot clear or remove */
-    }
-
-    @Override
-    public void remove(TerraBaseItem item) {
-        /* cannot clear or remove */
-    }
-
-    @Override
     public boolean canUpdate() {
         return false;
     }
@@ -67,5 +57,6 @@ public class UpdateCodeComponent implements TerraUpdateCodeComponent {
 
     @Override
     public void setCode(String code) {
+        this.code = code;
     }
 }

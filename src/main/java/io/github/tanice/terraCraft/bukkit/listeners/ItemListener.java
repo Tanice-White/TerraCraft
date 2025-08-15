@@ -1,11 +1,8 @@
 package io.github.tanice.terraCraft.bukkit.listeners;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.TerraEdible;
-import io.github.tanice.terraCraft.api.items.TerraGem;
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
 import io.github.tanice.terraCraft.api.items.gems.TerraGemHolder;
-import io.github.tanice.terraCraft.api.items.levels.TerraLeveled;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.TerraItemUpdateEvent;

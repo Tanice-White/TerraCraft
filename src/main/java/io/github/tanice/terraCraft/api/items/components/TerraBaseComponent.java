@@ -14,16 +14,6 @@ public interface TerraBaseComponent {
     void apply(TerraBaseItem item);
 
     /**
-     * 清除本组件内容
-     */
-    void clear(TerraBaseItem item);
-
-    /**
-     * 禁用本组件
-     */
-    void remove(TerraBaseItem item);
-
-    /**
      * 组件是否可更新
      */
     default boolean canUpdate() {

@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.core.items;
 
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.levels.TerraLevel;
+import io.github.tanice.terraCraft.api.items.levels.TerraLevelTemplate;
 import io.github.tanice.terraCraft.api.items.qualities.TerraQualityGroup;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.core.items.levels.LevelTemplate;
@@ -30,7 +30,7 @@ public final class ItemManager implements TerraItemManager {
     private final ItemProvider provider;
     private final ConcurrentMap<String, TerraBaseItem> items;
 
-    private final ConcurrentMap<String, TerraLevel> levelTemplates;
+    private final ConcurrentMap<String, TerraLevelTemplate> levelTemplates;
     private final ConcurrentMap<String, TerraQualityGroup> qualityGroups;
 
     public ItemManager(TerraPlugin plugin) {
@@ -39,15 +39,24 @@ public final class ItemManager implements TerraItemManager {
         this.items = new ConcurrentHashMap<>();
         this.levelTemplates = new ConcurrentHashMap<>();
         this.qualityGroups = new ConcurrentHashMap<>();
-        this.loadResource();
         this.loadLevelTemplates();
         this.loadQualityGroups();
+        this.loadResource();
     }
 
     public void reload() {
+        this.items.clear();
+        this.levelTemplates.clear();
+        this.qualityGroups.clear();
+        this.loadLevelTemplates();
+        this.loadQualityGroups();
+        this.loadResource();
     }
 
     public void unload() {
+        this.items.clear();
+        this.levelTemplates.clear();
+        this.qualityGroups.clear();
     }
 
     @Override
@@ -77,7 +86,7 @@ public final class ItemManager implements TerraItemManager {
     }
 
     @Override
-    public Optional<TerraLevel> getLevelTemplate(String name) {
+    public Optional<TerraLevelTemplate> getLevelTemplate(String name) {
         return Optional.ofNullable(levelTemplates.get(name));
     }
 

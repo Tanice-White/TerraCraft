@@ -53,8 +53,7 @@ public class ToolComponent implements TerraToolComponent {
         } else TerraCraftLogger.warning("Tool component is only supported in Minecraft 1.20.5 or newer versions");
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "tool");
@@ -62,8 +61,7 @@ public class ToolComponent implements TerraToolComponent {
         }
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
+    public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "tool");
@@ -73,8 +71,8 @@ public class ToolComponent implements TerraToolComponent {
     }
 
     public record DigConfig(List<TerraNamespaceKey> items, @Nullable Boolean correctForDrops, @Nullable Float speed) {
-    @Override
-    public List<TerraNamespaceKey> items() {
+        @Override
+        public List<TerraNamespaceKey> items() {
             return this.items;
         }
     }

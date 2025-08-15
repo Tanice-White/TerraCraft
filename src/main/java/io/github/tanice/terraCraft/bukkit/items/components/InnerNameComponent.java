@@ -6,6 +6,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.TerraInnerNameComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -49,16 +50,6 @@ public class InnerNameComponent implements TerraInnerNameComponent {
     }
 
     @Override
-    public void clear(TerraBaseItem item) {
-        /* cannot clear or remove */
-    }
-
-    @Override
-    public void remove(TerraBaseItem item) {
-        /* cannot clear or remove */
-    }
-
-    @Override
     public boolean canUpdate() {
         return false;
     }
@@ -70,6 +61,6 @@ public class InnerNameComponent implements TerraInnerNameComponent {
 
     @Override
     public void setName(String name) {
-
+        TerraCraftLogger.warning("Terra inner name cannot be changed");
     }
 }

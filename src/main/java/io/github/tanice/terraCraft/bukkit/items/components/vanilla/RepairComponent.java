@@ -31,7 +31,11 @@ public class RepairComponent implements TerraRepairComponent {
                 NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                     nbt.getOrCreateCompound(COMPONENT_KEY).setInteger(MINECRAFT_PREFIX + "repair_cost", cost);
                 });
-            } else TerraCraftLogger.warning("Repair cost component is only supported in Minecraft 1.20.5 or newer versions");
+            } else {
+                NBT.modify(item.getBukkitItem(), nbt -> {
+                    nbt.getOrCreateCompound(TAG_KEY).setInteger("RepairCost", cost);
+                });
+            }
         }
 
         if (item != null && !items.isEmpty()) {
@@ -45,11 +49,14 @@ public class RepairComponent implements TerraRepairComponent {
         }
     }
 
-    @Override
-    public void clear(TerraBaseItem item) {
+    public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "repair_cost");
+            });
+        } else {
+            NBT.modify(item.getBukkitItem(), nbt -> {
+                nbt.getOrCreateCompound(TAG_KEY).removeKey("RepairCost");
             });
         }
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
@@ -59,12 +66,15 @@ public class RepairComponent implements TerraRepairComponent {
         }
     }
 
-    @Override
-    public void remove(TerraBaseItem item) {
+    public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "repair_cost");
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "repair_cost");
+            });
+        } else {
+            NBT.modify(item.getBukkitItem(), nbt -> {
+                nbt.getOrCreateCompound(TAG_KEY).removeKey("RepairCost");
             });
         }
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {

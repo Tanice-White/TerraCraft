@@ -7,9 +7,11 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Repairable + RepairCost
@@ -22,6 +24,13 @@ public class RepairComponent implements TerraRepairComponent {
     public RepairComponent(@Nullable Integer cost, List<TerraNamespaceKey> items) {
         this.cost = cost;
         this.items = items;
+    }
+
+    public RepairComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("cost") ? cfg.getInt("cost") : null,
+                cfg.getStringList("items").stream().map(TerraNamespaceKey::from).filter(Objects::nonNull).toList()
+        );
     }
 
     @Override

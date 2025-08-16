@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.api.items.components.vanilla.TerraFoodCompone
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 
@@ -20,6 +21,14 @@ public class FoodComponent implements TerraFoodComponent {
         this.canAlwaysEat = canAlwaysEat;
         this.nutrition = nutrition;
         this.saturation = saturation;
+    }
+
+    public FoodComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("always_eat") ? cfg.getBoolean("always_eat") : null,
+                cfg.getInt("nutrition"),
+                cfg.getInt("saturation")
+        );
     }
 
     @Override

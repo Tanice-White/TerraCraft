@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.utils.MiniMessageUtil;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import net.kyori.adventure.text.Component;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 
@@ -21,6 +22,10 @@ public class CustomNameComponent implements TerraCustomNameComponent {
 
     public CustomNameComponent(@Nullable String name) {
         this.name = MiniMessageUtil.serialize(name);
+    }
+
+    public CustomNameComponent(ConfigurationSection cfg) {
+        this(cfg.getString("name"));
     }
 
     @Override

@@ -9,6 +9,9 @@ import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTPotion;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.utils.ColorUtil;
+import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -26,16 +29,31 @@ public class PotionComponent implements TerraPotionComponent {
     @Nullable
     private final String customName; /* 1.21.2 */
     @Nullable
-    private final String potionId;
+    private final TerraNamespaceKey id;
     @Nullable
     private final Float durationScale; /* 1.21.5 */
 
-    public PotionComponent(@Nullable Integer color, @Nullable String customName, @Nullable String potionId, @Nullable Float durationScale) {
+    public PotionComponent(@Nullable Integer color, @Nullable List<NBTPotion> potions, @Nullable String customName, @Nullable TerraNamespaceKey id, @Nullable Float durationScale) {
         this.color = color;
-        this.potions = new ArrayList<>();
+        this.potions = potions == null ? new ArrayList<>() : potions;
         this.customName = customName;
-        this.potionId = potionId;
+        this.id = id;
         this.durationScale = durationScale;
+    }
+
+    public PotionComponent(ConfigurationSection cfg) {
+        this(
+                ColorUtil.stringToRgb(cfg.getString("color")),
+                null,
+                cfg.getString("name"),
+                TerraNamespaceKey.from(cfg.getString("id")),
+                cfg.isSet("duration_scale") ? (float) cfg.getDouble("duration_scale") : null
+        );
+
+        ConfigurationSection sub = cfg.getConfigurationSection("potions");
+        if (sub != null) {
+            for (String key : sub.getKeys(false)) this.potions.add(NBTPotion.from(key, sub.getConfigurationSection(key)));
+        }
     }
 
     @Override
@@ -50,7 +68,7 @@ public class PotionComponent implements TerraPotionComponent {
                 }
                 if (customName != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) component.setString("custom_name", customName);
                 else TerraCraftLogger.warning("custom name in Potion contents component is only supported in Minecraft 1.21.2 or newer versions");
-                if (potionId != null) component.setString("potion", potionId);
+                if (id != null) component.setString("potion", id.get());
                 if (durationScale != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
                     nbt.getOrCreateCompound(COMPONENT_KEY).setFloat(MINECRAFT_PREFIX + "potion_duration_scale", durationScale);
 
@@ -78,13 +96,5 @@ public class PotionComponent implements TerraPotionComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "potion_duration_scale");
             });
         }
-    }
-
-    public void addPotion(NBTPotion potion) {
-        this.potions.add(potion);
-    }
-
-    public void addPotions(List<NBTPotion> potions) {
-        this.potions.addAll(potions);
     }
 }

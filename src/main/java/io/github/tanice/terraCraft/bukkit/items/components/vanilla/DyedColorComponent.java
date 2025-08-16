@@ -6,16 +6,17 @@ import io.github.tanice.terraCraft.api.items.components.vanilla.TerraDyedColor;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.utils.ColorUtil;
 
 import javax.annotation.Nullable;
 
-public class DyedColor implements TerraDyedColor {
+public class DyedColorComponent implements TerraDyedColor {
 
     @Nullable
     private final Integer color;
 
-    public DyedColor(@Nullable Integer color) {
-        this.color = color;
+    public DyedColorComponent(@Nullable String color) {
+        this.color = ColorUtil.stringToRgb(color);
     }
 
     @Override

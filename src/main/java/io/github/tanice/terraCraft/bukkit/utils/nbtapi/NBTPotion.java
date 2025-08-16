@@ -1,25 +1,32 @@
 package io.github.tanice.terraCraft.bukkit.utils.nbtapi;
 
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class NBTPotion {
-    @Nonnull
     private final TerraNamespaceKey id;
+    @Nullable
     private final Boolean ambient;
+    @Nullable
     private final Integer amplifier;
+    @Nullable
     private final Integer duration;
+    @Nullable
     private final NBTPotion hiddenEffect;
+    @Nullable
     private final Boolean showIcon;
+    @Nullable
     private final Boolean showParticles;
 
     /**
      * @param hiddenEffect 同类型等级更低的药水效果
      */
-    public NBTPotion(@Nonnull String key, Boolean ambient, Integer amplifier, Integer duration, NBTPotion hiddenEffect, Boolean showIcon, Boolean showParticles) {
-        this.id = TerraNamespaceKey.minecraft(key);
+    public NBTPotion(TerraNamespaceKey id, @Nullable Boolean ambient, @Nullable Integer amplifier, @Nullable Integer duration, @Nullable NBTPotion hiddenEffect, @Nullable Boolean showIcon, @Nullable Boolean showParticles) {
+        this.id = id;
         this.ambient = ambient;
         this.amplifier = amplifier;
         this.duration = duration;
@@ -28,35 +35,60 @@ public class NBTPotion {
         this.showParticles = showParticles;
     }
 
+    @Nullable
+    public static NBTPotion from(String id, @Nullable ConfigurationSection cfg) {
+        if (cfg == null) return null;
+        TerraNamespaceKey nk = TerraNamespaceKey.from(id);
+        if (nk == null) {
+            TerraCraftLogger.warning("Invalid NBTPotion ID: " + cfg.getString("id"));
+            return null;
+        }
+        return new NBTPotion(
+                nk,
+                cfg.isSet("ambient") ? cfg.getBoolean("ambient") : null,
+                cfg.isSet("amplifier") ? cfg.getInt("amplifier") : null,
+                cfg.isSet("duration") ? cfg.getInt("duration") : null,
+                NBTPotion.from("inner", cfg.getConfigurationSection("hidden")),
+                cfg.isSet("icon") ? cfg.getBoolean("icon") : null,
+                cfg.isSet("particles") ? cfg.getBoolean("particles") : null
+        );
+    }
+
+    @Nullable
     public Boolean isAmbient() {
         return ambient;
     }
 
+    @Nullable
     public Integer getAmplifier() {
         return amplifier;
     }
 
+    @Nullable
     public Byte getAmplifierAsByte() {
         if (amplifier == null) return null;
         return amplifier.byteValue();
     }
 
+    @Nullable
     public Integer getDuration() {
         return duration;
     }
 
+    @Nullable
     public NBTPotion getHiddenEffect() {
         return hiddenEffect;
     }
-
     public String getId() {
         return id.get();
     }
 
+    @Nullable
     public Boolean isShowIcon() {
         return showIcon;
     }
 
+    @Nullable
     public Boolean isShowParticles() {
         return showParticles;
     }

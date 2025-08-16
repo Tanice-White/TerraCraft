@@ -1,89 +1,98 @@
 package io.github.tanice.terraCraft.bukkit.utils.nbtapi;
 
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
+import de.tr7zw.nbtapi.iface.ReadWriteNBTList;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.configuration.ConfigurationSection;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class NBTEffect {
     private final String type;
-    private final float probability;
-    private NBTPotion[] effects;
-    private NBTSound sound;
-    private String[] effectsToBeRemoved;
-    private float diameter;
+    private final Float probability;
+    private final NBTPotion[] effects;
+    private final NBTSound sound;
+    private final String[] effectsToBeRemoved;
+    private final Float diameter;
 
-    public NBTEffect(float probability, NBTPotion[] effects) {
-        this.type = "apply_effects";
+    public NBTEffect(String type, @Nullable Float probability, @Nullable NBTPotion[] effects, @Nullable NBTSound sound, @Nullable String[] effectsToBeRemoved, @Nullable Float diameter) {
+        this.type = type;
         this.probability = probability;
         this.effects = effects;
-    }
-
-    public NBTEffect(float probability, NBTSound sound) {
-        this.type = "play_sound";
-        this.probability = probability;
         this.sound = sound;
-    }
-
-    public NBTEffect(float probability, String[] effectsToBeRemoved) {
-        this.type = "remove_effects";
-        this.probability = probability;
         this.effectsToBeRemoved = effectsToBeRemoved;
-    }
-
-    public NBTEffect(float probability) {
-        this.type = "clear_all_effects";
-        this.probability = probability;
-    }
-
-    public NBTEffect(float probability, float diameter) {
-        this.type = "teleport_randomly";
-        this.probability = probability;
         this.diameter = diameter;
     }
 
-    public String getType() {
-        return this.type;
+    @Nullable
+    public static NBTEffect from(String type,@Nullable ConfigurationSection cfg) {
+        if (cfg == null) return null;
+        Float chance = cfg.isSet("chance") ? (float) cfg.getDouble("chance") : null;
+        switch (type) {
+            case "apply_effects":
+                List<NBTPotion> potions = new ArrayList<>();
+                ConfigurationSection subCfg = cfg.getConfigurationSection("potions");
+                if (subCfg != null) {
+                    for (String key : subCfg.getKeys(false)) {
+                        potions.add(NBTPotion.from(key, subCfg.getConfigurationSection(key)));
+                    }
+                }
+                return new NBTEffect(type, chance, potions.toArray(new NBTPotion[0]), null, null, null);
+
+            case "play_sound":
+                NBTSound sound = NBTSound.form(cfg.getConfigurationSection("sound"));
+                if (sound == null) {
+                    TerraCraftLogger.warning("Invalid sound: " + cfg.getString("sound") + " in " + cfg.getCurrentPath());
+                    return null;
+                }
+                return new NBTEffect(type, chance, null, sound, null, null);
+
+            case "remove_effects":
+                return new NBTEffect(type, chance, null, null, cfg.getStringList("remove").toArray(new String[0]), null);
+
+            case "clear_all_effects":
+                return new NBTEffect(type, chance, null, null, null, null);
+
+            case "teleport_randomly":
+                return new NBTEffect(type, chance, null, null, null, cfg.isSet("diameter") ? (float) cfg.getDouble("diameter") : null);
+
+            default:
+                TerraCraftLogger.warning("Invalid effect type: " + type + " in " + cfg.getCurrentPath());
+                return null;
+        }
     }
 
-    public float getProbability() {
-        return this.probability;
-    }
-
-    public NBTPotion[] getEffects() {
-        return this.effects;
-    }
-
-    public NBTSound getSound() {
-        return this.sound;
-    }
-
-    public String[] getEffectsToBeRemoved() {
-        return this.effectsToBeRemoved;
-    }
-
-    public float getDiameter() {
-        return this.diameter;
-    }
 
     public void addToCompound(ReadWriteNBT compound) {
         ReadWriteNBT sComponent;
         compound.setString("type", type);
-        compound.setFloat("probability", probability);
+        if (probability != null) compound.setFloat("probability", probability);
         switch (type) {
             case "apply_effects" -> {
+                ReadWriteNBTCompoundList list = compound.getCompoundList("effects");
+                if (effects == null) return;
                 for (NBTPotion potion : effects) {
-                    sComponent = compound.getCompoundList("effects").addCompound();
+                    sComponent = list.addCompound();
                     potion.addToCompound(sComponent);
                 }
             }
             case "clear_all_effects" -> compound.getCompoundList("effects").clear();
             case "play_sound" -> {
-                sComponent = compound.getOrCreateCompound("sound");
-                sComponent.setFloat("range", sound.getRange());
-                sComponent.setString("sound_id", sound.getId());
+                if (sound != null) sound.addToCompound(compound.getOrCreateCompound("sound"));
             }
-            case "remove_effects" -> compound.getStringList("effects").addAll(Arrays.stream(effectsToBeRemoved).toList());
-            case "teleport_randomly" -> compound.setFloat("diameter", diameter);
+            case "remove_effects" -> {
+                ReadWriteNBTList<String> list = compound.getStringList("effects");
+                if (effectsToBeRemoved == null) return;
+                list.addAll(Arrays.stream(effectsToBeRemoved).toList());
+            }
+            case "teleport_randomly" -> {
+                if(diameter != null) compound.setFloat("diameter", diameter);
+            }
+            default -> TerraCraftLogger.warning("Invalid effect type: " + type);
         }
     }
 }

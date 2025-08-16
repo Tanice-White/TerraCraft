@@ -14,10 +14,12 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import net.kyori.adventure.text.Component;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
@@ -33,8 +35,28 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
         modifiers = new ArrayList<>();
     }
 
+    public AttributeModifiersComponent(ConfigurationSection cfg) {
+        modifiers = new ArrayList<>();
+
+        for (String key : cfg.getKeys(false)) {
+            if (key.isBlank()) {
+                TerraCraftLogger.warning("Attribute modifier cannot have a blank key");
+                continue;
+            }
+            modifiers.add(new AttributeModifierComponent(
+                    key,
+                    cfg.getString("attr"),
+                    cfg.isSet("amount") ? cfg.getDouble("amount") : 1,
+                    cfg.getString("op"),
+                    cfg.getString("slot"),
+                    cfg.getString("display_type"),
+                    cfg.getString("value")
+            ));
+        }
+    }
+
     @Override
-    public void addAttributeModifier(String id, BukkitAttribute attribute, double amount, String op, @Nullable String slot, @Nullable DisplayType displayType, @Nullable Component extraValue) {
+    public void addAttributeModifier(String id, String attribute, double amount, String op, @Nullable String slot, @Nullable String displayType, @Nullable String extraValue) {
         modifiers.add(new AttributeModifierComponent(id, attribute, amount, op, slot, displayType, extraValue));
     }
 
@@ -73,7 +95,7 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
                 for (AttributeModifierComponent modifier : modifiers) {
                     component = compoundList.addCompound();
                     component.setDouble("Amount", modifier.amount);
-                    component.setString("AttributeName", modifier.attributeType.getBukkitAttribute().name());
+                    component.setString("AttributeName", modifier.attributeType.getBukkitAttribute().toString());
                     component.setString("Name", modifier.id.get());
                     component.setString("Operation", "Op" + modifier.op.getOperation());
                     component.setUUID("UUID", UUID.randomUUID());
@@ -118,14 +140,14 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
         private final DisplayType displayType;
         private final Component extraValue;
 
-        public AttributeModifierComponent(String id, BukkitAttribute attribute, double amount, String op, @Nullable String slot, @Nullable DisplayType displayType, @Nullable Component extraValue) {
+        public AttributeModifierComponent(String id, String attribute, double amount, String op, @Nullable String slot, @Nullable String displayType, @Nullable String extraValue) {
             this.id = new TerraNamespaceKey(id);
-            this.attributeType = attribute;
+            this.attributeType = BukkitAttribute.get(attribute);
             this.amount = amount;
             this.op = safeValueOf(Operation.class, op, Operation.ADD);
             this.slot = safeValueOf(TerraEquipmentSlot.class, slot, null);
-            this.displayType = displayType == null ? DisplayType.DEFAULT : displayType;
-            this.extraValue = extraValue == null ? Component.empty() : extraValue;
+            this.displayType = safeValueOf(DisplayType.class, displayType, DisplayType.DEFAULT);
+            this.extraValue = extraValue == null ? Component.empty() : MiniMessageUtil.serialize(extraValue);
         }
     }
 }

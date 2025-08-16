@@ -1,7 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.items;
-
-import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
-import io.github.tanice.terraCraft.api.items.components.ComponentState;
+package io.github.tanice.terraCraft.api.items.components;
 
 import javax.annotation.Nullable;
 

@@ -5,6 +5,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraCustomModelDataComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 
@@ -14,6 +15,10 @@ public class CustomModelDataComponent implements TerraCustomModelDataComponent {
 
     public CustomModelDataComponent(@Nullable Integer cmd) {
         this.cmd = cmd;
+    }
+
+    public CustomModelDataComponent(ConfigurationSection cfg) {
+        this(cfg.isSet("cmd") ? cfg.getInt("cmd") : null);
     }
 
     @Override

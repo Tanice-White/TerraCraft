@@ -7,7 +7,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.ComponentState;
 import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.TerraDurabilityComponent;
-import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
+import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import org.bukkit.inventory.ItemStack;

@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 
@@ -19,6 +20,13 @@ public class UseCooldownComponent implements TerraUseCooldownComponent {
     public UseCooldownComponent(@Nullable TerraNamespaceKey group, float seconds) {
         this.group = group;
         this.seconds = seconds;
+    }
+
+    public UseCooldownComponent(ConfigurationSection cfg) {
+        this(
+                TerraNamespaceKey.from(cfg.getString("group")),
+                (float) cfg.getDouble("seconds")
+        );
     }
 
     @Override

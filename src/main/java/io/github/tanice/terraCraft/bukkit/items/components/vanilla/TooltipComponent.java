@@ -7,9 +7,13 @@ import io.github.tanice.terraCraft.api.items.components.vanilla.TerraTooltipComp
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemFlag;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 /**
  * TooltipDisplay + TooltipStyle
@@ -28,6 +32,14 @@ public class TooltipComponent implements TerraTooltipComponent {
         this.tooltipStyle = tooltipStyle;
     }
 
+    public TooltipComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("hide_tooltip") ? cfg.getBoolean("hide_tooltip") : null,
+                cfg.isSet("hide") ? cfg.getStringList("hide") : null,
+                cfg.getString("style")
+        );
+    }
+
     @Override
     public void apply(TerraBaseItem item) {
         if (hideTooltip != null || hiddenComponents != null) {
@@ -37,7 +49,21 @@ public class TooltipComponent implements TerraTooltipComponent {
                     if (hideTooltip != null) component.setBoolean("hide_tooltip", hideTooltip);
                     if (hiddenComponents != null) component.getStringList("hidden_components").addAll(hiddenComponents);
                 });
-            } else TerraCraftLogger.warning("Tooltip display component is only supported in Minecraft 1.20.5 or newer versions");
+            } else {
+                if (hideTooltip != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+                    NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                        nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + ".hide_tooltip");
+                    });
+                }
+                // TODO 使用NBT(中间断层了)
+                if (hiddenComponents != null) {
+                    NBT.modify(item.getBukkitItem(), nbt -> {
+                        nbt.modifyMeta((readableNBT, meta) -> {
+                            for (String s : hiddenComponents) meta.addItemFlags(safeValueOf(ItemFlag.class, "HIDE_" + s, ItemFlag.HIDE_ARMOR_TRIM));
+                        });
+                    });
+                }
+            }
         }
 
         if (tooltipStyle != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {

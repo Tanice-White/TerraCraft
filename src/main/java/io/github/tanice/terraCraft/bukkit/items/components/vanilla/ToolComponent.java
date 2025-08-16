@@ -9,9 +9,12 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ToolComponent implements TerraToolComponent {
     @Nullable
@@ -23,11 +26,28 @@ public class ToolComponent implements TerraToolComponent {
 
     private final List<DigConfig> rules;
 
-    public ToolComponent(@Nullable Boolean canDestroyInCreative, @Nullable Integer damagePerBlock, @Nullable Float defaultMiningSpeed, List<DigConfig> rules) {
+    public ToolComponent(@Nullable Boolean canDestroyInCreative, @Nullable Integer damagePerBlock, @Nullable Float defaultMiningSpeed, @Nullable List<DigConfig> rules) {
         this.canDestroyInCreative = canDestroyInCreative;
         this.damagePerBlock = damagePerBlock;
         this.defaultMiningSpeed = defaultMiningSpeed;
-        this.rules = rules;
+        this.rules = rules == null ? new ArrayList<>() : rules;
+    }
+
+    public ToolComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("creative_destroy") ? cfg.getBoolean("creative_destroy") : null,
+                cfg.isSet("damage_per_block") ? cfg.getInt("damage_per_block") : null,
+                cfg.isSet("default_speed") ? (float) cfg.getDouble("default_speed") : null,
+                null
+        );
+        ConfigurationSection sub = cfg.getConfigurationSection("rules");
+        if (sub == null)  return;
+        ConfigurationSection tmp;
+        for (String key : sub.getKeys(false)) {
+            tmp = cfg.getConfigurationSection(key);
+            if (tmp == null) continue;
+            this.rules.add(new DigConfig(tmp));
+        }
     }
 
     @Override
@@ -42,13 +62,7 @@ public class ToolComponent implements TerraToolComponent {
                 if (damagePerBlock != null) component.setInteger("damage_per_block", damagePerBlock);
                 if (defaultMiningSpeed != null) component.setFloat("default_mining_speed", defaultMiningSpeed);
                 ReadWriteNBTCompoundList compoundList = component.getCompoundList("rules");
-                ReadWriteNBT subCompound;
-                for (DigConfig rule : rules) {
-                    subCompound = compoundList.addCompound();
-                    subCompound.getStringList("blocks").addAll(rule.items().stream().map(TerraNamespaceKey::get).toList());
-                    if (rule.speed() != null) subCompound.setFloat("speed", rule.speed());
-                    if (rule.correctForDrops() != null) subCompound.setBoolean("correct_for_drops", rule.correctForDrops());
-                }
+                for (DigConfig rule : rules) rule.addToCompound(compoundList.addCompound());
             });
         } else TerraCraftLogger.warning("Tool component is only supported in Minecraft 1.20.5 or newer versions");
     }
@@ -70,10 +84,45 @@ public class ToolComponent implements TerraToolComponent {
         }
     }
 
-    public record DigConfig(List<TerraNamespaceKey> items, @Nullable Boolean correctForDrops, @Nullable Float speed) {
-        @Override
+    public static class DigConfig {
+        private final List<TerraNamespaceKey> items;
+        @Nullable
+        private final Boolean correctForDrops;
+        @Nullable
+        private final Float speed;
+
+        public DigConfig(List<TerraNamespaceKey> items, @Nullable Boolean correctForDrops, @Nullable Float speed) {
+            this.items = items;
+            this.correctForDrops = correctForDrops;
+            this.speed = speed;
+        }
+
+        public DigConfig(ConfigurationSection cfg) {
+            this(
+                    cfg.getStringList("items").stream().map(TerraNamespaceKey::from).filter(Objects::nonNull).toList(),
+                    cfg.isSet("drop") ? cfg.getBoolean("drop") : null,
+                    cfg.isSet("speed") ? (float) cfg.getDouble("speed") : null
+            );
+        }
+
+        public void addToCompound(ReadWriteNBT compound) {
+            compound.getStringList("blocks").addAll(items.stream().map(TerraNamespaceKey::get).toList());
+            if (speed != null) compound.setFloat("speed", speed);
+            if (correctForDrops != null) compound.setBoolean("correct_for_drops", correctForDrops);
+        }
+
         public List<TerraNamespaceKey> items() {
-            return this.items;
+            return items;
+        }
+
+        @Nullable
+        public Boolean correctForDrops() {
+            return correctForDrops;
+        }
+
+        @Nullable
+        public Float speed() {
+            return speed;
         }
     }
 }

@@ -6,7 +6,7 @@ import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.ComponentState;
 import io.github.tanice.terraCraft.api.items.components.TerraSkillComponent;
-import io.github.tanice.terraCraft.bukkit.items.AbstractItemComponent;
+import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import org.bukkit.inventory.ItemStack;

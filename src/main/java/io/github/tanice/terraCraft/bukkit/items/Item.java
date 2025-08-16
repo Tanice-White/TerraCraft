@@ -7,10 +7,8 @@ import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
-import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.items.AbstractItem;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
-import io.github.tanice.terraCraft.core.utils.EnumUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,14 +18,11 @@ import java.util.*;
 @NonnullByDefault
 public class Item extends AbstractItem implements TerraItem {
 
-
     /**
      * 依据内部名称和对应的config文件创建mc基础物品
      */
     public Item(String innerName, ConfigurationSection cfg, AttributeActiveSection aas) {
         super(innerName, cfg);
-
-        // TODO 绑定原版属性
     }
 
     @Override

@@ -7,6 +7,8 @@ import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 
@@ -16,6 +18,10 @@ public class BreakSoundComponent implements TerraBreakSoundComponent {
 
     public BreakSoundComponent(@Nullable NBTSound sound) {
         this.sound = sound;
+    }
+
+    public BreakSoundComponent(ConfigurationSection cfg) {
+        this(new NBTSound(cfg.isSet("range") ? (float) cfg.getDouble("range") : null, TerraNamespaceKey.from(cfg.getString("id"))));
     }
 
     @Override

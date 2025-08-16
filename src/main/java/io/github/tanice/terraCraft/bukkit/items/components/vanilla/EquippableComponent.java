@@ -10,9 +10,13 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
+
+import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 public class EquippableComponent implements TerraEquippableComponent {
     @Nullable
@@ -50,6 +54,22 @@ public class EquippableComponent implements TerraEquippableComponent {
         this.shearingSound = shearingSound;
         this.slot = slot;
         this.swappable = swappable;
+    }
+
+    public EquippableComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("allow") ? cfg.getStringList("allow").stream().map(TerraNamespaceKey::from).filter(Objects::nonNull).toList() : null,
+                cfg.isSet("asset") ? TerraNamespaceKey.from(cfg.getString("asset")) : null,
+                cfg.isSet("camera") ? TerraNamespaceKey.from(cfg.getString("camera")) : null,
+                cfg.isSet("can_shear") ? cfg.getBoolean("can_shear") :null,
+                cfg.isSet("damage_on_hurt") ? cfg.getBoolean("damage_on_hurt") :null,
+                cfg.isSet("equip_on_interact") ? cfg.getBoolean("equip_on_interact") :null,
+                NBTSound.form(cfg.getConfigurationSection("equip_sound")),
+                cfg.isSet("dispensable") ? cfg.getBoolean("dispensable") :null,
+                NBTSound.form(cfg.getConfigurationSection("shearing_sound")),
+                safeValueOf(TerraEquipmentSlot.class, cfg.getString("slot"), TerraEquipmentSlot.SADDLE),
+                cfg.isSet("swappable") ? cfg.getBoolean("swappable") :null
+        );
     }
 
     @Override

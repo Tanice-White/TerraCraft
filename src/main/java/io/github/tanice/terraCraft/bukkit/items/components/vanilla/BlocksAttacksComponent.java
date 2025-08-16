@@ -10,6 +10,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -53,6 +54,19 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
         this.base = base;
         this.factor = factor;
         this.threshold = threshold;
+    }
+
+    public BlocksAttacksComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("delay_seconds") ? (float) cfg.getDouble("delay_seconds") : null,
+                NBTSound.form(cfg.getConfigurationSection("block_sound")),
+                TerraNamespaceKey.from(cfg.getString("pass")),
+                cfg.isSet("cooldown_scale") ? (float) cfg.getDouble("cooldown_scale") : null,
+                NBTSound.form(cfg.getConfigurationSection("disabled_sound")),
+                (float) cfg.getDouble("base"),
+                (float) cfg.getDouble("factor"),
+                (float) cfg.getDouble("threshold")
+        );
     }
 
     @Override

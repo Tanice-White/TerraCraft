@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.api.items.components.vanilla.TerraWeaponCompo
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 
@@ -19,6 +20,13 @@ public class WeaponComponent implements TerraWeaponComponent {
     public WeaponComponent(@Nullable Float disableBlockingForSeconds, @Nullable Integer itemDamagePerAttack) {
         this.disableBlockingForSeconds = disableBlockingForSeconds;
         this.itemDamagePerAttack = itemDamagePerAttack;
+    }
+
+    public WeaponComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("disable_shield_seconds") ? (float) cfg.getDouble("disable_shield_seconds") : null,
+                cfg.isSet("damage_per_attack") ? cfg.getInt("damage_per_attack") : null
+        );
     }
 
     @Override

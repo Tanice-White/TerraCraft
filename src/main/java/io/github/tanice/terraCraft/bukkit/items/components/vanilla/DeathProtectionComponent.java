@@ -9,6 +9,7 @@ import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTEffect;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,15 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
 
     public DeathProtectionComponent() {
         this.effects = new ArrayList<>();
+    }
+
+    public DeathProtectionComponent(ConfigurationSection cfg) {
+        this();
+        NBTEffect effect;
+        for (String key : cfg.getKeys(false)) {
+            effect = NBTEffect.from(key, cfg.getConfigurationSection(key));
+            if (effect != null) effects.add(effect);
+        }
     }
 
     @Override

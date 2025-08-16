@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class DamageResistantComponent implements TerraDamageResistantComponent {
 
@@ -14,6 +15,10 @@ public class DamageResistantComponent implements TerraDamageResistantComponent {
 
     public DamageResistantComponent(TerraNamespaceKey resistantType) {
         this.resistantType = resistantType;
+    }
+
+    public DamageResistantComponent(ConfigurationSection cfg) {
+        this(TerraNamespaceKey.from(cfg.getString("type")));
     }
 
     @Override

@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.api.items.components.vanilla.TerraDamageCompo
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 
@@ -27,6 +28,14 @@ public class DamageComponent implements TerraDamageComponent {
         this.damage = damage;
         this.maxDamage = maxDamage;
         this.unbreakable = unbreakable;
+    }
+
+    public DamageComponent(ConfigurationSection cfg) {
+        this(
+                cfg.isSet("damage") ? cfg.getInt("damage") : null,
+                cfg.isSet("max_damage") ? cfg.getInt("max_damage") : null,
+                cfg.isSet("unbreakable") ? cfg.getBoolean("unbreakable") : null
+        );
     }
 
     @Override

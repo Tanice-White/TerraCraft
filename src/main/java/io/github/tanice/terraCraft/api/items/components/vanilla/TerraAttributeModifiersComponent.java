@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public interface TerraAttributeModifiersComponent extends TerraBaseComponent {
 
-    void addAttributeModifier(String id, BukkitAttribute attribute, double amount, String op, @Nullable String slot, @Nullable DisplayType displayType, @Nullable Component extraValue);
+    void addAttributeModifier(String id, String attribute, double amount, String op, @Nullable String slot, @Nullable String displayType, @Nullable String extraValue);
 
     enum Operation {
         ADD(0),

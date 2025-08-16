@@ -10,10 +10,14 @@ import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 
 public class ConsumableComponent implements TerraConsumableComponent {
@@ -34,6 +38,15 @@ public class ConsumableComponent implements TerraConsumableComponent {
         this.hasConsumeParticles = hasConsumeParticles;
         this.onConsumeEffects = new ArrayList<>();
         this.sound = sound;
+    }
+
+    public ConsumableComponent(ConfigurationSection cfg) {
+        this(
+                safeValueOf(Animation.class, cfg.getString("animation"), null),
+                cfg.isSet("consume_seconds") ? (float) cfg.getDouble("consume_seconds") : null,
+                cfg.isSet("particle") ? cfg.getBoolean("particle") : null,
+                new NBTSound(cfg.isSet("sound.range") ? (float) cfg.getDouble("sound.range") : null, TerraNamespaceKey.from(cfg.getString("sound.id")))
+        );
     }
 
     @Override

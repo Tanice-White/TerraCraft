@@ -64,12 +64,4 @@ public final class MiniMessageUtil {
         // 都不匹配时返回空
         return new String[]{"", ""};
     }
-
-    public static Color gethexColor(@Nullable String color) {
-        if (color == null || !color.startsWith("#")) return null;
-        int red = Integer.valueOf(color.substring(1, 3), 16);
-        int green = Integer.valueOf(color.substring(3, 5), 16);
-        int blue = Integer.valueOf(color.substring(5, 7), 16);
-        return Color.fromRGB(red, green, blue);
-    }
 }

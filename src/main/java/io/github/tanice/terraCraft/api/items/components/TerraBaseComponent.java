@@ -1,6 +1,6 @@
 package io.github.tanice.terraCraft.api.items.components;
 
-import io.github.tanice.terraCraft.api.items.TerraBaseItem;
+import org.bukkit.inventory.ItemStack;
 
 public interface TerraBaseComponent {
 
@@ -11,7 +11,7 @@ public interface TerraBaseComponent {
     /**
      * 将组件附加到物品上
      */
-    void apply(TerraBaseItem item);
+    void apply(ItemStack item);
 
     /**
      * 组件是否可更新
@@ -23,7 +23,8 @@ public interface TerraBaseComponent {
     /**
      * 更新时继承部分值
      */
-    default void updatePartialFrom(TerraBaseComponent old) {
+    default TerraBaseComponent updatePartial() {
         /* 默认不需要继承任何值 */
+        return this;
     }
 }

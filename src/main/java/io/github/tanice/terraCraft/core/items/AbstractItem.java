@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
+
 import java.util.*;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
@@ -26,6 +27,7 @@ public abstract class AbstractItem implements TerraBaseItem {
         this.vanillaComponents = new ArrayList<>();
         this.bukkitItem = new ItemStack(material, amount);
         this.processComponents(cfg);
+        for (TerraBaseComponent component : vanillaComponents) component.apply(bukkitItem);
     }
 
     public Set<TerraBaseComponent> getVanillaComponents() {
@@ -40,6 +42,14 @@ public abstract class AbstractItem implements TerraBaseItem {
     @Override
     public int getHashCode() {
         return Objects.hash(material, amount, vanillaComponents);
+    }
+
+    @Override
+    public void selfUpdate(ItemStack old) {
+        for (TerraBaseComponent component : vanillaComponents) {
+            if (!component.canUpdate()) continue;
+            component.updatePartial().apply(old);
+        }
     }
 
     private void processComponents(ConfigurationSection cfg) {

@@ -28,7 +28,7 @@ public class ItemListener {
     public ItemListener() {
         random = new Random();
 
-        /* 可食用物 */
+        /* TODO 可食用物  根据版本实现 */
         TerraEvents.subscribe(PlayerInteractEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
 
             if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;

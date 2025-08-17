@@ -2,12 +2,12 @@ package io.github.tanice.terraCraft.bukkit.items.components.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraCustomNameComponent;
 import io.github.tanice.terraCraft.bukkit.utils.MiniMessageUtil;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -25,16 +25,16 @@ public class CustomNameComponent implements TerraCustomNameComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 if (name != null) {
                     nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "custom_name", MiniMessageUtil.toNBTJson(name));
                     nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "item_name", MiniMessageUtil.toNBTJson(name));
                 }
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 if (name != null) nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").setString("Name", MiniMessageUtil.toNBTJson(name));
             });
         }
@@ -67,8 +67,8 @@ public class CustomNameComponent implements TerraCustomNameComponent {
     }
 
     @Override
-    public void updatePartialFrom(TerraBaseComponent old) {
-        this.name = ((CustomNameComponent) old).name;
+    public boolean canUpdate() {
+        return false;
     }
 
     @Override

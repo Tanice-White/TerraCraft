@@ -5,6 +5,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraCustomModelDataComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -18,12 +19,12 @@ public class CustomModelDataComponent implements TerraCustomModelDataComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 if (cmd != null) nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "custom_model_data").getFloatList("floats").add(cmd.floatValue());
             });
-        } else NBT.modify(item.getBukkitItem(), nbt -> {nbt.getOrCreateCompound(TAG_KEY).setInteger("CustomModelData", cmd);});
+        } else NBT.modify(item, nbt -> {nbt.getOrCreateCompound(TAG_KEY).setInteger("CustomModelData", cmd);});
     }
 
     public static void clear(TerraBaseItem item) {

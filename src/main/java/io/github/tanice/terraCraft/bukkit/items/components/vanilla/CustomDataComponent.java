@@ -4,6 +4,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraCustomDataComponent;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class CustomDataComponent implements TerraCustomDataComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
 
     }
 

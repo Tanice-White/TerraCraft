@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.ColorUtil;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -21,9 +22,9 @@ public class DyedColorComponent implements TerraDyedColor {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 if (color != null) nbt.getOrCreateCompound(COMPONENT_KEY).setInteger(MINECRAFT_PREFIX + "dyed_color", color);
             });
         } else TerraCraftLogger.warning("Dye color component is only supported in Minecraft 1.20.5 or newer versions");

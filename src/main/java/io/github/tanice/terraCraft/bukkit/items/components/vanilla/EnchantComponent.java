@@ -1,8 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.items.components.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
-import de.tr7zw.nbtapi.iface.ReadWriteNBT;
-import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
+import de.tr7zw.nbtapi.iface.*;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraEnchantComponent;
@@ -11,6 +10,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ public class EnchantComponent implements TerraEnchantComponent {
 
     private final int enchantmentValue; /* Enchantable 1.21.2 加入 */
     @Nullable
-    private List<TerraNamespaceKey> enchantments;
+    private final List<TerraNamespaceKey> enchantments;
     @Nullable
-    private List<Integer> levels;
+    private final List<Integer> levels;
 
     public EnchantComponent(@Nullable List<TerraNamespaceKey> enchantments, @Nullable List<Integer> levels) {
         this(0, enchantments, levels);
@@ -63,9 +63,9 @@ public class EnchantComponent implements TerraEnchantComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
                 if (enchantmentValue > 0) {
                     if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
@@ -80,7 +80,7 @@ public class EnchantComponent implements TerraEnchantComponent {
                 }
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt ->{
+            NBT.modify(item, nbt ->{
                 if (enchantments != null && levels != null && !enchantments.isEmpty() && !levels.isEmpty()) {
                     ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(TAG_KEY).getCompoundList("Enchantments");
                     ReadWriteNBT compound;
@@ -126,9 +126,8 @@ public class EnchantComponent implements TerraEnchantComponent {
     }
 
     @Override
-    public void updatePartialFrom(TerraBaseComponent old) {
-        this.enchantments = ((EnchantComponent) old).enchantments;
-        this.levels = ((EnchantComponent) old).levels;
+    public TerraBaseComponent updatePartial() {
+        return new EnchantComponent(this.enchantmentValue, null, null);
     }
 
     @Override

@@ -3,9 +3,10 @@ package io.github.tanice.terraCraft.bukkit.utils;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.TerraItem;
+import io.github.tanice.terraCraft.api.items.components.TerraDurabilityComponent;
+import io.github.tanice.terraCraft.bukkit.items.components.DurabilityComponent;
 import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.attributes.AttributeUtil;
-import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -162,11 +163,8 @@ public final class EquipmentUtil {
      * 通过耐久判断物品是否需要计入属性
      */
     public static boolean isValidItem(ItemStack item) {
-        Integer md = PDCAPI.getMaxDamage(item);
-        if (md == null) return true;
-        if (md <= 0) return true;
-        Integer cd = PDCAPI.getCurrentDamage(item);
-        if (cd == null) return true;
-        return cd > 0;
+        TerraDurabilityComponent durabilityComponent = DurabilityComponent.from(item);
+        if (durabilityComponent == null) return true;
+        return durabilityComponent.broken();
     }
 }

@@ -9,6 +9,7 @@ import io.github.tanice.terraCraft.bukkit.utils.MiniMessageUtil;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -24,17 +25,17 @@ public class LoreComponent implements TerraLoreComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (lore == null) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "lore");
                 for (Component c : lore) {
                     compoundList.addCompound().mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(c)));
                 }
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt ->{
+            NBT.modify(item, nbt ->{
                 ReadWriteNBTList<String> loreList = nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").getStringList("lore");
                 for (Component c : lore) loreList.add(MiniMessageUtil.toNBTJson(c));
             });

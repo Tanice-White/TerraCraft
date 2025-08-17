@@ -10,6 +10,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,10 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (effects.isEmpty()) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 if (effects.isEmpty()) return;
                 ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "death_protection").getCompoundList("death_effects");
                 ReadWriteNBT component;

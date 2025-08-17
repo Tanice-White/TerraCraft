@@ -11,6 +11,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -73,9 +74,9 @@ public class EquippableComponent implements TerraEquippableComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "equippable");
 
                 if (allowedEntities != null && !allowedEntities.isEmpty())

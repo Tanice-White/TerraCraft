@@ -6,6 +6,7 @@ import io.github.tanice.terraCraft.api.items.components.vanilla.TerraEnchantment
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -19,9 +20,9 @@ public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintO
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 if(glint != null) nbt.getOrCreateCompound(COMPONENT_KEY).setBoolean(MINECRAFT_PREFIX + "enchantment_glint_override", glint);
             });
         } else TerraCraftLogger.warning("Enchantment glint override component is only supported in Minecraft 1.20.5 or newer versions");

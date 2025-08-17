@@ -68,9 +68,9 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
 
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
                 component.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");
                 /* 操作custom_data部分 */
@@ -78,7 +78,7 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
                 addToCompound(data);
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(TAG_KEY);
                 component.setBoolean("Unbreakable", true);
 
@@ -112,8 +112,8 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     }
 
     @Override
-    public void updatePartialFrom(TerraBaseComponent old) {
-        this.damage = ((DurabilityComponent) old).damage;
+    public TerraBaseComponent updatePartial() {
+        return new DurabilityComponent(null, this.maxDamage, this.breakLoss, this.state);
     }
 
     @Override
@@ -144,6 +144,12 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     @Override
     public void setBreakLoss(boolean breakLoss) {
         this.breakLoss = breakLoss;
+    }
+
+    @Override
+    public boolean broken() {
+        if (this.damage == null) return false;
+        return this.damage == this.maxDamage;
     }
 
     private void addToCompound(ReadWriteNBT compound) {

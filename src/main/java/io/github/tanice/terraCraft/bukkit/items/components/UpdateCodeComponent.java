@@ -2,7 +2,6 @@ package io.github.tanice.terraCraft.bukkit.items.components;
 
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.TerraUpdateCodeComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
@@ -35,13 +34,13 @@ public class UpdateCodeComponent implements TerraUpdateCodeComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).setInteger("code", code);
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).setInteger("code", code);
             });
         }

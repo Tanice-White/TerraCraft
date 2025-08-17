@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
@@ -19,9 +20,9 @@ public class DamageResistantComponent implements TerraDamageResistantComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "damage_resistant").setString("types", "#" + resistantType.get());
             });
         } else TerraCraftLogger.warning("damage resistant component is only supported in Minecraft 1.21.2 or newer versions");

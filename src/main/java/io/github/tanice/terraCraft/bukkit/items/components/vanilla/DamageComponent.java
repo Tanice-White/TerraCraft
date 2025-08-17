@@ -9,6 +9,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -19,7 +20,7 @@ import java.util.Objects;
 public class DamageComponent implements TerraDamageComponent {
 
     @Nullable
-    private Integer damage;
+    private final Integer damage;
     @Nullable
     private final Integer maxDamage;
     @Nullable
@@ -40,16 +41,16 @@ public class DamageComponent implements TerraDamageComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
                 if (damage != null) component.setInteger(MINECRAFT_PREFIX + "damage", damage);
                 if (maxDamage != null) component.setInteger(MINECRAFT_PREFIX + "max_damage", maxDamage);
                 if (unbreakable != null && unbreakable) component.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 if (unbreakable != null && unbreakable) nbt.getOrCreateCompound(TAG_KEY).setBoolean("Unbreakable", true);
                 if (damage != null) nbt.getOrCreateCompound(TAG_KEY).setInteger("Damage", damage);
                 if (maxDamage != null) TerraCraftLogger.warning("Versions before 1.20.5 do not support setting max_damage. Only damage is configurable. Max damage uses default.");
@@ -93,8 +94,9 @@ public class DamageComponent implements TerraDamageComponent {
     }
 
     @Override
-    public void updatePartialFrom(TerraBaseComponent old) {
-        this.damage = ((DamageComponent) old).damage;
+    public TerraBaseComponent updatePartial() {
+        /* damage 主动设置为 null 不覆盖 */
+        return new DamageComponent(null, this.maxDamage, this.unbreakable);
     }
 
     @Override

@@ -53,14 +53,14 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skills");
                 addToCompound(data);
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".skills");
                 addToCompound(data);
             });

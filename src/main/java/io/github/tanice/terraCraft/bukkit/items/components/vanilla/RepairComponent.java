@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -34,14 +35,14 @@ public class RepairComponent implements TerraRepairComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (cost != null) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-                NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                NBT.modifyComponents(item, nbt -> {
                     nbt.getOrCreateCompound(COMPONENT_KEY).setInteger(MINECRAFT_PREFIX + "repair_cost", cost);
                 });
             } else {
-                NBT.modify(item.getBukkitItem(), nbt -> {
+                NBT.modify(item, nbt -> {
                     nbt.getOrCreateCompound(TAG_KEY).setInteger("RepairCost", cost);
                 });
             }
@@ -49,7 +50,7 @@ public class RepairComponent implements TerraRepairComponent {
 
         if (item != null && !items.isEmpty()) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-                NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                NBT.modifyComponents(item, nbt -> {
                     nbt.getOrCreateCompound(COMPONENT_KEY)
                             .getOrCreateCompound(MINECRAFT_PREFIX + "repairable")
                             .getStringList("items").addAll(items.stream().map(TerraNamespaceKey::get).toList());

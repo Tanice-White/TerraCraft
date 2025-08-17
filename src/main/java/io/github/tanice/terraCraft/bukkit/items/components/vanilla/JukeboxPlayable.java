@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
@@ -18,9 +19,9 @@ public class JukeboxPlayable implements TerraJukeboxPlayable {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "jukebox_playable", music.get());
             });
         } else TerraCraftLogger.warning("Jukebox playable component is only supported in Minecraft 1.21 or newer versions");

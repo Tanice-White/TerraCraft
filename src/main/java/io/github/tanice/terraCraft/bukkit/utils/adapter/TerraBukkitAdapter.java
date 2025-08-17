@@ -3,15 +3,15 @@ package io.github.tanice.terraCraft.bukkit.utils.adapter;
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.TerraItem;
+import io.github.tanice.terraCraft.api.items.components.TerraInnerNameComponent;
+import io.github.tanice.terraCraft.api.items.components.TerraMetaComponent;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.load.TerraEnchantMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.events.load.TerraItemMetaLoadEvent;
+import io.github.tanice.terraCraft.bukkit.items.components.InnerNameComponent;
+import io.github.tanice.terraCraft.bukkit.items.components.MetaComponent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
-import io.github.tanice.terraCraft.bukkit.utils.pdc.PDCAPI;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Optional;
 
 public final class TerraBukkitAdapter {
 
@@ -22,8 +22,9 @@ public final class TerraBukkitAdapter {
      */
     public static TerraBaseItem itemAdapt(ItemStack item) {
         if (item == null) return null;
-        Optional<TerraBaseItem> baseItem = TerraCraftBukkit.inst().getItemManager().getItem(PDCAPI.getItemName(item));
-        return baseItem.orElse(null);
+        TerraInnerNameComponent innerNameComponent = InnerNameComponent.from(item);
+        if (innerNameComponent == null) return null;
+        return TerraCraftBukkit.inst().getItemManager().getItem(innerNameComponent.getName()).orElse(null);
     }
 
     /**
@@ -33,19 +34,16 @@ public final class TerraBukkitAdapter {
      */
     public static TerraCalculableMeta metaAdapt(ItemStack item) {
         if (item == null) return null;
-        return TerraCraftBukkit.inst().getItemManager().getItem(PDCAPI.getItemName(item))
-                .map(baseItem -> {
-                    /* 本插件的物品计算属性 */
-                    if (baseItem instanceof TerraItem ti) return ti.copyMeta();
-                    return null;
-                })
-                .orElseGet(() ->{
-                    /* 是否为其他插件物品并创建对应的计算属性 */
-                    TerraItemMetaLoadEvent event = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
-                    if (event.getMeta().getActiveSection() != AttributeActiveSection.INNER) return event.getMeta();
-                    /* TODO 返回原版属性 */
-                    return null;
-                });
+
+        TerraMetaComponent metaComponent = MetaComponent.from(item);
+        if (metaComponent != null) return metaComponent.getMeta();
+        else {
+            /* 是否为其他插件物品并创建对应的计算属性 */
+            TerraItemMetaLoadEvent event = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
+            if (event.getMeta().getActiveSection() != AttributeActiveSection.INNER) return event.getMeta();
+            /* TODO 返回原版属性 */
+            return null;
+        }
     }
 
     /**

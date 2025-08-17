@@ -15,6 +15,7 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -61,10 +62,10 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (modifiers.isEmpty()) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "attribute_modifiers");
                 ReadWriteNBT component;
                 for (AttributeModifierComponent modifier : modifiers) {
@@ -89,7 +90,7 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
                 }
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(TAG_KEY).getCompoundList("AttributeModifiers");
                 ReadWriteNBT component;
                 for (AttributeModifierComponent modifier : modifiers) {

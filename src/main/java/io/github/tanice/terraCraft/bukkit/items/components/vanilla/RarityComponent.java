@@ -6,6 +6,7 @@ import io.github.tanice.terraCraft.api.items.components.vanilla.TerraRarityCompo
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
@@ -23,9 +24,9 @@ public class RarityComponent implements TerraRarityComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 if (rarity != null) nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "rarity", rarity.name().toLowerCase());
             });
         } else TerraCraftLogger.warning("Rarity contents component is only supported in Minecraft 1.20.5 or newer versions");

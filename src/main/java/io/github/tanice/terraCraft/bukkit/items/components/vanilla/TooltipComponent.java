@@ -9,6 +9,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -42,23 +43,23 @@ public class TooltipComponent implements TerraTooltipComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (hideTooltip != null || hiddenComponents != null) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
-                NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                NBT.modifyComponents(item, nbt -> {
                     ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "tooltip_display");
                     if (hideTooltip != null) component.setBoolean("hide_tooltip", hideTooltip);
                     if (hiddenComponents != null) component.getStringList("hidden_components").addAll(hiddenComponents);
                 });
             } else {
                 if (hideTooltip != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-                    NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+                    NBT.modifyComponents(item, nbt -> {
                         nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + ".hide_tooltip");
                     });
                 }
                 // TODO 恢复使用NBT(但是NBT更新断层)
                 if (hiddenComponents != null) {
-                    NBT.modify(item.getBukkitItem(), nbt -> {
+                    NBT.modify(item, nbt -> {
                         nbt.modifyMeta((readableNBT, meta) -> {
                             for (String s : hiddenComponents) meta.addItemFlags(safeValueOf(ItemFlag.class, "HIDE_" + s, ItemFlag.HIDE_ARMOR_TRIM));
                         });
@@ -68,7 +69,7 @@ public class TooltipComponent implements TerraTooltipComponent {
         }
 
         if (tooltipStyle != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "tooltip_style", tooltipStyle);
             });
         } else TerraCraftLogger.warning("Tooltip style component is only supported in Minecraft 1.21.2 or newer versions");

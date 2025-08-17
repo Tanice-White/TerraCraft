@@ -13,4 +13,6 @@ public interface TerraDurabilityComponent extends TerraBaseComponent {
     boolean isBreakLoss();
 
     void setBreakLoss(boolean breakLoss);
+
+    boolean broken();
 }

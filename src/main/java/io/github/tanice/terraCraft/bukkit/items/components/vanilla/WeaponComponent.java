@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -31,9 +32,9 @@ public class WeaponComponent implements TerraWeaponComponent {
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (disableBlockingForSeconds == null && itemDamagePerAttack == null) return;
-        NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+        NBT.modifyComponents(item, nbt -> {
             ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "weapon");
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
                 if (disableBlockingForSeconds != null) component.setFloat("disable_blocking_for_seconds", disableBlockingForSeconds);

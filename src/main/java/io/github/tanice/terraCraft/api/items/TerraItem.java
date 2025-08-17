@@ -1,36 +1,42 @@
 package io.github.tanice.terraCraft.api.items;
 
-import io.github.tanice.terraCraft.api.attribute.DamageFromType;
-import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
+import io.github.tanice.terraCraft.api.items.components.*;
 
-import java.util.List;
+import javax.annotation.Nullable;
 
 public interface TerraItem extends TerraBaseItem {
 
-    boolean isCancelDamage();
+    @Nullable
+    TerraBuffComponent getBuffComponent();
 
-    boolean isLoseWhenBreak();
+    @Nullable
+    TerraCommandsComponent getCommandComponent();
 
-    String getSetName();
+    @Nullable
+    TerraDamageTypeComponent getDamageTypeComponent();
 
-    DamageFromType getDamageType();
+    @Nullable
+    TerraDurabilityComponent getDurabilityComponent();
 
-    String getSlotAsString();
+    @Nullable
+    TerraGemComponent getGemComponent();
 
-    TerraCalculableMeta copyMeta();
+    @Nullable
+    TerraGemHolderComponent getGemHolderComponent();
 
-    List<TerraBaseBuff> getHoldBuffs();
+    TerraInnerNameComponent getInnerNameComponent();
 
-    List<TerraBaseBuff> getAttackBuffs();
+    @Nullable
+    TerraLevelComponent getLevelComponent();
 
-    List<TerraBaseBuff> getDefenseBuffs();
+    @Nullable
+    TerraMetaComponent getMetaComponent();
 
-    List<TerraBaseBuff> getAttackBuffsForSelf();
+    @Nullable
+    TerraQualityComponent getQualityComponent();
 
-    List<TerraBaseBuff> getAttackBuffsForOther();
+    @Nullable
+    TerraSkillComponent getSkillComponent();
 
-    List<TerraBaseBuff> getDefenseBuffsForSelf();
-
-    List<TerraBaseBuff> getDefenseBuffsForOther();
+    TerraUpdateCodeComponent getUpdateCodeComponent();
 }

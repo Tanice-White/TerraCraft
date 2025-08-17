@@ -15,7 +15,7 @@ public class TerraItemUpdateEvent extends Event {
     private final TerraBaseItem terraBaseItem;
     private final ItemStack pre;
 
-    public TerraItemUpdateEvent(Player player, TerraBaseItem baseItem,ItemStack pre) {
+    public TerraItemUpdateEvent(Player player, TerraBaseItem baseItem, ItemStack pre) {
         this.player = player;
         this.terraBaseItem = baseItem;
         this.pre = pre;

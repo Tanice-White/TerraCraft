@@ -19,52 +19,52 @@ import java.util.Objects;
 /**
  * 消耗物品的额外拓展
  */
-public class CommandComponent extends AbstractItemComponent implements TerraCommandsComponent {
+public class CommandsComponent extends AbstractItemComponent implements TerraCommandsComponent {
     @Nullable
     private List<String> commands;
 
-    public CommandComponent(@Nullable List<String> commands, boolean updatable) {
+    public CommandsComponent(@Nullable List<String> commands, boolean updatable) {
         super(updatable);
         this.commands = commands;
     }
 
-    public CommandComponent(@Nullable List<String> commands, ComponentState state) {
+    public CommandsComponent(@Nullable List<String> commands, ComponentState state) {
         super(state);
         this.commands = commands;
     }
 
-    public CommandComponent(ConfigurationSection cfg) {
+    public CommandsComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
         this.commands = cfg.getStringList("commands");
     }
 
     @Nullable
-    public static CommandComponent from(ItemStack item) {
+    public static CommandsComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)){
             return NBT.getComponents(item, nbt ->{
                 ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".commands");
                 if (data == null) return null;
-                return new CommandComponent(data.getStringList("content").toListCopy(), new ComponentState(data.getByte("state")));
+                return new CommandsComponent(data.getStringList("content").toListCopy(), new ComponentState(data.getByte("state")));
             });
         } else {
             return NBT.modify(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".commands");
                 if (data == null) return null;
-                return new CommandComponent(data.getStringList("content").toListCopy(), new ComponentState(data.getByte("state")));
+                return new CommandsComponent(data.getStringList("content").toListCopy(), new ComponentState(data.getByte("state")));
             });
         }
     }
 
     @Override
-    public void apply(TerraBaseItem item) {
+    public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)){
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".commands");
                 component.setByte("state", state.toNbtByte());
                 component.getStringList("content").addAll(commands);
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".commands");
                 component.setByte("state", state.toNbtByte());
                 component.getStringList("content").addAll(commands);

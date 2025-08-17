@@ -115,7 +115,7 @@ public final class ItemManager implements TerraItemManager {
                     }
                 }
             });
-            TerraCraftLogger.success("Loaded " + provider.getTotal() + " items in total, including " + provider.getValid() + " valid items and " + provider.getOther() + " invalid type items.");
+            TerraCraftLogger.success("Loaded " + provider.getTotal() + " items in total");
         } catch (IOException e) {
             TerraCraftLogger.error("Failed to load buffs from " + itemDir.toAbsolutePath() + " " + e.getMessage());
         }

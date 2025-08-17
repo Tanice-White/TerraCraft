@@ -11,6 +11,7 @@ import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class UseCooldownComponent implements TerraUseCooldownComponent {
     @Nullable
@@ -55,5 +56,10 @@ public class UseCooldownComponent implements TerraUseCooldownComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "use_cooldown");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(group, seconds);
     }
 }

@@ -11,6 +11,7 @@ import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class UseRemainderComponent implements TerraUseRemainderComponent {
 
@@ -61,5 +62,10 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "use_remainder");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(itemId, component, counts);
     }
 }

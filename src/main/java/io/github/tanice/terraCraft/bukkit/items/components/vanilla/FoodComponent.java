@@ -10,6 +10,7 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class FoodComponent implements TerraFoodComponent {
     @Nullable
@@ -58,5 +59,10 @@ public class FoodComponent implements TerraFoodComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "food");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(canAlwaysEat, nutrition, saturation);
     }
 }

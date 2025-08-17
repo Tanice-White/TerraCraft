@@ -11,6 +11,7 @@ import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class BreakSoundComponent implements TerraBreakSoundComponent {
     @Nullable
@@ -48,5 +49,10 @@ public class BreakSoundComponent implements TerraBreakSoundComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "break_sound");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sound);
     }
 }

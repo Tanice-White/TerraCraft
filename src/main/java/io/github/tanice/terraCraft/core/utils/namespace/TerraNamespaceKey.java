@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.core.utils.namespace;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class TerraNamespaceKey {
     private final String namespace;
@@ -33,5 +34,10 @@ public class TerraNamespaceKey {
 
     public String get() {
         return this.namespace + ":" + this.key;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(namespace, key);
     }
 }

@@ -6,6 +6,7 @@ import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class NBTPotion {
     private final TerraNamespaceKey id;
@@ -91,6 +92,11 @@ public class NBTPotion {
     @Nullable
     public Boolean isShowParticles() {
         return showParticles;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, ambient, amplifier, duration, showIcon, showParticles, hiddenEffect);
     }
 
     public void addToCompound(ReadWriteNBT compound) {

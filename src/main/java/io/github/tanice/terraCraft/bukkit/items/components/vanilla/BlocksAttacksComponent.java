@@ -5,6 +5,7 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraBlocksAttacksComponent;
+import io.github.tanice.terraCraft.bukkit.utils.StringUtil;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
@@ -15,6 +16,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
     @Nullable
@@ -67,6 +69,17 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
                 (float) cfg.getDouble("factor"),
                 (float) cfg.getDouble("threshold")
         );
+        ConfigurationSection sub = cfg.getConfigurationSection("reduction");
+        if (sub == null) return;
+        ConfigurationSection c;
+        for (String k : sub.getKeys(false)) {
+            c = sub.getConfigurationSection(k);
+            if (c == null) {
+                TerraCraftLogger.warning("Empty reduction section in " + sub.getCurrentPath());
+                continue;
+            }
+            damageReductions.add(new DamageReduction(c));
+        }
     }
 
     @Override
@@ -129,17 +142,36 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
         }
     }
 
-    public void addDamageReduction(float base, float factor, @Nullable Float horizontalBlockingAngle, @Nullable TerraNamespaceKey[] types) {
-        damageReductions.add(new DamageReduction(base, factor, horizontalBlockingAngle, types));
+    @Override
+    public int hashCode() {
+        return Objects.hash(blockDelaySeconds, blockSound, canPass, damageReductions, disableCooldownScale, disabledSound, base, factor, threshold);
     }
 
-    /**
-     * @param base                    固定阻挡的伤害
-     * @param factor                  应被阻挡的伤害比例
-     * @param horizontalBlockingAngle （值>0，角度制，默认为90）在水平方向上，以当前玩家视角的水平分量向量为基准，如果受伤害方向与基准方向夹角小于此角度则伤害可被阻挡，否则不能阻挡。任何无来源伤害均被视为需要180度才能阻挡。
-     * @param types                   可阻挡的伤害类型列表
-     */
-    private record DamageReduction(float base, float factor, @Nullable Float horizontalBlockingAngle, @Nullable TerraNamespaceKey[] types) {
+    private static class DamageReduction {
+        private final float base;
+        private final float factor;
+        private final Float horizontalBlockingAngle;
+        private final List<TerraNamespaceKey> types;
 
+        public DamageReduction(float base, float factor, @Nullable Float horizontalBlockingAngle, @Nullable List<TerraNamespaceKey> types) {
+            this.base = base;
+            this.factor = factor;
+            this.horizontalBlockingAngle = horizontalBlockingAngle;
+            this.types = types;
+        }
+
+        public DamageReduction(ConfigurationSection cfg) {
+            this(
+                    (float) cfg.getDouble("base"),
+                    (float) cfg.getDouble("factor"),
+                    cfg.isSet("angle") ? (float) cfg.getDouble("angle") : null,
+                    cfg.isSet("types") ? StringUtil.splitByComma(cfg.getString("types")).stream().map(TerraNamespaceKey::from).toList() : null
+            );
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(base, factor, horizontalBlockingAngle, types);
+        }
     }
 }

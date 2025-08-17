@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemFlag;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
@@ -55,7 +56,7 @@ public class TooltipComponent implements TerraTooltipComponent {
                         nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + ".hide_tooltip");
                     });
                 }
-                // TODO 使用NBT(中间断层了)
+                // TODO 恢复使用NBT(但是NBT更新断层)
                 if (hiddenComponents != null) {
                     NBT.modify(item.getBukkitItem(), nbt -> {
                         nbt.modifyMeta((readableNBT, meta) -> {
@@ -99,5 +100,10 @@ public class TooltipComponent implements TerraTooltipComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "tooltip_style");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hideTooltip, hiddenComponents, tooltipStyle);
     }
 }

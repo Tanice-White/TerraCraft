@@ -10,6 +10,7 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class WeaponComponent implements TerraWeaponComponent {
     @Nullable
@@ -60,5 +61,10 @@ public class WeaponComponent implements TerraWeaponComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "weapon");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(disableBlockingForSeconds, itemDamagePerAttack);
     }
 }

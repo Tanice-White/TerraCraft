@@ -16,6 +16,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
@@ -94,5 +95,10 @@ public class ConsumableComponent implements TerraConsumableComponent {
     @Override
     public void addEffect(NBTEffect effect) {
         this.onConsumeEffects.add(effect);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(animation, consumeSeconds, hasConsumeParticles, onConsumeEffects, sound);
     }
 }

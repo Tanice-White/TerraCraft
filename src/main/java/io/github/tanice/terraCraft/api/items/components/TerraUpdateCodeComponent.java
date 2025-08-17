@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.api.items.components;
 
 public interface TerraUpdateCodeComponent extends TerraBaseComponent {
 
-    String getCode();
+    int getCode();
 
-    void setCode(String code);
+    void setCode(int code);
 }

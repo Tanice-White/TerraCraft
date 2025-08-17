@@ -10,15 +10,18 @@ import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.TerraGemHolderComponent;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
+import io.github.tanice.terraCraft.bukkit.utils.StringUtil;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 // TODO + 原版属性
 public class GemHolderComponent extends AbstractItemComponent implements TerraGemHolderComponent {
@@ -47,6 +50,20 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
         super(state);
         this.limit = limit;
         this.gems = gems;
+    }
+
+    public GemHolderComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.limit = cfg.getInt("limit");
+        this.gems = new ArrayList<>();
+        TerraItemManager itemManager = TerraCraftBukkit.inst().getItemManager();
+        for (String name : StringUtil.splitByComma(cfg.getString("gems"))) {
+            itemManager.getItem(name).ifPresentOrElse(terraItem -> {
+                ItemStack item = terraItem.getBukkitItem();
+                if (GemComponent.from(item) != null) this.gems.add(item);
+                else TerraCraftLogger.error("Item: " + name + " is not a gem");
+            }, () -> TerraCraftLogger.warning("Gem: " + name + " dose not exist, or has not been loaded."));
+        }
     }
 
     @Nullable
@@ -98,8 +115,13 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(gems, limit);
+    }
+
+    @Override
     public void updatePartialFrom(TerraBaseComponent old) {
-        super.updatePartialFrom(old);
+        this.gems = ((GemHolderComponent) old).gems;
     }
 
     public @Nullable List<ItemStack> getGems() {

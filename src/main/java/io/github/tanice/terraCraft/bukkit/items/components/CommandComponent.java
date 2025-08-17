@@ -9,10 +9,12 @@ import io.github.tanice.terraCraft.api.items.components.TerraCommandsComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 消耗物品的额外拓展
@@ -29,6 +31,11 @@ public class CommandComponent extends AbstractItemComponent implements TerraComm
     public CommandComponent(@Nullable List<String> commands, ComponentState state) {
         super(state);
         this.commands = commands;
+    }
+
+    public CommandComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.commands = cfg.getStringList("commands");
     }
 
     @Nullable
@@ -79,6 +86,11 @@ public class CommandComponent extends AbstractItemComponent implements TerraComm
 
     public static void remove(TerraBaseItem item) {
         clear(item);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(commands);
     }
 
     @Override

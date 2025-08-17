@@ -135,4 +135,9 @@ public class EquippableComponent implements TerraEquippableComponent {
             });
         }
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(allowedEntities, assetId, cameraOverlay, canBeSheared, damageOnHurt, equipOnInteract, equipSound, dispensable, shearingSound, slot, swappable);
+    }
 }

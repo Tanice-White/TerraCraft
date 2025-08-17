@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class MaxStackSizeComponent implements TerraMaxStackSizeComponent {
     @Nullable
@@ -41,5 +42,10 @@ public class MaxStackSizeComponent implements TerraMaxStackSizeComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "max_stack_size");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size);
     }
 }

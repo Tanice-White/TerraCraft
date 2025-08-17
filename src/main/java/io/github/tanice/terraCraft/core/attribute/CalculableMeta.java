@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.core.utils.TerraUtil;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class CalculableMeta implements TerraCalculableMeta, Cloneable {
@@ -159,5 +160,10 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.hashCode(attributeModifiers), Arrays.hashCode(damageTypeModifiers), activeSection);
     }
 }

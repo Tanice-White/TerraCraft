@@ -105,6 +105,11 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
         }
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(modifiers);
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
@@ -148,6 +153,11 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
             this.slot = safeValueOf(TerraEquipmentSlot.class, slot, null);
             this.displayType = safeValueOf(DisplayType.class, displayType, DisplayType.DEFAULT);
             this.extraValue = extraValue == null ? Component.empty() : MiniMessageUtil.serialize(extraValue);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(amount, id, attributeType, op, slot, displayType, extraValue);
         }
     }
 }

@@ -8,6 +8,8 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.namespace.TerraNamespaceKey;
 
+import java.util.Objects;
+
 public class JukeboxPlayable implements TerraJukeboxPlayable {
     private final TerraNamespaceKey music;
 
@@ -39,5 +41,10 @@ public class JukeboxPlayable implements TerraJukeboxPlayable {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "jukebox_playable");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(music);
     }
 }

@@ -8,18 +8,18 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class NBTEffect {
     private final String type;
     private final Float probability;
-    private final NBTPotion[] effects;
+    private final List<NBTPotion> effects;
     private final NBTSound sound;
-    private final String[] effectsToBeRemoved;
+    private final List<String> effectsToBeRemoved;
     private final Float diameter;
 
-    public NBTEffect(String type, @Nullable Float probability, @Nullable NBTPotion[] effects, @Nullable NBTSound sound, @Nullable String[] effectsToBeRemoved, @Nullable Float diameter) {
+    public NBTEffect(String type, @Nullable Float probability, @Nullable List<NBTPotion> effects, @Nullable NBTSound sound, @Nullable List<String> effectsToBeRemoved, @Nullable Float diameter) {
         this.type = type;
         this.probability = probability;
         this.effects = effects;
@@ -41,7 +41,7 @@ public class NBTEffect {
                         potions.add(NBTPotion.from(key, subCfg.getConfigurationSection(key)));
                     }
                 }
-                return new NBTEffect(type, chance, potions.toArray(new NBTPotion[0]), null, null, null);
+                return new NBTEffect(type, chance, potions, null, null, null);
 
             case "play_sound":
                 NBTSound sound = NBTSound.form(cfg.getConfigurationSection("sound"));
@@ -52,7 +52,7 @@ public class NBTEffect {
                 return new NBTEffect(type, chance, null, sound, null, null);
 
             case "remove_effects":
-                return new NBTEffect(type, chance, null, null, cfg.getStringList("remove").toArray(new String[0]), null);
+                return new NBTEffect(type, chance, null, null, cfg.getStringList("remove"), null);
 
             case "clear_all_effects":
                 return new NBTEffect(type, chance, null, null, null, null);
@@ -87,12 +87,17 @@ public class NBTEffect {
             case "remove_effects" -> {
                 ReadWriteNBTList<String> list = compound.getStringList("effects");
                 if (effectsToBeRemoved == null) return;
-                list.addAll(Arrays.stream(effectsToBeRemoved).toList());
+                list.addAll(effectsToBeRemoved);
             }
             case "teleport_randomly" -> {
                 if(diameter != null) compound.setFloat("diameter", diameter);
             }
             default -> TerraCraftLogger.warning("Invalid effect type: " + type);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, probability, effects, sound, effectsToBeRemoved, diameter);
     }
 }

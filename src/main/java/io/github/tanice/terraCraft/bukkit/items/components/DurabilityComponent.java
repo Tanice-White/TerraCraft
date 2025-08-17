@@ -10,9 +10,11 @@ import io.github.tanice.terraCraft.api.items.components.TerraDurabilityComponent
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 // TODO 支持 weapon 的 攻击耐久减少 和 tool 的挖掘耐久减少
 public class DurabilityComponent extends AbstractItemComponent implements TerraDurabilityComponent {
@@ -38,6 +40,13 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
         this.damage = damage;
         this.maxDamage = maxDamage;
         this.breakLoss = breakLoss;
+    }
+
+    public DurabilityComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.damage = cfg.isSet("damage") ? cfg.getInt("damage") : null;
+        this.maxDamage = cfg.getInt("maxDamage", 1);
+        this.breakLoss = cfg.isSet("break_loss") ? cfg.getBoolean("breakLoss") : null;
     }
 
     @Nullable
@@ -95,6 +104,11 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
 
     public static void remove(TerraBaseItem item) {
         clear(item);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(damage, maxDamage, breakLoss);
     }
 
     @Override

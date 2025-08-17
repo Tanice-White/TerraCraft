@@ -9,6 +9,8 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
 import javax.annotation.Nullable;
 
+import java.util.Objects;
+
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 public class RarityComponent implements TerraRarityComponent {
@@ -45,5 +47,10 @@ public class RarityComponent implements TerraRarityComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "rarity");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rarity);
     }
 }

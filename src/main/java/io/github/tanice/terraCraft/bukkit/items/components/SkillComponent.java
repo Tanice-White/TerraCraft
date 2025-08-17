@@ -9,10 +9,12 @@ import io.github.tanice.terraCraft.api.items.components.TerraSkillComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public class SkillComponent extends AbstractItemComponent implements TerraSkillComponent {
 
@@ -27,6 +29,11 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     public SkillComponent(@Nullable List<String> skills, ComponentState state) {
         super(state);
         this.skills = skills;
+    }
+
+    public SkillComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.skills = cfg.getStringList("skills");
     }
 
     public static SkillComponent from(ItemStack item) {
@@ -74,6 +81,11 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
 
     public static void remove(TerraBaseItem item) {
         clear(item);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(skills);
     }
 
     @Override

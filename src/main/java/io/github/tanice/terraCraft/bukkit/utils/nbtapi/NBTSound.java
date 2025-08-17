@@ -7,6 +7,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class NBTSound {
     @Nullable
@@ -42,5 +43,10 @@ public class NBTSound {
 
     public String getId() {
         return this.id.get();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(range, id);
     }
 }

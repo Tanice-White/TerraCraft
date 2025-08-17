@@ -8,12 +8,15 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.ComponentState;
 import io.github.tanice.terraCraft.api.items.components.TerraBuffComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
+import io.github.tanice.terraCraft.bukkit.utils.StringUtil;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public class BuffComponent extends AbstractItemComponent implements TerraBuffComponent {
     @Nullable
@@ -43,6 +46,15 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
         this.attack = attack;
         this.defenseSelf = defenseSelf;
         this.defense = defense;
+    }
+
+    public BuffComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.hold = StringUtil.splitByComma(cfg.getString("hold"));
+        this.attackSelf = StringUtil.splitByComma(cfg.getString("attack_self"));
+        this.attack = StringUtil.splitByComma(cfg.getString("attack"));
+        this.defenseSelf = StringUtil.splitByComma(cfg.getString("defense_self"));
+        this.defense = StringUtil.splitByComma(cfg.getString("defense"));
     }
 
     @Nullable
@@ -141,6 +153,11 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     @Override
     public void setDefense(@Nullable List<String> buffs) {
         this.defense = buffs;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hold, attackSelf, attack, defenseSelf, defense);
     }
 
     private void addToCompound(ReadWriteNBT component) {

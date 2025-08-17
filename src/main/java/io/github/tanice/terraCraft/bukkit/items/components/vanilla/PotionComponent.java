@@ -16,6 +16,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * PotionContents + PotionDurationScale
@@ -96,5 +97,10 @@ public class PotionComponent implements TerraPotionComponent {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "potion_duration_scale");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color, potions, customName, durationScale, id);
     }
 }

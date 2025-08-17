@@ -11,6 +11,7 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * 融合 damage + maxDamage + unbreakable
@@ -94,5 +95,10 @@ public class DamageComponent implements TerraDamageComponent {
     @Override
     public void updatePartialFrom(TerraBaseComponent old) {
         this.damage = ((DamageComponent) old).damage;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(damage, maxDamage, unbreakable);
     }
 }

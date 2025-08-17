@@ -94,4 +94,9 @@ public class RepairComponent implements TerraRepairComponent {
             });
         }
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cost, items);
+    }
 }

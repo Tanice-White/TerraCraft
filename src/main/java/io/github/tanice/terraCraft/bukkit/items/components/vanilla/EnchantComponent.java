@@ -15,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Enchantable + Enchantments
@@ -128,5 +129,10 @@ public class EnchantComponent implements TerraEnchantComponent {
     public void updatePartialFrom(TerraBaseComponent old) {
         this.enchantments = ((EnchantComponent) old).enchantments;
         this.levels = ((EnchantComponent) old).levels;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enchantments, levels, enchantmentValue);
     }
 }

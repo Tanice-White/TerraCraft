@@ -6,6 +6,7 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.items.components.*;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.items.AbstractItem;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -17,7 +18,18 @@ import java.util.*;
 
 @NonnullByDefault
 public class Item extends AbstractItem implements TerraItem {
-
+    private BuffComponent buffComponent;
+    private CommandComponent commandComponent;
+    private DamageTypeComponent damageTypeComponent;
+    private DurabilityComponent durabilityComponent;
+    private GemComponent gemComponent;
+    private GemHolderComponent gemHolderComponent;
+    private InnerNameComponent innerNameComponent;
+    private LevelComponent levelComponent;
+    private MetaComponent metaComponent;
+    private QualityComponent qualityComponent;
+    private SkillComponent skillComponent;
+    private UpdateCodeComponent updateCodeComponent;
     /**
      * 依据内部名称和对应的config文件创建mc基础物品
      */

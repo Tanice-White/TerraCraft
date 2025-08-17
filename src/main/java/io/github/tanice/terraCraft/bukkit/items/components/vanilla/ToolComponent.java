@@ -26,19 +26,18 @@ public class ToolComponent implements TerraToolComponent {
 
     private final List<DigConfig> rules;
 
-    public ToolComponent(@Nullable Boolean canDestroyInCreative, @Nullable Integer damagePerBlock, @Nullable Float defaultMiningSpeed, @Nullable List<DigConfig> rules) {
+    public ToolComponent(@Nullable Boolean canDestroyInCreative, @Nullable Integer damagePerBlock, @Nullable Float defaultMiningSpeed) {
         this.canDestroyInCreative = canDestroyInCreative;
         this.damagePerBlock = damagePerBlock;
         this.defaultMiningSpeed = defaultMiningSpeed;
-        this.rules = rules == null ? new ArrayList<>() : rules;
+        this.rules = new ArrayList<>();
     }
 
     public ToolComponent(ConfigurationSection cfg) {
         this(
                 cfg.isSet("creative_destroy") ? cfg.getBoolean("creative_destroy") : null,
                 cfg.isSet("damage_per_block") ? cfg.getInt("damage_per_block") : null,
-                cfg.isSet("default_speed") ? (float) cfg.getDouble("default_speed") : null,
-                null
+                cfg.isSet("default_speed") ? (float) cfg.getDouble("default_speed") : null
         );
         ConfigurationSection sub = cfg.getConfigurationSection("rules");
         if (sub == null)  return;
@@ -84,7 +83,12 @@ public class ToolComponent implements TerraToolComponent {
         }
     }
 
-    public static class DigConfig {
+    @Override
+    public int hashCode() {
+        return Objects.hash(canDestroyInCreative, damagePerBlock, defaultMiningSpeed, rules);
+    }
+
+    private static class DigConfig {
         private final List<TerraNamespaceKey> items;
         @Nullable
         private final Boolean correctForDrops;
@@ -111,18 +115,9 @@ public class ToolComponent implements TerraToolComponent {
             if (correctForDrops != null) compound.setBoolean("correct_for_drops", correctForDrops);
         }
 
-        public List<TerraNamespaceKey> items() {
-            return items;
-        }
-
-        @Nullable
-        public Boolean correctForDrops() {
-            return correctForDrops;
-        }
-
-        @Nullable
-        public Float speed() {
-            return speed;
+        @Override
+        public int hashCode() {
+            return Objects.hash(items, correctForDrops, speed);
         }
     }
 }

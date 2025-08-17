@@ -9,6 +9,7 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.ColorUtil;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class DyedColorComponent implements TerraDyedColor {
 
@@ -43,5 +44,10 @@ public class DyedColorComponent implements TerraDyedColor {
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "dyed_color");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color);
     }
 }

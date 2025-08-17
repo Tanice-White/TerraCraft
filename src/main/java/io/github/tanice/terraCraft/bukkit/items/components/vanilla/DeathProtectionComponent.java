@@ -13,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DeathProtectionComponent implements TerraDeathProtectionComponent {
 
@@ -64,12 +65,8 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
         }
     }
 
-
-    public void addEffect(NBTEffect effect) {
-        this.effects.add(effect);
-    }
-
-    public void addEffects(List<NBTEffect> effects) {
-        this.effects.addAll(effects);
+    @Override
+    public int hashCode() {
+        return Objects.hash(effects);
     }
 }

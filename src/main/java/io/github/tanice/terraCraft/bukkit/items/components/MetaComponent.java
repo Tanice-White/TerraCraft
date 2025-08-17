@@ -13,11 +13,13 @@ import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
@@ -37,6 +39,16 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
     public MetaComponent(TerraCalculableMeta meta, ComponentState state) {
         super(state);
         this.meta = meta;
+    }
+
+    public MetaComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+
+
+        this.meta = new CalculableMeta(
+                cfg.getConfigurationSection("meta"),
+                safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR)
+        );
     }
 
     @Nullable
@@ -87,10 +99,17 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
         clear(item);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(meta);
+    }
+
+    @Override
     public TerraCalculableMeta getMeta() {
         return this.meta;
     }
 
+    @Override
     public void setMeta(TerraCalculableMeta meta) {
         this.meta = meta;
     }

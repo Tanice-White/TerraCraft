@@ -10,9 +10,12 @@ import io.github.tanice.terraCraft.api.items.components.TerraDamageTypeComponent
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
 
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
@@ -28,6 +31,11 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     public DamageTypeComponent(String type, ComponentState state) {
         super(state);
         this.type = safeValueOf(DamageFromType.class, type, DamageFromType.OTHER);
+    }
+
+    public DamageTypeComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.type = safeValueOf(DamageFromType.class, cfg.getString("type"), DamageFromType.OTHER);
     }
 
     @Nullable
@@ -78,6 +86,11 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
 
     public static void remove(TerraBaseItem item) {
         clear(item);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 
     @Override

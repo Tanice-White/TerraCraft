@@ -10,9 +10,11 @@ import io.github.tanice.terraCraft.api.items.components.TerraLevelComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * 等级模板扩展
@@ -33,6 +35,12 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
         super(state);
         this.level = level;
         this.levelTemplate = levelTemplate;
+    }
+
+    public LevelComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.level = cfg.isSet("lvl") ? cfg.getInt("lvl") : null;
+        this.levelTemplate = cfg.getString("lvlTemplate");
     }
 
     @Nullable
@@ -81,6 +89,11 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
 
     public static void remove(TerraBaseItem item) {
         clear(item);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(level, levelTemplate);
     }
 
     @Override

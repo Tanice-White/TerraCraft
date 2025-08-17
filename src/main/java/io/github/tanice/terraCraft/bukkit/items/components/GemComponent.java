@@ -9,9 +9,11 @@ import io.github.tanice.terraCraft.api.items.components.TerraGemComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class GemComponent extends AbstractItemComponent implements TerraGemComponent {
     @Nullable
@@ -37,6 +39,14 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
         this.inlayFailLoss = inlayFailLoss;
         this.dismantleSuccessChance = dismantleSuccessChance;
         this.dismantleFailLoss = dismantleFailLoss;
+    }
+
+    public GemComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.inlaySuccessChance = cfg.isSet("inlay_chance") ? (float) cfg.getDouble("inlay_chance") : null;
+        this.inlayFailLoss = cfg.isSet("inlay_fail_loss") ? cfg.getBoolean("inlay_fail_loss") : null;
+        this.dismantleSuccessChance = cfg.isSet("dismantle_chance") ? (float) cfg.getDouble("dismantle_chance") : null;
+        this.dismantleFailLoss = cfg.isSet("dismantle_fail_loss") ? cfg.getBoolean("dismantle_fail_loss") : null;
     }
 
     @Nullable
@@ -85,6 +95,11 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
 
     public static void remove(TerraBaseItem item) {
         clear(item);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inlaySuccessChance, inlayFailLoss, dismantleSuccessChance, dismantleFailLoss);
     }
 
     @Override

@@ -1,43 +1,21 @@
 package io.github.tanice.terraCraft.api.items;
 
-import org.bukkit.Material;
+import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 // TODO Component化
 public interface TerraBaseItem {
 
+    Set<TerraBaseComponent> getVanillaComponents();
+
+    ItemStack getBukkitItem();
+
     List<String> selfUpdate(ItemStack old);
 
     String getName();
-
-    String getDisplayName();
-
-    String getLoreTemplateName();
-
-    Material type();
-
-    int getAmount();
-
-    int getMaxStackSize();
-
-    int getCustomModelData();
-
-    boolean unbreakable();
-
-    int getMaxDamage();
-
-    String getColor();
-
-    List<String> getHideFlags();
-
-    Map<String, String> getCustomNBTs();
-
-    List<String> getLore();
-
-    ItemStack getBukkitItem();
 
     int getHashCode();
 }

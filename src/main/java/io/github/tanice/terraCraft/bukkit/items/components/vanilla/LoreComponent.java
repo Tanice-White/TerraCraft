@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public class LoreComponent implements TerraLoreComponent {
 
@@ -63,5 +64,10 @@ public class LoreComponent implements TerraLoreComponent {
                 nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").removeKey("lore");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lore);
     }
 }

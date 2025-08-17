@@ -10,6 +10,7 @@ import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class InnerNameComponent implements TerraInnerNameComponent {
 
@@ -47,6 +48,11 @@ public class InnerNameComponent implements TerraInnerNameComponent {
                 nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).setString("terra_name", name);
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override

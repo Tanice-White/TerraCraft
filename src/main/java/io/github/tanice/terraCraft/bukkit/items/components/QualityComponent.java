@@ -10,9 +10,11 @@ import io.github.tanice.terraCraft.api.items.components.TerraQualityComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class QualityComponent extends AbstractItemComponent implements TerraQualityComponent {
     @Nullable
@@ -30,6 +32,12 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
         super(state);
         this.quality = quality;
         this.qualityGroup = qualityGroup;
+    }
+
+    public QualityComponent(ConfigurationSection cfg) {
+        super(cfg.getBoolean("updatable", true));
+        this.qualityGroup = cfg.getString("qualityGroup");
+        this.quality = cfg.getString("quality");
     }
 
     @Nullable
@@ -78,6 +86,11 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
 
     public static void remove(TerraBaseItem item) {
         clear(item);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(quality, qualityGroup);
     }
 
     @Override

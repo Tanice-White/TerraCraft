@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintOverrideComponent {
     @Nullable
@@ -41,5 +42,10 @@ public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintO
                 nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "enchantment_glint_override");
             });
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(glint);
     }
 }

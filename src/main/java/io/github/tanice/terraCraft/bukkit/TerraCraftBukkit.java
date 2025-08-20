@@ -11,7 +11,7 @@ import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.listeners.DamageListener;
 import io.github.tanice.terraCraft.bukkit.listeners.ItemListener;
-import io.github.tanice.terraCraft.bukkit.listeners.SkillTriggerListener;
+import io.github.tanice.terraCraft.bukkit.listeners.HelperListener;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
 import io.github.tanice.terraCraft.core.buffs.BuffManager;
@@ -39,7 +39,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
     private DamageListener damageListener;
     private ItemListener itemListener;
-    private SkillTriggerListener skillTriggerListener;
+    private HelperListener helperListener;
 
     /* 更改finalDamage方法 */
     static {
@@ -63,7 +63,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
         itemListener = new ItemListener();
         damageListener = new DamageListener();
-        skillTriggerListener = new SkillTriggerListener();
+        helperListener = new HelperListener();
 
     }
 

@@ -4,6 +4,8 @@ import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.utils.helper.mythicmobs.TerraDamageMechanic;
+import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -13,18 +15,22 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
-public class SkillTriggerListener {
+public class HelperListener {
 
     private static final String MM = "MythicMobs";
 
-    private boolean registered = false;
-
-    public SkillTriggerListener() {
+    public HelperListener() {
 
         TerraEvents.subscribe(PluginEnableEvent.class).priority(EventPriority.HIGHEST).handler(event -> {
-            if (event.getPlugin().getName().equals(MM) && !registered) {
+            if (event.getPlugin().getName().equals(MM)) {
+                /* terraDamage */
+                TerraEvents.subscribe(MythicMechanicLoadEvent.class).priority(EventPriority.HIGH).handler(e -> {
+                    if (e.getMechanicName().equalsIgnoreCase("terraDamage") || e.getEventName().equalsIgnoreCase("td")) {
+                        e.register(new TerraDamageMechanic(e.getConfig()));
+                    }
+                }).register();
+                /* trigger */
                 triggerRegister();
-                registered = true;
                 TerraCraftLogger.success("MythicMobs detected, skills available");
             }
         }).register();

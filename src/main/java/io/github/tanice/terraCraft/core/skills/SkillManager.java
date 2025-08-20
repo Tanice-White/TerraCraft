@@ -20,6 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
@@ -71,13 +72,6 @@ public final class SkillManager implements TerraSkillManager {
         this.loadResourceFiles();
 
         TerraSchedulers.async().repeat(this::cleanup, 2, CLEAN_UP_CD);
-
-        /* mm */
-        TerraEvents.subscribe(MythicMechanicLoadEvent.class).priority(EventPriority.HIGH).handler(event -> {
-            if (event.getMechanicName().equalsIgnoreCase("terraDamage") || event.getEventName().equalsIgnoreCase("td")) {
-                event.register(new TerraDamageMechanic(event.getConfig()));
-            }
-        }).register();
 
         /* 可用技能更新 */
         TerraEvents.subscribe(TerraSkillUpdateEvent.class).priority(EventPriority.MONITOR).ignoreCancelled(true).handler(event -> {

@@ -39,11 +39,11 @@ public class RepairComponent implements TerraRepairComponent {
         if (cost != null) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
                 NBT.modifyComponents(item, nbt -> {
-                    nbt.getOrCreateCompound(COMPONENT_KEY).setInteger(MINECRAFT_PREFIX + "repair_cost", cost);
+                    nbt.setInteger(MINECRAFT_PREFIX + "repair_cost", cost);
                 });
             } else {
                 NBT.modify(item, nbt -> {
-                    nbt.getOrCreateCompound(TAG_KEY).setInteger("RepairCost", cost);
+                    nbt.setInteger("RepairCost", cost);
                 });
             }
         }
@@ -51,7 +51,7 @@ public class RepairComponent implements TerraRepairComponent {
         if (item != null && !items.isEmpty()) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
                 NBT.modifyComponents(item, nbt -> {
-                    nbt.getOrCreateCompound(COMPONENT_KEY)
+                    nbt
                             .getOrCreateCompound(MINECRAFT_PREFIX + "repairable")
                             .getStringList("items").addAll(items.stream().map(TerraNamespaceKey::get).toList());
                 });
@@ -62,16 +62,16 @@ public class RepairComponent implements TerraRepairComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "repair_cost");
+                nbt.removeKey(MINECRAFT_PREFIX + "repair_cost");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("RepairCost");
+                nbt.removeKey("RepairCost");
             });
         }
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "repairable");
+                nbt.removeKey(MINECRAFT_PREFIX + "repairable");
             });
         }
     }
@@ -79,19 +79,19 @@ public class RepairComponent implements TerraRepairComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "repair_cost");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "repair_cost");
+                nbt.removeKey(MINECRAFT_PREFIX + "repair_cost");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "repair_cost");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("RepairCost");
+                nbt.removeKey("RepairCost");
             });
         }
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "repairable");
+                nbt.removeKey(MINECRAFT_PREFIX + "repairable");
                 /* 不能禁止武器合武器式修复 */
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "repairable");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "repairable");
             });
         }
     }

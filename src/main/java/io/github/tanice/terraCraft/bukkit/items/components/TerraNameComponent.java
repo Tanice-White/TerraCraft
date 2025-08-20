@@ -23,13 +23,13 @@ public class TerraNameComponent implements TerraInnerNameComponent {
     public static TerraNameComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY);
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY);
                 if (data == null) return null;
                 return new TerraNameComponent(data.getString("terra_name"));
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY);
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY);
                 if (data == null) return null;
                 return new TerraNameComponent(data.getString("terra_name"));
             });
@@ -40,11 +40,11 @@ public class TerraNameComponent implements TerraInnerNameComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).setString("terra_name", name);
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).setString("terra_name", name);
             });
         } else {
             NBT.modify(item, nbt -> {
-                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).setString("terra_name", name);
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).setString("terra_name", name);
             });
         }
     }

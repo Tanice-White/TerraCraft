@@ -54,7 +54,7 @@ public class ToolComponent implements TerraToolComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "tool");
+                ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "tool");
                 if (canDestroyInCreative != null) {
                     if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) component.setBoolean("can_destroy_blocks_in_creative", canDestroyInCreative);
                     else TerraCraftLogger.warning("can_destroy_blocks_in_creative in Tool component is only supported in Minecraft 1.21.5 or newer versions");
@@ -70,7 +70,7 @@ public class ToolComponent implements TerraToolComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "tool");
+                nbt.removeKey(MINECRAFT_PREFIX + "tool");
             });
         }
     }
@@ -78,8 +78,8 @@ public class ToolComponent implements TerraToolComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "tool");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "tool");
+                nbt.removeKey(MINECRAFT_PREFIX + "tool");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "tool");
             });
         }
     }

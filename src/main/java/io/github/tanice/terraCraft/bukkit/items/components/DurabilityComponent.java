@@ -53,13 +53,13 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     public static DurabilityComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".durability");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".durability");
                 if (data == null) return null;
                 return new DurabilityComponent(data.getInteger("damage"), data.getInteger("max_damage"), data.getBoolean("break_loss"), new ComponentState(data.getByte("state")));
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".durability");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".durability");
                 if (data == null) return null;
                 return new DurabilityComponent(data.getInteger("damage"), data.getInteger("max_damage"), data.getBoolean("break_loss"), new ComponentState(data.getByte("state")));
             });
@@ -71,18 +71,15 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                component.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");
+                nbt.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");
                 /* 操作custom_data部分 */
-                ReadWriteNBT data = component.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".durability");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".durability");
                 addToCompound(data);
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(TAG_KEY);
-                component.setBoolean("Unbreakable", true);
-
-                ReadWriteNBT data = component.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".durability");
+                nbt.setBoolean("Unbreakable", true);
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".durability");
                 addToCompound(data);
             });
         }
@@ -101,13 +98,13 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "unbreakable");
-                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("durability");
+                nbt.removeKey(MINECRAFT_PREFIX + "unbreakable");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("durability");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("Unbreakable");
-                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("durability");
+                nbt.removeKey("Unbreakable");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("durability");
             });
         }
     }

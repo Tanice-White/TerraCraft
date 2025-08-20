@@ -55,7 +55,7 @@ public class ConsumableComponent implements TerraConsumableComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "consumable");
+                ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "consumable");
 
                 if (animation != null) {
                     if (animation == Animation.BUNDLE) {
@@ -79,7 +79,7 @@ public class ConsumableComponent implements TerraConsumableComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "consumable");
+                nbt.removeKey(MINECRAFT_PREFIX + "consumable");
             });
         }
     }
@@ -87,8 +87,8 @@ public class ConsumableComponent implements TerraConsumableComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "consumable");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "consumable");
+                nbt.removeKey(MINECRAFT_PREFIX + "consumable");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "consumable");
             });
         }
     }

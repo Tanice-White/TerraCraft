@@ -66,14 +66,13 @@ public class EnchantComponent implements TerraEnchantComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
                 if (enchantmentValue > 0) {
                     if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-                        component.getOrCreateCompound(MINECRAFT_PREFIX + "enchantable").setInteger("value", enchantmentValue);
+                        nbt.getOrCreateCompound(MINECRAFT_PREFIX + "enchantable").setInteger("value", enchantmentValue);
                     } else TerraCraftLogger.warning("Enchantable component is only supported in Minecraft 1.21.2 or newer versions");
                 }
                 if (enchantments != null && levels != null && !enchantments.isEmpty() && !levels.isEmpty()) {
-                    ReadWriteNBT subCompound = component.getOrCreateCompound(MINECRAFT_PREFIX + "enchantments");
+                    ReadWriteNBT subCompound = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "enchantments");
                     for (int i = 0; i < enchantments.size(); i++) {
                         subCompound.setInteger(enchantments.get(i).get(), levels.get(i));
                     }
@@ -82,7 +81,7 @@ public class EnchantComponent implements TerraEnchantComponent {
         } else {
             NBT.modify(item, nbt ->{
                 if (enchantments != null && levels != null && !enchantments.isEmpty() && !levels.isEmpty()) {
-                    ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(TAG_KEY).getCompoundList("Enchantments");
+                    ReadWriteNBTCompoundList compoundList = nbt.getCompoundList("Enchantments");
                     ReadWriteNBT compound;
                     for (int i = 0; i < enchantments.size(); i++) {
                         compound = compoundList.addCompound();
@@ -98,13 +97,12 @@ public class EnchantComponent implements TerraEnchantComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                component.removeKey(MINECRAFT_PREFIX + "enchantable");
-                component.removeKey(MINECRAFT_PREFIX + "enchantments");
+                nbt.removeKey(MINECRAFT_PREFIX + "enchantable");
+                nbt.removeKey(MINECRAFT_PREFIX + "enchantments");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("Enchantments");
+                nbt.removeKey("Enchantments");
             });
         }
     }
@@ -112,15 +110,14 @@ public class EnchantComponent implements TerraEnchantComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                component.removeKey(MINECRAFT_PREFIX + "enchantable");
-                component.getOrCreateCompound("!" + MINECRAFT_PREFIX + "enchantable");
-                component.removeKey(MINECRAFT_PREFIX + "enchantments");
-                component.getOrCreateCompound("!" + MINECRAFT_PREFIX + "enchantments");
+                nbt.removeKey(MINECRAFT_PREFIX + "enchantable");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "enchantable");
+                nbt.removeKey(MINECRAFT_PREFIX + "enchantments");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "enchantments");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("Enchantments");
+                nbt.removeKey("Enchantments");
             });
         }
     }

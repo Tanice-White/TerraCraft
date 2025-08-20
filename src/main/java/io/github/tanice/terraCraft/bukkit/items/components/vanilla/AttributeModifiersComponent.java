@@ -66,7 +66,7 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
         if (modifiers.isEmpty()) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "attribute_modifiers");
+                ReadWriteNBTCompoundList compoundList = nbt.getCompoundList(MINECRAFT_PREFIX + "attribute_modifiers");
                 ReadWriteNBT component;
                 for (AttributeModifierComponent modifier : modifiers) {
                     component = compoundList.addCompound();
@@ -91,7 +91,7 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(TAG_KEY).getCompoundList("AttributeModifiers");
+                ReadWriteNBTCompoundList compoundList = nbt.getCompoundList("AttributeModifiers");
                 ReadWriteNBT component;
                 for (AttributeModifierComponent modifier : modifiers) {
                     component = compoundList.addCompound();
@@ -114,11 +114,11 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "attribute_modifiers");
+                nbt.removeKey(MINECRAFT_PREFIX + "attribute_modifiers");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("AttributeModifiers");
+                nbt.removeKey("AttributeModifiers");
             });
         }
     }
@@ -126,12 +126,12 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "attribute_modifiers");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "attribute_modifiers");
+                nbt.removeKey(MINECRAFT_PREFIX + "attribute_modifiers");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "attribute_modifiers");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("AttributeModifiers");
+                nbt.removeKey("AttributeModifiers");
             });
         }
     }

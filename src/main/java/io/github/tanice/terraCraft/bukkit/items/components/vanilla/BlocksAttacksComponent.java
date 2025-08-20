@@ -87,7 +87,7 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "blocks_attacks");
+                ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "blocks_attacks");
                 if (blockDelaySeconds != null) component.setFloat("block_delay_seconds", blockDelaySeconds);
                 ReadWriteNBT bsCompound;
                 if (blockSound != null) {
@@ -129,7 +129,7 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "blocks_attacks");
+                nbt.removeKey(MINECRAFT_PREFIX + "blocks_attacks");
             });
         }
     }
@@ -137,8 +137,8 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "blocks_attacks");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "blocks_attacks");
+                nbt.removeKey(MINECRAFT_PREFIX + "blocks_attacks");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "blocks_attacks");
             });
         }
     }

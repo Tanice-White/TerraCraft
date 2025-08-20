@@ -40,12 +40,12 @@ public final class BuffProvider {
         String name = vars.getOrDefault(NAME, jsFileName);
         String displayName = vars.getOrDefault(DISPLAY_NAME, name);
         boolean enable = Boolean.parseBoolean(vars.getOrDefault(ENABLE, "true"));
-        int priority = Integer.parseInt(vars.getOrDefault(PRIORITY, String.valueOf(Integer.MAX_VALUE)));
+        int priority = (int) Double.parseDouble(vars.getOrDefault(PRIORITY, "2147483647"));
         double chance = Double.parseDouble(vars.getOrDefault(CHANCE, "1"));
-        int duration = Integer.parseInt(vars.getOrDefault(DURATION, "20"));
+        int duration = (int) Double.parseDouble(vars.getOrDefault(DURATION, "20"));
         AttributeActiveSection aas = EnumUtil.safeValueOf(AttributeActiveSection.class, vars.get(ACTIVE_SECTION), AttributeActiveSection.ERROR);
         BuffActiveCondition bac = EnumUtil.safeValueOf(BuffActiveCondition.class, vars.get(BUFF_ACTIVE_CONDITION), BuffActiveCondition.ALL);
-        int cd = Integer.parseInt(vars.getOrDefault(CD, "20"));
+        int cd = (int) Double.parseDouble(vars.getOrDefault(CD, "20"));
 
         if (checkAttributeActiveSection(name, aas)) {
             if (aas == AttributeActiveSection.TIMER) return Optional.of(new TimerBuff(jsFileName, name, displayName, enable, priority, chance, duration, bac, aas, cd));

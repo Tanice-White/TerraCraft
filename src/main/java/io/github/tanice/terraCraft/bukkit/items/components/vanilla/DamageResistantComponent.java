@@ -23,7 +23,7 @@ public class DamageResistantComponent implements TerraDamageResistantComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "damage_resistant").setString("types", "#" + resistantType.get());
+                nbt.getOrCreateCompound(MINECRAFT_PREFIX + "damage_resistant").setString("types", "#" + resistantType.get());
             });
         } else TerraCraftLogger.warning("damage resistant component is only supported in Minecraft 1.21.2 or newer versions");
     }
@@ -31,7 +31,7 @@ public class DamageResistantComponent implements TerraDamageResistantComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "damage_resistant");
+                nbt.removeKey(MINECRAFT_PREFIX + "damage_resistant");
             });
         }
     }
@@ -39,8 +39,8 @@ public class DamageResistantComponent implements TerraDamageResistantComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "damage_resistant");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "damage_resistant");
+                nbt.removeKey(MINECRAFT_PREFIX + "damage_resistant");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "damage_resistant");
             });
         }
     }

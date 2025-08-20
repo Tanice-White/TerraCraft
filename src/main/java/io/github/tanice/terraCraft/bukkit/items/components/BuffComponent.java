@@ -61,13 +61,13 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     public static BuffComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".buffs");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".buffs");
                 if (data == null) return null;
                 return formNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".buffs");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".buffs");
                 if (data == null) return null;
                 return formNBT(data);
             });
@@ -78,12 +78,12 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + "." + "buffs");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + "." + "buffs");
                 addToCompound(data);
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".buffs");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".buffs");
                 addToCompound(data);
             });
         }
@@ -106,7 +106,7 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("buffs");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("buffs");
             });
         }
     }

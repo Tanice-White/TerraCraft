@@ -40,7 +40,7 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT compound = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "use_remainder");
+                ReadWriteNBT compound = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "use_remainder");
                 compound.setString("id", itemId.get());
                 if (counts != null) compound.setInteger("count", counts);
                 if (component != null) compound.getOrCreateCompound("components").mergeCompound(component);
@@ -51,7 +51,7 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "use_remainder");
+                nbt.removeKey(MINECRAFT_PREFIX + "use_remainder");
             });
         }
     }
@@ -59,8 +59,8 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "use_remainder");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "use_remainder");
+                nbt.removeKey(MINECRAFT_PREFIX + "use_remainder");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "use_remainder");
             });
         }
     }

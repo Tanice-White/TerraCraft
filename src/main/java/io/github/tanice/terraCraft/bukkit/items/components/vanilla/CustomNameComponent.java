@@ -18,7 +18,7 @@ import java.util.Objects;
 public class CustomNameComponent implements TerraCustomNameComponent {
 
     @Nullable
-    private Component name;
+    private final Component name;
 
     public CustomNameComponent(@Nullable String name) {
         this.name = MiniMessageUtil.serialize(name);
@@ -29,13 +29,13 @@ public class CustomNameComponent implements TerraCustomNameComponent {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (name != null) {
-                    nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "custom_name", MiniMessageUtil.toNBTJson(name));
-                    nbt.getOrCreateCompound(COMPONENT_KEY).setString(MINECRAFT_PREFIX + "item_name", MiniMessageUtil.toNBTJson(name));
+                    nbt.setString(MINECRAFT_PREFIX + "custom_name", MiniMessageUtil.toNBTJson(name));
+                    nbt.setString(MINECRAFT_PREFIX + "item_name", MiniMessageUtil.toNBTJson(name));
                 }
             });
         } else {
             NBT.modify(item, nbt -> {
-                if (name != null) nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").setString("Name", MiniMessageUtil.toNBTJson(name));
+                if (name != null) nbt.getOrCreateCompound("display").setString("Name", MiniMessageUtil.toNBTJson(name));
             });
         }
     }
@@ -43,12 +43,12 @@ public class CustomNameComponent implements TerraCustomNameComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "custom_name");
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "item_name");
+                nbt.removeKey(MINECRAFT_PREFIX + "custom_name");
+                nbt.removeKey(MINECRAFT_PREFIX + "item_name");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").removeKey("Name");
+                nbt.getOrCreateCompound("display").removeKey("Name");
             });
         }
     }
@@ -56,12 +56,12 @@ public class CustomNameComponent implements TerraCustomNameComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "custom_name");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "item_name");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "custom_name");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "item_name");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").removeKey("Name");
+                nbt.getOrCreateCompound("display").removeKey("Name");
             });
         }
     }

@@ -13,7 +13,7 @@ public class GliderComponent implements TerraGliderComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "glider");
+                nbt.getOrCreateCompound(MINECRAFT_PREFIX + "glider");
             });
         } else TerraCraftLogger.warning("Glider component is only supported in Minecraft 1.21.2 or newer versions");
     }
@@ -21,7 +21,7 @@ public class GliderComponent implements TerraGliderComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "glider");
+                nbt.removeKey(MINECRAFT_PREFIX + "glider");
             });
         }
     }
@@ -29,8 +29,8 @@ public class GliderComponent implements TerraGliderComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "glider");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "glider");
+                nbt.removeKey(MINECRAFT_PREFIX + "glider");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "glider");
             });
         }
     }

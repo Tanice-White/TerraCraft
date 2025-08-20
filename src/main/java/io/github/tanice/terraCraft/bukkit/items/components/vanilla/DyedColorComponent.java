@@ -25,7 +25,7 @@ public class DyedColorComponent implements TerraDyedColor {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                if (color != null) nbt.getOrCreateCompound(COMPONENT_KEY).setInteger(MINECRAFT_PREFIX + "dyed_color", color);
+                if (color != null) nbt.setInteger(MINECRAFT_PREFIX + "dyed_color", color);
             });
         } else TerraCraftLogger.warning("Dye color component is only supported in Minecraft 1.20.5 or newer versions");
     }
@@ -33,7 +33,7 @@ public class DyedColorComponent implements TerraDyedColor {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "dyed_color");
+                nbt.removeKey(MINECRAFT_PREFIX + "dyed_color");
             });
         }
     }
@@ -41,8 +41,8 @@ public class DyedColorComponent implements TerraDyedColor {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "dyed_color");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "dyed_color");
+                nbt.removeKey(MINECRAFT_PREFIX + "dyed_color");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "dyed_color");
             });
         }
     }

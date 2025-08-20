@@ -1,7 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.items.components.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
-import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraDamageComponent;
@@ -44,15 +43,14 @@ public class DamageComponent implements TerraDamageComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                if (damage != null) component.setInteger(MINECRAFT_PREFIX + "damage", damage);
-                if (maxDamage != null) component.setInteger(MINECRAFT_PREFIX + "max_damage", maxDamage);
-                if (unbreakable != null && unbreakable) component.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");
+                if (damage != null) nbt.setInteger(MINECRAFT_PREFIX + "damage", damage);
+                if (maxDamage != null) nbt.setInteger(MINECRAFT_PREFIX + "max_damage", maxDamage);
+                if (unbreakable != null && unbreakable) nbt.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");
             });
         } else {
             NBT.modify(item, nbt -> {
-                if (unbreakable != null && unbreakable) nbt.getOrCreateCompound(TAG_KEY).setBoolean("Unbreakable", true);
-                if (damage != null) nbt.getOrCreateCompound(TAG_KEY).setInteger("Damage", damage);
+                if (unbreakable != null && unbreakable) nbt.setBoolean("Unbreakable", true);
+                if (damage != null) nbt.setInteger("Damage", damage);
                 if (maxDamage != null) TerraCraftLogger.warning("Versions before 1.20.5 do not support setting max_damage. Only damage is configurable. Max damage uses default.");
             });
         }
@@ -61,15 +59,14 @@ public class DamageComponent implements TerraDamageComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                component.removeKey(MINECRAFT_PREFIX + "damage");
-                component.removeKey(MINECRAFT_PREFIX + "max_damage");
-                component.removeKey(MINECRAFT_PREFIX + "unbreakable");
+                nbt.removeKey(MINECRAFT_PREFIX + "damage");
+                nbt.removeKey(MINECRAFT_PREFIX + "max_damage");
+                nbt.removeKey(MINECRAFT_PREFIX + "unbreakable");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("Unbreakable");
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("Damage");
+                nbt.removeKey("Unbreakable");
+                nbt.removeKey("Damage");
             });
         }
     }
@@ -77,18 +74,17 @@ public class DamageComponent implements TerraDamageComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
-                component.removeKey(MINECRAFT_PREFIX + "damage");
-                component.removeKey(MINECRAFT_PREFIX + "max_damage");
-                component.removeKey(MINECRAFT_PREFIX + "unbreakable");
-                component.getOrCreateCompound("!" + MINECRAFT_PREFIX + "damage");
-                component.getOrCreateCompound("!" + MINECRAFT_PREFIX + "max_damage");
-                component.getOrCreateCompound("!" + MINECRAFT_PREFIX + "unbreakable");
+                nbt.removeKey(MINECRAFT_PREFIX + "damage");
+                nbt.removeKey(MINECRAFT_PREFIX + "max_damage");
+                nbt.removeKey(MINECRAFT_PREFIX + "unbreakable");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "damage");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "max_damage");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "unbreakable");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("Unbreakable");
-                nbt.getOrCreateCompound(TAG_KEY).removeKey("Damage");
+                nbt.removeKey("Unbreakable");
+                nbt.removeKey("Damage");
             });
         }
     }

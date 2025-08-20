@@ -62,7 +62,7 @@ public class PotionComponent implements TerraPotionComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt ->{
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "potion_contents");
+                ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "potion_contents");
                 if (color != null) component.setInteger("custom_color", color);
                 if (!potions.isEmpty()) {
                     ReadWriteNBTCompoundList compoundList = component.getCompoundList("custom_effects");
@@ -72,7 +72,7 @@ public class PotionComponent implements TerraPotionComponent {
                 else TerraCraftLogger.warning("custom name in Potion contents component is only supported in Minecraft 1.21.2 or newer versions");
                 if (id != null) component.setString("potion", id.get());
                 if (durationScale != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
-                    nbt.getOrCreateCompound(COMPONENT_KEY).setFloat(MINECRAFT_PREFIX + "potion_duration_scale", durationScale);
+                    nbt.setFloat(MINECRAFT_PREFIX + "potion_duration_scale", durationScale);
 
                 } else TerraCraftLogger.warning("Potion duration scale component is only supported in Minecraft 1.21.5 or newer versions");
             });
@@ -83,8 +83,8 @@ public class PotionComponent implements TerraPotionComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "potion_contents");
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "potion_duration_scale");
+                nbt.removeKey(MINECRAFT_PREFIX + "potion_contents");
+                nbt.removeKey(MINECRAFT_PREFIX + "potion_duration_scale");
             });
         }
     }
@@ -92,10 +92,10 @@ public class PotionComponent implements TerraPotionComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "potion_contents");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "potion_contents");
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "potion_duration_scale");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "potion_duration_scale");
+                nbt.removeKey(MINECRAFT_PREFIX + "potion_contents");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "potion_contents");
+                nbt.removeKey(MINECRAFT_PREFIX + "potion_duration_scale");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "potion_duration_scale");
             });
         }
     }

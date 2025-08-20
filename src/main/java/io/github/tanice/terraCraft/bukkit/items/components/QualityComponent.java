@@ -44,13 +44,13 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     public static QualityComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".quality");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".quality");
                 if (data == null) return null;
                 return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".quality");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".quality");
                 if (data == null) return null;
                 return fromNBT(data);
             });
@@ -61,12 +61,12 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".quality");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".quality");
                 addToCompound(data);
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".quality");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".quality");
                 addToCompound(data);
             });
         }
@@ -85,11 +85,11 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("quality");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("quality");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("quality");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("quality");
             });
         }
     }

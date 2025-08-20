@@ -42,13 +42,13 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     public static DamageTypeComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".damage_from");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".damage_from");
                 if (data == null) return null;
                 return new DamageTypeComponent(data.getString("type"), new ComponentState(data.getByte("state")));
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".damage_from");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".damage_from");
                 if (data == null) return null;
                 return new DamageTypeComponent(data.getString("type"), new ComponentState(data.getByte("state")));
             });
@@ -59,13 +59,13 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".damage_from");
+                ReadWriteNBT component = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".damage_from");
                 component.setString("type", type.name().toLowerCase());
                 component.setByte("state", state.toNbtByte());
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT component = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".damage_from");
+                ReadWriteNBT component = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".damage_from");
                 component.setString("type", type.name().toLowerCase());
                 component.setByte("state", state.toNbtByte());
             });
@@ -85,11 +85,11 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("damage_from");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("damage_from");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("damage_from");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("damage_from");
             });
         }
     }

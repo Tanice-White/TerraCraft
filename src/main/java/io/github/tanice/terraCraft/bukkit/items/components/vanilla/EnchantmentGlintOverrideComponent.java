@@ -23,7 +23,7 @@ public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintO
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                if(glint != null) nbt.getOrCreateCompound(COMPONENT_KEY).setBoolean(MINECRAFT_PREFIX + "enchantment_glint_override", glint);
+                if(glint != null) nbt.setBoolean(MINECRAFT_PREFIX + "enchantment_glint_override", glint);
             });
         } else TerraCraftLogger.warning("Enchantment glint override component is only supported in Minecraft 1.20.5 or newer versions");
     }
@@ -31,7 +31,7 @@ public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintO
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "enchantment_glint_override");
+                nbt.removeKey(MINECRAFT_PREFIX + "enchantment_glint_override");
             });
         }
     }
@@ -39,8 +39,8 @@ public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintO
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "enchantment_glint_override");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "enchantment_glint_override");
+                nbt.removeKey(MINECRAFT_PREFIX + "enchantment_glint_override");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "enchantment_glint_override");
             });
         }
     }

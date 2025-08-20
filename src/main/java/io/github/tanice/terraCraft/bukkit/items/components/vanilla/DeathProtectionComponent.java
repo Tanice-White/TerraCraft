@@ -39,7 +39,7 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt ->{
                 if (effects.isEmpty()) return;
-                ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "death_protection").getCompoundList("death_effects");
+                ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "death_protection").getCompoundList("death_effects");
                 ReadWriteNBT component;
                 for (NBTEffect effect : effects) {
                     component = compoundList.addCompound();
@@ -52,7 +52,7 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "death_protection");
+                nbt.removeKey(MINECRAFT_PREFIX + "death_protection");
             });
         }
     }
@@ -60,8 +60,8 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "death_protection");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "death_protection");
+                nbt.removeKey(MINECRAFT_PREFIX + "death_protection");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "death_protection");
             });
         }
     }

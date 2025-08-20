@@ -35,7 +35,7 @@ public class WeaponComponent implements TerraWeaponComponent {
     public void apply(ItemStack item) {
         if (disableBlockingForSeconds == null && itemDamagePerAttack == null) return;
         NBT.modifyComponents(item, nbt -> {
-            ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "weapon");
+            ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "weapon");
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
                 if (disableBlockingForSeconds != null) component.setFloat("disable_blocking_for_seconds", disableBlockingForSeconds);
                 if (itemDamagePerAttack != null) component.setInteger("damage_per_attack", itemDamagePerAttack);
@@ -50,7 +50,7 @@ public class WeaponComponent implements TerraWeaponComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "weapon");
+                nbt.removeKey(MINECRAFT_PREFIX + "weapon");
             });
         }
     }
@@ -58,8 +58,8 @@ public class WeaponComponent implements TerraWeaponComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "weapon");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "weapon");
+                nbt.removeKey(MINECRAFT_PREFIX + "weapon");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "weapon");
             });
         }
     }

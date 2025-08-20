@@ -77,7 +77,7 @@ public class EquippableComponent implements TerraEquippableComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "equippable");
+                ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "equippable");
 
                 if (allowedEntities != null && !allowedEntities.isEmpty())
                     component.getStringList("allowed_entities").addAll(allowedEntities.stream().map(TerraNamespaceKey::get).toList());
@@ -123,7 +123,7 @@ public class EquippableComponent implements TerraEquippableComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "equippable");
+                nbt.removeKey(MINECRAFT_PREFIX + "equippable");
             });
         }
     }
@@ -131,8 +131,8 @@ public class EquippableComponent implements TerraEquippableComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "equippable");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "equippable");
+                nbt.removeKey(MINECRAFT_PREFIX + "equippable");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "equippable");
             });
         }
     }

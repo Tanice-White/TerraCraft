@@ -48,13 +48,13 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     public static LevelComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");
                 if (data == null) return null;
                 return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".level");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".level");
                 if (data == null) return null;
                 return fromNBT(data);
             });
@@ -65,12 +65,12 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");
                 addToCompound(data);
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY + ".level");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".level");
                 addToCompound(data);
             });
         }
@@ -89,11 +89,11 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("level");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("level");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY).removeKey("level");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("level");
             });
         }
     }

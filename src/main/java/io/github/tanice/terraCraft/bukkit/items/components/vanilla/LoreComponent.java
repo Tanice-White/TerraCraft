@@ -29,14 +29,14 @@ public class LoreComponent implements TerraLoreComponent {
         if (lore == null) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt ->{
-                ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(COMPONENT_KEY).getCompoundList(MINECRAFT_PREFIX + "lore");
+                ReadWriteNBTCompoundList compoundList = nbt.getCompoundList(MINECRAFT_PREFIX + "lore");
                 for (Component c : lore) {
                     compoundList.addCompound().mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(c)));
                 }
             });
         } else {
             NBT.modify(item, nbt ->{
-                ReadWriteNBTList<String> loreList = nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").getStringList("lore");
+                ReadWriteNBTList<String> loreList = nbt.getOrCreateCompound("display").getStringList("lore");
                 for (Component c : lore) loreList.add(MiniMessageUtil.toNBTJson(c));
             });
         }
@@ -45,11 +45,11 @@ public class LoreComponent implements TerraLoreComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "lore");
+                nbt.removeKey(MINECRAFT_PREFIX + "lore");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").removeKey("lore");
+                nbt.getOrCreateCompound("display").removeKey("lore");
             });
         }
     }
@@ -57,12 +57,12 @@ public class LoreComponent implements TerraLoreComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "lore");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "lore");
+                nbt.removeKey(MINECRAFT_PREFIX + "lore");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "lore");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(TAG_KEY).getOrCreateCompound("display").removeKey("lore");
+                nbt.getOrCreateCompound("display").removeKey("lore");
             });
         }
     }

@@ -37,7 +37,7 @@ public class FoodComponent implements TerraFoodComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt ->{
-                ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "food");
+                ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "food");
                 if (canAlwaysEat != null) component.setBoolean("can_always_eat", canAlwaysEat);
                 component.setInteger("nutrition", nutrition);
                 component.setFloat("saturation", saturation);
@@ -48,7 +48,7 @@ public class FoodComponent implements TerraFoodComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "food");
+                nbt.removeKey(MINECRAFT_PREFIX + "food");
             });
         }
     }
@@ -56,8 +56,8 @@ public class FoodComponent implements TerraFoodComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "food");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "food");
+                nbt.removeKey(MINECRAFT_PREFIX + "food");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "food");
             });
         }
     }

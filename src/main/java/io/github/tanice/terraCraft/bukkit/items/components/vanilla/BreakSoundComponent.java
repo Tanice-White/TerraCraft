@@ -30,7 +30,7 @@ public class BreakSoundComponent implements TerraBreakSoundComponent {
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
-                if (sound != null) sound.addToCompound(nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound(MINECRAFT_PREFIX + "break_sound"));
+                if (sound != null) sound.addToCompound(nbt.getOrCreateCompound(MINECRAFT_PREFIX + "break_sound"));
             });
         } else TerraCraftLogger.warning("break sound component is only supported in Minecraft 1.21.5 or newer versions");
     }
@@ -38,7 +38,7 @@ public class BreakSoundComponent implements TerraBreakSoundComponent {
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "break_sound");
+                nbt.removeKey(MINECRAFT_PREFIX + "break_sound");
             });
         }
     }
@@ -46,8 +46,8 @@ public class BreakSoundComponent implements TerraBreakSoundComponent {
     public static void remove(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.getOrCreateCompound(COMPONENT_KEY).removeKey(MINECRAFT_PREFIX + "break_sound");
-                nbt.getOrCreateCompound(COMPONENT_KEY).getOrCreateCompound("!" + MINECRAFT_PREFIX + "break_sound");
+                nbt.removeKey(MINECRAFT_PREFIX + "break_sound");
+                nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "break_sound");
             });
         }
     }

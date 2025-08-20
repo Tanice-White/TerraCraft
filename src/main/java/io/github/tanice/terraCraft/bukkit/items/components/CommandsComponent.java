@@ -56,7 +56,7 @@ public class CommandsComponent extends AbstractItemComponent implements TerraCom
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)){
             NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".commands");
@@ -70,6 +70,16 @@ public class CommandsComponent extends AbstractItemComponent implements TerraCom
                 component.getStringList("content").addAll(commands);
             });
         }
+    }
+
+    @Override
+    public void callEvent() {
+
+    }
+
+    @Override
+    public void updateLore() {
+
     }
 
     public static void clear(TerraBaseItem item) {
@@ -94,8 +104,8 @@ public class CommandsComponent extends AbstractItemComponent implements TerraCom
     }
 
     @Override
-    public @Nullable List<String> getCommands() {
-        return this.commands;
+    public List<String> getCommands() {
+        return this.commands == null ? List.of() : this.commands;
     }
 
     @Override

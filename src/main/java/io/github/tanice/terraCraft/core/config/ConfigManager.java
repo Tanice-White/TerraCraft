@@ -25,7 +25,6 @@ public final class ConfigManager implements TerraConfigManager {
     private double version;
     private boolean debug;
     private boolean generateExamples;
-    private boolean cancelGenericParticles;
     private boolean generateDamageIndicator;
     private String defaultPrefix;
     private String criticalPrefix;
@@ -73,11 +72,6 @@ public final class ConfigManager implements TerraConfigManager {
     @Override
     public boolean shouldGenerateExamples() {
         return this.generateExamples;
-    }
-
-    @Override
-    public boolean shouldCancelGenericParticles() {
-        return this.cancelGenericParticles;
     }
 
     @Override
@@ -202,7 +196,6 @@ public final class ConfigManager implements TerraConfigManager {
         version = cfg.getDouble("VERSION", -1);
         debug = cfg.getBoolean("DEBUG", false);
         generateExamples = cfg.getBoolean("generate_examples", true);
-        cancelGenericParticles = cfg.getBoolean("cancel_generic_particles", false);
         generateDamageIndicator = cfg.getBoolean("generate_damage_indicator", false);
         defaultPrefix = cfg.getString("default_prefix", "§6");
         criticalPrefix = cfg.getString("critical_prefix", "§4");

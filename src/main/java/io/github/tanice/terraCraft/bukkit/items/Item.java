@@ -25,7 +25,7 @@ public class Item extends AbstractItem implements TerraItem {
     @Nullable
     private GemHolderComponent gemHolderComponent;
 
-    private final InnerNameComponent innerNameComponent;
+    private final TerraNameComponent terraNameComponent;
     @Nullable
     private LevelComponent levelComponent;
     @Nullable
@@ -85,7 +85,7 @@ public class Item extends AbstractItem implements TerraItem {
             if (sub != null) skillComponent = new SkillComponent(sub);
         }
 
-        this.innerNameComponent = new InnerNameComponent(id);
+        this.terraNameComponent = new TerraNameComponent(id);
         this.updateCodeComponent = new UpdateCodeComponent(this.hashCode());
     }
 
@@ -98,8 +98,8 @@ public class Item extends AbstractItem implements TerraItem {
     public void selfUpdate(ItemStack old) {
         if (UpdateCodeComponent.from(old).getCode() == this.updateCodeComponent.getCode()) return;
         super.selfUpdate(old);
-        // innerName 不能被更改
-        // updateCode 必须被更改
+        /* innerName 不能被更改 */
+        /* updateCode 必须被更改 */
         updateCodeComponent.apply(old);
         if (buffComponent != null && buffComponent.canUpdate()) buffComponent.updatePartial().apply(old);
         if (commandsComponent != null && commandsComponent.canUpdate()) commandsComponent.updatePartial().apply(old);
@@ -151,7 +151,7 @@ public class Item extends AbstractItem implements TerraItem {
 
     @Override
     public TerraInnerNameComponent getInnerNameComponent() {
-        return innerNameComponent;
+        return terraNameComponent;
     }
 
     @Override
@@ -186,7 +186,7 @@ public class Item extends AbstractItem implements TerraItem {
     @Override
     public int hashCode() {
         return Objects.hash(
-                super.hashCode(), name, innerNameComponent,
+                super.hashCode(), name, terraNameComponent,
                 buffComponent, commandsComponent, damageTypeComponent, durabilityComponent, gemComponent,
                 gemHolderComponent, levelComponent, metaComponent, qualityComponent, skillComponent
         );

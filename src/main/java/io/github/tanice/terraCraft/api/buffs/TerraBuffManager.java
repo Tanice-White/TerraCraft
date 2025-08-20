@@ -55,38 +55,20 @@ public interface TerraBuffManager {
      */
     void saveAllPlayerRecords();
 
-    /**
-     * 为实体激活非永久的对应buff
-     *
-     * @param entity 目标实体
-     * @param buff buff实体
-     */
+    void activateBuff(LivingEntity entity, String buffName);
+
+    void activateBuff(LivingEntity entity, String buffName, boolean isPermanent);
+
     void activateBuff(LivingEntity entity, TerraBaseBuff buff);
 
-    /**
-     * 为实体激活对应buff
-     *
-     * @param entity      目标实体
-     * @param buff        buff实体
-     * @param isPermanent 此buff是否是永久的
-     */
     void activateBuff(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent);
 
-    /**
-     * 为玩家激活一组非永久的buff
-     *
-     * @param entity 目标实体
-     * @param buffs  buff实体集合
-     */
+    void activateBuffs(LivingEntity entity, List<String> buffNames);
+
+    void activateBuffs(LivingEntity entity, List<String> buffNames, boolean isPermanent);
+
     void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs);
 
-    /**
-     * 为玩家激活一组buff
-     *
-     * @param entity      目标实体
-     * @param buffs       buff实体集合
-     * @param isPermanent 此组buff是否都是是永久的
-     */
     void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean isPermanent);
 
     /**

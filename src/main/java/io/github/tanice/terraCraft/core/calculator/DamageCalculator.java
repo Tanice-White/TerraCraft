@@ -15,6 +15,8 @@ import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.items.Item;
+import io.github.tanice.terraCraft.bukkit.items.components.BuffComponent;
+import io.github.tanice.terraCraft.bukkit.items.components.DamageTypeComponent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
@@ -119,12 +121,8 @@ public final class DamageCalculator {
 
         EntityEquipment equipment = attacker.getEquipment();
         if (equipment == null) return DamageFromType.OTHER;
-
-        ItemStack mainHandItem = equipment.getItemInMainHand();
-        TerraBaseItem bit = TerraBukkitAdapter.itemAdapt(mainHandItem);
-        if (bit instanceof Item it) return it.getDamageType();
-
-        return DamageFromType.OTHER;
+        DamageTypeComponent damageTypeComponent = DamageTypeComponent.from(equipment.getItemInMainHand());
+        return damageTypeComponent == null ? DamageFromType.OTHER : damageTypeComponent.getType();
     }
 
     private static void calculateBaseDamage(TerraDamageProtocol protocol, DamageFromType type) {
@@ -249,16 +247,21 @@ public final class DamageCalculator {
     private static void activateBuffForAttackerAndDefender(@Nullable LivingEntity attacker, LivingEntity defender) {
         TerraBuffManager buffManager = TerraCraftBukkit.inst().getBuffManager();
         /* attacker 给 defender 增加 buff */
+        BuffComponent buffComponent;
         if (attacker != null) {
-            for (TerraItem i : EquipmentUtil.getActiveEquipmentItem(attacker)){
-                buffManager.activateBuffs(attacker, i.getAttackBuffsForSelf());
-                buffManager.activateBuffs(defender, i.getAttackBuffsForOther());
+            for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(attacker)){
+                buffComponent = BuffComponent.from(item);
+                if (buffComponent == null) continue;
+                buffManager.activateBuffs(attacker, buffComponent.getAttackSelf());
+                buffManager.activateBuffs(defender, buffComponent.getAttack());
             }
         }
         /* defender 给 attacker 增加 buff */
-        for (TerraItem i : EquipmentUtil.getActiveEquipmentItem(defender)){
-            buffManager.activateBuffs(defender, i.getDefenseBuffsForSelf());
-            if (attacker != null) buffManager.activateBuffs(attacker, i.getDefenseBuffsForOther());
+        for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(defender)){
+            buffComponent = BuffComponent.from(item);
+            if (buffComponent == null) continue;
+            buffManager.activateBuffs(defender, buffComponent.getDefenseSelf());
+            if (attacker != null) buffManager.activateBuffs(attacker, buffComponent.getDefense());
         }
     }
 }

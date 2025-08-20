@@ -1,12 +1,12 @@
 package io.github.tanice.terraCraft.bukkit.utils;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.items.components.TerraDurabilityComponent;
+import io.github.tanice.terraCraft.bukkit.events.load.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.items.components.DurabilityComponent;
-import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
-import io.github.tanice.terraCraft.bukkit.utils.attributes.AttributeUtil;
+import io.github.tanice.terraCraft.bukkit.items.components.MetaComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -16,135 +16,43 @@ import java.util.*;
 public final class EquipmentUtil {
 
     /**
-     * 获取实体装备的内部 Item
+     * 获取实体装备(已损坏的不计入)
      */
-    public static List<TerraItem> getActiveEquipmentItem(LivingEntity living) {
-        EntityEquipment equip = living.getEquipment();
+    public static List<ItemStack> getActiveEquipmentItemStack(LivingEntity entity) {
+        EntityEquipment equip = entity.getEquipment();
         if (equip == null) return List.of();
-
-        List<TerraItem> res = new ArrayList<>(12);
-
-        ItemStack it;
-        TerraBaseItem bit;
-        it = equip.getItemInMainHand();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem i && SlotUtil.isMainHand(i.getSlotAsString()) && isValidItem(it)) {
-            res.add(i);
-        }
-
-        it = equip.getItemInOffHand();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem i && SlotUtil.isOffHand(i.getSlotAsString()) && isValidItem(it)) {
-            res.add(i);
-        }
-
-        it = equip.getHelmet();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem i && SlotUtil.isHelmet(i.getSlotAsString()) && isValidItem(it)) {
-            res.add(i);
-        }
-
-        it = equip.getChestplate();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem i && SlotUtil.isChestplate(i.getSlotAsString()) && isValidItem(it)) {
-            res.add(i);
-        }
-
-        it = equip.getLeggings();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem i && SlotUtil.isLeggings(i.getSlotAsString()) && isValidItem(it)) {
-            res.add(i);
-        }
-
-        it = equip.getBoots();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem i && SlotUtil.isBoots(i.getSlotAsString()) && isValidItem(it)) {
-            res.add(i);
-        }
-
+        List<ItemStack> res = new ArrayList<>(12);
+        ItemStack item;
+        item = equip.getItemInMainHand();
+        if (validDurability(item)) res.add(item);
+        item = equip.getItemInOffHand();
+        if (validDurability(item)) res.add(item);
+        item = equip.getHelmet();
+        if (validDurability(item)) res.add(item);
+        item = equip.getChestplate();
+        if (validDurability(item)) res.add(item);
+        item = equip.getLeggings();
+        if (validDurability(item)) res.add(item);
+        item = equip.getBoots();
+        if (validDurability(item)) res.add(item);
         return res;
     }
 
     /**
      * 获取实体装备的内部 meta
-     * TODO 算上附魔
      */
-    public static List<TerraCalculableMeta> getActiveEquipmentMeta(LivingEntity living) {
-        EntityEquipment equip = living.getEquipment();
-        if (equip == null) return List.of();
-
+    public static List<TerraCalculableMeta> getActiveEquipmentMeta(LivingEntity entity) {
         List<TerraCalculableMeta> res = new ArrayList<>(12);
-        ItemStack it;
-        TerraBaseItem bit;
-        TerraCalculableMeta tMeta;
-
-        it = equip.getItemInMainHand();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem terraItem) {
-            if (SlotUtil.isMainHand(terraItem.getSlotAsString()) && isValidItem(it)) {
-                res.add(AttributeUtil.getMergedMeta(terraItem, it));
-            }
-            /* 非插件物品兼容 */
-        } else {
-            tMeta = TerraBukkitAdapter.metaAdapt(it);
-            if (tMeta != null) res.add(tMeta);
+        MetaComponent metaComponent;
+        for (ItemStack item : getActiveEquipmentItemStack(entity)) {
+            metaComponent = MetaComponent.from(item);
+            if (metaComponent == null) {
+                TerraItemMetaLoadEvent event = new TerraItemMetaLoadEvent(item);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.getMeta() != null) res.add(event.getMeta());
+                // TODO 否则用原版物品默认对应的meta
+            } else res.add(metaComponent.getMeta());
         }
-
-        it = equip.getItemInOffHand();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem terraItem) {
-            if (SlotUtil.isMainHand(terraItem.getSlotAsString()) && isValidItem(it)) {
-                res.add(AttributeUtil.getMergedMeta(terraItem, it));
-            }
-        } else {
-            tMeta = TerraBukkitAdapter.metaAdapt(it);
-            if (tMeta != null) res.add(tMeta);
-        }
-
-        it = equip.getHelmet();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem terraItem) {
-            if (SlotUtil.isMainHand(terraItem.getSlotAsString()) && isValidItem(it)) {
-                res.add(AttributeUtil.getMergedMeta(terraItem, it));
-            }
-        } else {
-            tMeta = TerraBukkitAdapter.metaAdapt(it);
-            if (tMeta != null) res.add(tMeta);
-        }
-
-        it = equip.getChestplate();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem terraItem) {
-            if (SlotUtil.isMainHand(terraItem.getSlotAsString()) && isValidItem(it)) {
-                res.add(AttributeUtil.getMergedMeta(terraItem, it));
-            }
-        } else {
-            tMeta = TerraBukkitAdapter.metaAdapt(it);
-            if (tMeta != null) res.add(tMeta);
-        }
-
-        it = equip.getLeggings();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem terraItem) {
-            if (SlotUtil.isMainHand(terraItem.getSlotAsString()) && isValidItem(it)) {
-                res.add(AttributeUtil.getMergedMeta(terraItem, it));
-            }
-        } else {
-            tMeta = TerraBukkitAdapter.metaAdapt(it);
-            if (tMeta != null) res.add(tMeta);
-        }
-
-        it = equip.getBoots();
-        bit = TerraBukkitAdapter.itemAdapt(it);
-        if (bit instanceof TerraItem terraItem) {
-            if (SlotUtil.isMainHand(terraItem.getSlotAsString()) && isValidItem(it)) {
-                res.add(AttributeUtil.getMergedMeta(terraItem, it));
-            }
-        } else {
-            tMeta = TerraBukkitAdapter.metaAdapt(it);
-            if (tMeta != null) res.add(tMeta);
-        }
-
         return res;
     }
 
@@ -162,9 +70,8 @@ public final class EquipmentUtil {
     /**
      * 通过耐久判断物品是否需要计入属性
      */
-    public static boolean isValidItem(ItemStack item) {
+    public static boolean validDurability(ItemStack item) {
         TerraDurabilityComponent durabilityComponent = DurabilityComponent.from(item);
-        if (durabilityComponent == null) return true;
-        return durabilityComponent.broken();
+        return durabilityComponent == null || !durabilityComponent.broken();
     }
 }

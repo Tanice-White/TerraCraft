@@ -75,7 +75,7 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + "." + "buffs");
@@ -87,6 +87,16 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
                 addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void callEvent() {
+
+    }
+
+    @Override
+    public void updateLore() {
+
     }
 
     public static void clear(TerraBaseItem item) {
@@ -106,8 +116,8 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public @Nullable List<String> getHold() {
-        return this.hold;
+    public List<String> getHold() {
+        return this.hold == null ? List.of() : this.hold;
     }
 
     @Override
@@ -116,8 +126,8 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public @Nullable List<String> getAttackSelf() {
-        return this.attackSelf;
+    public List<String> getAttackSelf() {
+        return this.attackSelf == null ? List.of() : this.attackSelf;
     }
 
     @Override
@@ -126,8 +136,8 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public @Nullable List<String> getAttack() {
-        return this.attack;
+    public List<String> getAttack() {
+        return this.attack == null ? List.of() : this.attack;
     }
 
     @Override
@@ -136,8 +146,8 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public @Nullable List<String> getDefenseSelf() {
-        return this.defenseSelf;
+    public List<String> getDefenseSelf() {
+        return this.defenseSelf == null ? List.of() : this.defenseSelf;
     }
 
     @Override
@@ -146,8 +156,8 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public @Nullable List<String> getDefense() {
-        return this.defense;
+    public List<String> getDefense() {
+        return this.defense == null ? List.of() : this.defense;
     }
 
     @Override

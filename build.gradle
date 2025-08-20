@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id 'com.github.johnrengelman.shadow' version '8.1.1' // 打包自带依赖
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'io.github.tanice'
@@ -24,9 +24,6 @@ repositories {
         name = "CodeMC"
         url = uri("https://repo.codemc.io/repository/maven-public/")
     }
-    // packageEvents
-    maven { url = "https://repo.codemc.io/repository/maven-releases/" }
-    maven { url = "https://repo.codemc.io/repository/maven-snapshots/" }
 }
 
 dependencies {
@@ -46,19 +43,17 @@ dependencies {
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.1")
     // mm
     compileOnly("io.lumine:Mythic-Dist:5.9.0")
-    // packageEvents
-    compileOnly("com.github.retrooper:packetevents-spigot:2.9.3")
 }
 
 shadowJar {
-    // 重定位依赖包，避免与其他插件冲突
-    relocate 'com.fasterxml.jackson', 'io.github.tanice.terracraft.libs.jackson'
-    relocate 'org.graalvm', 'io.github.tanice.terracraft.libs.graalvm'
-    relocate 'net.kyori', 'io.github.tanice.terracraft.libs.kyori'
-    relocate 'org.ow2.asm', 'io.github.tanice.terracraft.libs.asm'
-
-    // 输出的 JAR 文件名
-    archiveFileName.set("TerraCraft-${version}-shadow.jar")
+//    // 重定位依赖包，避免与其他插件冲突
+//    relocate 'com.fasterxml.jackson', 'io.github.tanice.terracraft.libs.jackson'
+//    relocate 'org.graalvm', 'io.github.tanice.terracraft.libs.graalvm'
+//    relocate 'net.kyori', 'io.github.tanice.terracraft.libs.kyori'
+//    relocate 'org.ow2.asm', 'io.github.tanice.terracraft.libs.asm'
+//
+//    // 输出的 JAR 文件名
+//    archiveFileName.set("TerraCraft-${version}-shadow.jar")
 }
 
 tasks {

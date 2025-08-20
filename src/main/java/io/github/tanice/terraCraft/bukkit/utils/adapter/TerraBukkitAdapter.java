@@ -8,7 +8,7 @@ import io.github.tanice.terraCraft.api.items.components.TerraMetaComponent;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.load.TerraEnchantMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.events.load.TerraItemMetaLoadEvent;
-import io.github.tanice.terraCraft.bukkit.items.components.InnerNameComponent;
+import io.github.tanice.terraCraft.bukkit.items.components.TerraNameComponent;
 import io.github.tanice.terraCraft.bukkit.items.components.MetaComponent;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +22,7 @@ public final class TerraBukkitAdapter {
      */
     public static TerraBaseItem itemAdapt(ItemStack item) {
         if (item == null) return null;
-        TerraInnerNameComponent innerNameComponent = InnerNameComponent.from(item);
+        TerraInnerNameComponent innerNameComponent = TerraNameComponent.from(item);
         if (innerNameComponent == null) return null;
         return TerraCraftBukkit.inst().getItemManager().getItem(innerNameComponent.getName()).orElse(null);
     }

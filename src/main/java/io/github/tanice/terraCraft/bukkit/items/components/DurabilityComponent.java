@@ -68,7 +68,7 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
 
 
     @Override
-    public void apply(ItemStack item) {
+    public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(COMPONENT_KEY);
@@ -86,6 +86,16 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
                 addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void callEvent() {
+
+    }
+
+    @Override
+    public void updateLore() {
+
     }
 
     public static void clear(TerraBaseItem item) {

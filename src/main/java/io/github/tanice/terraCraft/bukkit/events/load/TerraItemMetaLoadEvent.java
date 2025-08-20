@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.events.load;
 
+import io.github.tanice.terraCraft.bukkit.events.AbstractTerraMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import org.bukkit.inventory.ItemStack;
 
@@ -7,9 +8,9 @@ import org.bukkit.inventory.ItemStack;
 public class TerraItemMetaLoadEvent extends AbstractTerraMetaLoadEvent {
     private final ItemStack BukkitItem;
 
-    public TerraItemMetaLoadEvent(ItemStack BukkitItem) {
+    public TerraItemMetaLoadEvent(ItemStack item) {
         super();
-        this.BukkitItem = BukkitItem;
+        this.BukkitItem = item;
     }
 
     public ItemStack getBukkitItem() {

@@ -12,12 +12,10 @@ public class TerraItemUpdateEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
-    private final TerraBaseItem terraBaseItem;
     private final ItemStack pre;
 
-    public TerraItemUpdateEvent(Player player, TerraBaseItem baseItem, ItemStack pre) {
+    public TerraItemUpdateEvent(Player player, ItemStack pre) {
         this.player = player;
-        this.terraBaseItem = baseItem;
         this.pre = pre;
     }
 
@@ -30,10 +28,6 @@ public class TerraItemUpdateEvent extends Event {
 
     public Player getPlayer() {
         return this.player;
-    }
-
-    public TerraBaseItem getTerraBaseItem() {
-        return this.terraBaseItem;
     }
 
     public ItemStack getItemStack() {

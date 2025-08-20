@@ -1,25 +1,26 @@
 package io.github.tanice.terraCraft.bukkit.listeners;
 
-import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.TerraItemManager;
-import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
+import io.github.tanice.terraCraft.api.items.components.TerraGemComponent;
+import io.github.tanice.terraCraft.api.items.components.TerraGemHolderComponent;
+import io.github.tanice.terraCraft.api.items.components.TerraInnerNameComponent;
+import io.github.tanice.terraCraft.api.items.components.TerraLevelComponent;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.events.TerraItemUpdateEvent;
-import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
+import io.github.tanice.terraCraft.bukkit.items.components.*;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
+import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class ItemListener {
@@ -28,33 +29,22 @@ public class ItemListener {
     public ItemListener() {
         random = new Random();
 
-        /* TODO 可食用物  根据版本实现 */
-        TerraEvents.subscribe(PlayerInteractEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
+        /* 物品消耗 */
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
+            TerraEvents.subscribe(PlayerItemConsumeEvent.class).priority(EventPriority.HIGHEST).ignoreCancelled(true).handler(event -> {
+                /* 原版食物效果自动生效, 额外效果由指令替代 */
+                CommandsComponent component = CommandsComponent.from(event.getItem());
+                if (component == null) return;
+                List<String> commands = component.getCommands();
+                String playerName = event.getPlayer().getName();
+                for (String command : commands) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("@self", playerName));
+                }
+            }).register();
+        }
 
-            if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-
-            ItemStack item = event.getItem();
-            TerraBaseItem baseItem = TerraBukkitAdapter.itemAdapt(item);
-            if (!(baseItem instanceof TerraEdible edible)) return;
-
-            Player player = event.getPlayer();
-            TerraPlayerDataManager playerDataManager = TerraCraftBukkit.inst().getPlayerDataManager();
-
-            playerDataManager.getPlayerData(player.getUniqueId())
-                    .ifPresentOrElse(playerData -> {
-                        int currentTimes = playerData.getAte().get(edible.getName());
-                        if (edible.getTimes() < 0 || edible.getTimes() > currentTimes) {
-                            playerData.getAte().put(edible.getName(), currentTimes + 1);
-                            if (edible.apply(player)) {
-                                item.setAmount(item.getAmount() - 1);
-                                player.setCooldown(item, edible.getCd());
-                            }
-                        } else {
-                            player.sendMessage("§c有股神秘的力量在阻止你吃下它");
-                        }
-                    }, () -> TerraCraftLogger.error("Player data not found for UUID: " + player.getUniqueId()));
-            event.setCancelled(true);
-        }).register();
+        // TODO 非CustomData数据无法保存，需要单独储存在minecraft:customData中备份
+        // TODO 设置UseCooldown, Consumable
 
         /* 宝石镶嵌 物品升级 */
         TerraEvents.subscribe(InventoryClickEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
@@ -68,97 +58,74 @@ public class ItemListener {
 
             /* 获取光标物品和被点击物品 */
             ItemStack cursorItem = event.getCursor(), clickedItem = event.getCurrentItem();
-            TerraBaseItem cursorBaseItem = TerraBukkitAdapter.itemAdapt(cursorItem);
-            TerraBaseItem clickedBaseItem = TerraBukkitAdapter.itemAdapt(clickedItem);
+            if (cursorItem == null || clickedItem == null) return;
 
             /* 宝石镶嵌 */
-            if (cursorBaseItem instanceof TerraGem gem && clickedBaseItem instanceof TerraGemHolder gemCarrier) {
-                int limit = gemCarrier.getGemStackNumber();
-                String[] gems = PDCAPI.getGems(clickedItem);
-                if ((gems == null && limit > 0) || (gems != null && gems.length < limit)) {
-                    /* 镶嵌 */
-                    if (random.nextDouble() > gem.getChance()) {
-                        String res = "§c镶嵌失败";
-                        if (gem.lossWhenFailed()) {
+            TerraGemComponent gemComponent = GemComponent.from(cursorItem);
+            TerraGemHolderComponent holderComponent = GemHolderComponent.from(clickedItem);
+            if (gemComponent != null && holderComponent != null ) {
+                List<ItemStack> gems = holderComponent.getGems();
+                int limit = holderComponent.getLimit();
+                String res;
+                if (limit > gems.size()) {
+                    /* 镶嵌成功 */
+                    if (random.nextDouble() < gemComponent.getInlaySuccessChance()) {
+                        // TODO 物品更新事件, 如果事件未取消则向下执行
+                        cursorItem.setAmount(cursorItem.getAmount() - 1);
+                        gems.add(cursorItem);
+                        res = "§a镶嵌成功";
+                        /* nbt回写 */
+                        holderComponent.apply(clickedItem);
+                        // TODO 物品 lore更新
+                    } else {
+                        /* 失败消耗 */
+                        res = "§c镶嵌失败";
+                        if (gemComponent.isInlayFailLoss()) {
                             cursorItem.setAmount(cursorItem.getAmount() - 1);
                             res += ", 宝石消失";
                         }
-                        player.sendMessage(res);
-                    } else {
-                        String[] newGems;
-                        if (gems == null) newGems = new String[]{gem.getName()};
-                        else {
-                            newGems = Arrays.copyOf(gems, gems.length + 1);
-                            newGems[gems.length] = gem.getName();
-                        }
-                        PDCAPI.setGems(clickedItem, newGems);
-                        cursorItem.setAmount(cursorItem.getAmount() - 1);
-                        player.sendMessage("§a镶嵌成功!");
-                        TerraEvents.call(new TerraItemUpdateEvent(player, clickedBaseItem, clickedItem));
                     }
-                }
-                player.sendMessage("§e此物品无法镶嵌");
+                    player.sendMessage(res);
+                } else player.sendMessage("§c宝石槽位已满");
                 /* 取消后续默认操作 */
                 event.setCancelled(true);
                 return;
             }
 
             /* 物品升级 */
-            if (clickedBaseItem instanceof TerraLeveled leveled && cursorBaseItem != null) {
-                TerraCraftBukkit.inst().getItemManager().getLevelTemplate(leveled.getLevelTemplateName()).ifPresent(template -> {
-                    /* 是否是升级材料 */
-                    if (!template.getMaterial().equals(cursorBaseItem.getName())) return;
+            TerraLevelComponent levelComponent = LevelComponent.from(clickedItem);
+            TerraInnerNameComponent terraName = TerraNameComponent.from(cursorItem);
+            if (levelComponent != null && terraName != null) {
+                TerraCraftBukkit.inst().getItemManager().getLevelTemplate(levelComponent.getTemplate()).ifPresent(template -> {
+                    if (!template.getMaterial().equals(terraName.getName())) return;
 
-                    Integer lvl = PDCAPI.getLevel(clickedItem);
-                    if (lvl == null) lvl = 0;
-                    lvl = Math.max(lvl, template.getBegin());
-                    lvl = Math.min(lvl, template.getMax());
-
-                    if (lvl == template.getMax()) {
-                        player.sendMessage("§e等级已达到上限");
-                        return;
-                    }
-                    /* 升级 */
-                    if (random.nextDouble() > template.getChance()) {
-                        String res = "§c强化失败";
-                        if (template.isFailedLevelDown()) {
-                            PDCAPI.setLevel(clickedItem, Math.max(lvl - 1, template.getBegin()));
-                            res += ", 物品降级";
-                            TerraEvents.call(new TerraItemUpdateEvent(player, clickedBaseItem, clickedItem));
+                    int lvl = levelComponent.getLevel();
+                    cursorItem.setAmount(cursorItem.getAmount() - 1);
+                    String res;
+                    if (lvl < template.getMax() - template.getBegin()) {
+                        if (random.nextDouble() < template.getChance()) {
+                            // TODO 物品更新事件, 如果事件未取消则向下执行
+                            res = "§a强化成功";
+                            levelComponent.setLevel(lvl + 1);
+                            levelComponent.apply(clickedItem);
+                            // TODO 物品 lore更新
+                        } else {
+                            res = "§c强化失败";
+                            if (template.isFailedLevelDown() && lvl > 0) {
+                                // TODO 物品更新事件, 如果事件未取消则向下执行
+                                res += ", 物品降级";
+                                levelComponent.setLevel(lvl - 1);
+                                levelComponent.apply(clickedItem);
+                                // TODO 物品 lore更新
+                            }
                         }
                         player.sendMessage(res);
-                    } else {
-                        PDCAPI.setLevel(clickedItem, lvl + 1);
-                        player.sendMessage("§a强化成功!");
-                        TerraEvents.call(new TerraItemUpdateEvent(player, clickedBaseItem, clickedItem));
-                    }
-                    cursorItem.setAmount(cursorItem.getAmount() - 1);
+                    } else player.sendMessage("§c物品已达最大等级");
+                    event.setCancelled(true);
                 });
             }
-            event.setCancelled(true);
         }).register();
 
-        // TODO 物品重铸需要使用指令
-
-        /* 物品更新 */
-        TerraEvents.subscribe(TerraItemUpdateEvent.class).priority(EventPriority.MONITOR).handler(event -> {
-            TerraItemManager itemManager = TerraCraftBukkit.inst().getItemManager();
-
-            ItemStack pre = event.getItemStack();
-            /* hash不等则先更新底层 */
-            if (PDCAPI.getCode(pre) != event.getTerraBaseItem().getHashCode()) {
-                TerraBaseItem baseItem = event.getTerraBaseItem();
-                Player player = event.getPlayer();;
-                for (String gemName : baseItem.selfUpdate(pre))
-                    itemManager.getItem(gemName).ifPresentOrElse(gem -> {
-                        player.getInventory().addItem(gem.getBukkitItem().clone());
-                    }, () -> {
-                        TerraCraftLogger.warning("Gem " + gemName + " does not exist when updating item: " + pre.getItemMeta().getDisplayName() + "for player" + player.getName());
-                        player.sendMessage("§c物品: " + pre.getItemMeta().getDisplayName() + "更新，宝石获取错误，请联系管理员");
-                    });
-            }
-            // TODO 更新lore
-
-        }).register();
+        /* 物品重铸需要使用指令 */
     }
 }

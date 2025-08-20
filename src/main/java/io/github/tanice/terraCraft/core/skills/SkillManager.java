@@ -2,11 +2,11 @@ package io.github.tanice.terraCraft.core.skills;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.events.entity.TerraSkillUpdateEvent;
+import io.github.tanice.terraCraft.bukkit.items.components.SkillComponent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
@@ -20,6 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -210,10 +211,12 @@ public final class SkillManager implements TerraSkillManager {
 
             SkillRowData skillRowData;
             Trigger trigger;
-            for (TerraItem item : EquipmentUtil.getActiveEquipmentItem(player)) {
-                if (!(item instanceof TerraSkillHolder skillCarrier)) continue;
+            SkillComponent skillComponent;
+            for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(player)) {
+                skillComponent = SkillComponent.from(item);
+                if (skillComponent == null) continue;
 
-                for (String skillName : skillCarrier.getSkillNames()) {
+                for (String skillName : skillComponent.getSkills()) {
                     SkillMeta skillMeta = skillMap.get(skillName);
                     if (skillMeta == null) continue;
 

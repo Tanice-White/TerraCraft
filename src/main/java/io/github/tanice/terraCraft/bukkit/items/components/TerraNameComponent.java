@@ -11,27 +11,27 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class InnerNameComponent implements TerraInnerNameComponent {
+public class TerraNameComponent implements TerraInnerNameComponent {
 
     private final String name;
 
-    public InnerNameComponent(String name) {
+    public TerraNameComponent(String name) {
         this.name = name;
     }
 
     @Nullable
-    public static InnerNameComponent from(ItemStack item) {
+    public static TerraNameComponent from(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY);
                 if (data == null) return null;
-                return new InnerNameComponent(data.getString("terra_name"));
+                return new TerraNameComponent(data.getString("terra_name"));
             });
         } else {
             return NBT.get(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(TAG_KEY + "." + TERRA_COMPONENT_KEY);
                 if (data == null) return null;
-                return new InnerNameComponent(data.getString("terra_name"));
+                return new TerraNameComponent(data.getString("terra_name"));
             });
         }
     }

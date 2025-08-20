@@ -84,7 +84,7 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".holds");
@@ -96,6 +96,16 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
                 addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void callEvent() {
+
+    }
+
+    @Override
+    public void updateLore() {
+
     }
 
     public static void clear(TerraBaseItem item) {
@@ -124,8 +134,8 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
         return new GemHolderComponent(this.limit, null, this.state);
     }
 
-    public @Nullable List<ItemStack> getGems() {
-        return this.gems;
+    public List<ItemStack> getGems() {
+        return this.gems == null ? List.of() : this.gems;
     }
 
     public void setGems(@Nullable List<ItemStack> gems) {

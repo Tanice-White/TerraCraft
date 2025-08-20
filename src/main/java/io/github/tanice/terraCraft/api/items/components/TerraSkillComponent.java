@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface TerraSkillComponent extends TerraBaseComponent {
 
-    @Nullable List<String> getSkills();
+    List<String> getSkills();
 
     void setSkills(@Nullable List<String> skills);
 }

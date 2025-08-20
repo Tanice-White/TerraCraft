@@ -159,8 +159,20 @@ public final class BuffManager implements TerraBuffManager {
     }
 
     @Override
+    public void activateBuff(LivingEntity entity, String buffName) {
+        activateBuff(entity, buffName, false);
+    }
+
+    @Override
+    public void activateBuff(LivingEntity entity, String buffName, boolean isPermanent) {
+        TerraBaseBuff buff = buffs.get(buffName);
+        if (buff == null) return;
+        activateBuff(entity, buff, isPermanent);
+    }
+
+    @Override
     public void activateBuff(LivingEntity entity, TerraBaseBuff buff) {
-        activateBuff(entity,buff, false);
+        activateBuff(entity, buff, false);
     }
 
     @Override
@@ -177,6 +189,15 @@ public final class BuffManager implements TerraBuffManager {
             } else return new BuffRecord(entity, buff, isPermanent);
         });
         TerraEvents.call(new TerraAttributeUpdateEvent(entity));
+    }
+
+    public void activateBuffs(LivingEntity entity, List<String> buffNames) {
+        activateBuffs(entity, buffNames, false);
+    }
+
+    public void activateBuffs(LivingEntity entity, List<String> buffNames, boolean isPermanent) {
+        List<TerraBaseBuff> bs = buffNames.stream().map(buffs::get).filter(Objects::nonNull).toList();
+        activateBuffs(entity, bs, isPermanent);
     }
 
     @Override

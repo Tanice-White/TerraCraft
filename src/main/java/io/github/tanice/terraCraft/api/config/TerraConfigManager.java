@@ -7,8 +7,6 @@ public interface TerraConfigManager {
 
     boolean shouldGenerateExamples();
 
-    boolean shouldCancelGenericParticles();
-
     boolean shouldGenerateDamageIndicator();
 
     String getDefaultPrefix();

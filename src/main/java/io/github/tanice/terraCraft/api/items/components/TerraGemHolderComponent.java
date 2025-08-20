@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TerraGemHolderComponent extends TerraBaseComponent {
 
-    @Nullable List<ItemStack> getGems();
+    List<ItemStack> getGems();
 
     void setGems(@Nullable List<ItemStack> gems);
 

@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.core.players;
 import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.players.TerraPlayerData;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.utils.attributes.AttributeAPI;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
@@ -82,7 +81,8 @@ public class PlayerData implements TerraPlayerData, Cloneable {
             return;
         }
 
-        AttributeAPI.setOriBaseAttr(player, Attribute.MAX_HEALTH, maxHealth);
+        // TODO 使用NBTAPI的额外profile设置最大生命值
+        // AttributeAPI.setOriBaseAttr(player, Attribute.MAX_HEALTH, maxHealth);
         player.setHealth(Math.min(health, maxHealth));
 
         if (!player.isHealthScaled()) {

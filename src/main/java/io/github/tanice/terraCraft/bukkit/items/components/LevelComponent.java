@@ -20,6 +20,7 @@ import java.util.Objects;
  * 等级模板扩展
  */
 public class LevelComponent extends AbstractItemComponent implements TerraLevelComponent {
+    /** 这里的lvl就是物品升级成功次数, 模板最值无关 */
     @Nullable
     private Integer level;
     @Nullable
@@ -61,7 +62,7 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");
@@ -73,6 +74,16 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
                 addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void callEvent() {
+
+    }
+
+    @Override
+    public void updateLore() {
+
     }
 
     public static void clear(TerraBaseItem item) {

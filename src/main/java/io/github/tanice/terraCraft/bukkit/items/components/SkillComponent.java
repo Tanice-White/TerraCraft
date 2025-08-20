@@ -53,7 +53,7 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skills");
@@ -65,6 +65,16 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
                 addToCompound(data);
             });
         }
+    }
+
+    @Override
+    public void callEvent() {
+
+    }
+
+    @Override
+    public void updateLore() {
+
     }
 
     public static void clear(TerraBaseItem item) {
@@ -89,8 +99,8 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     @Override
-    public @Nullable List<String> getSkills() {
-        return this.skills;
+    public List<String> getSkills() {
+        return this.skills == null ? List.of() : this.skills;
     }
 
     @Override

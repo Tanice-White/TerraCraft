@@ -5,7 +5,13 @@ import java.util.List;
 
 public interface TerraCommandsComponent extends TerraBaseComponent {
 
-    @Nullable List<String> getCommands();
+    /**
+     * 返回物品消耗后执行的指令列表的引用
+     */
+    List<String> getCommands();
 
+    /**
+     * 设置物品消耗后执行的指令列表
+     */
     void setCommands(@Nullable List<String> commands);
 }

@@ -102,7 +102,7 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(COMPONENT_KEY + "." + MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("buffs");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("buffs");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {

@@ -76,10 +76,9 @@ public final class ItemManager implements TerraItemManager {
     }
 
     @Override
-    public Collection<String> filterItems(Collection<TerraBaseItem> items, String name) {
+    public Collection<String> filterItems(String name) {
         if (name == null) return getItemNames();
-        if (items == null || items.isEmpty()) return Collections.emptyList();
-        return items.stream()
+        return items.values().stream()
                 .filter(item -> item.getName() != null && item.getName().startsWith(name))
                 .map(TerraBaseItem::getName)
                 .collect(Collectors.toList());

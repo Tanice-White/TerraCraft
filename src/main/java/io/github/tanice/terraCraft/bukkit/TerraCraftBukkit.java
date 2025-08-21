@@ -9,6 +9,8 @@ import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
+import io.github.tanice.terraCraft.bukkit.commands.TerraCraftCommand;
+import io.github.tanice.terraCraft.bukkit.commands.item.GetCommand;
 import io.github.tanice.terraCraft.bukkit.listeners.DamageListener;
 import io.github.tanice.terraCraft.bukkit.listeners.ItemListener;
 import io.github.tanice.terraCraft.bukkit.listeners.HelperListener;
@@ -42,6 +44,8 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private HelperListener helperListener;
     private TerraEventListener terraEventListener;
 
+    private TerraCraftCommand terraCraftCommand;
+
     /* 更改finalDamage方法 */
 //    static {
 //        ASMHelper.applyModification();
@@ -66,10 +70,15 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
         entityAttributeManager = new EntityAttributeManager();
         playerDataManager = new PlayerDataManager();
+
+        terraCraftCommand = new TerraCraftCommand(this);
+        terraCraftCommand.register(new GetCommand());
+        terraCraftCommand.onload();
     }
 
     @Override
     public void onDisable() {
+        if (terraCraftCommand != null) terraCraftCommand.unload();
         if (helperListener != null) helperListener.unload();
         if (itemListener != null) itemListener.unload();
         if (damageListener != null) damageListener.unload();

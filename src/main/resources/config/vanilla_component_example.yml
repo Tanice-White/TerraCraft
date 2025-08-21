@@ -10,7 +10,7 @@ attributes:
     operation: add_value
     slot: mainhand
 
-blocks_attacks:
+shield:
   delay_seconds: 2
   base: 1
   factor: 0.5
@@ -22,8 +22,7 @@ blocks_attacks:
       base: 4
       factor: 0.5
       angle: 180
-      types:  # 此规则对哪些伤害有效，未指定则对所有伤害有效
-        - magic
+      type: is_projectile
   block_sound:
     id: block.campfire.crackle
     range: 8
@@ -159,7 +158,7 @@ tool:
 tooltip:
   hide_tooltip: false  # 不隐藏提示框
   hide_tags:  # 1.20.5之后写组件名，之前写hide_flags中的值
-    - attribute
+    - attribute_modifiers
   # style: 物品提示框外观命名空间id
 
 use_cooldown:

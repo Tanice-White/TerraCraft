@@ -14,7 +14,7 @@ public interface TerraItemManager {
 
     boolean isTerraItem(String name);
 
-    Collection<String> filterItems(Collection<TerraBaseItem> items, String name);
+    Collection<String> filterItems(String name);
 
     Optional<TerraLevelTemplate> getLevelTemplate(String name);
 

@@ -5,7 +5,6 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraBlocksAttacksComponent;
-import io.github.tanice.terraCraft.bukkit.utils.StringUtil;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
@@ -104,9 +103,7 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
                         bsCompound.setFloat("factor", dr.factor);
                         if (dr.horizontalBlockingAngle != null) bsCompound.setFloat("horizontal_blocking_angle", dr.horizontalBlockingAngle);
 
-                        if (dr.types != null) {
-                            for (TerraNamespaceKey tag : dr.types) bsCompound.getStringList("type").add("#" + tag.get());
-                        }
+                        if (dr.type != null) bsCompound.setString("type", "#" + dr.type.get());
                     }
                 }
 
@@ -152,13 +149,13 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
         private final float base;
         private final float factor;
         private final Float horizontalBlockingAngle;
-        private final List<TerraNamespaceKey> types;
+        private final TerraNamespaceKey type;
 
-        public DamageReduction(float base, float factor, @Nullable Float horizontalBlockingAngle, @Nullable List<TerraNamespaceKey> types) {
+        public DamageReduction(float base, float factor, @Nullable Float horizontalBlockingAngle, @Nullable TerraNamespaceKey type) {
             this.base = base;
             this.factor = factor;
             this.horizontalBlockingAngle = horizontalBlockingAngle;
-            this.types = types;
+            this.type = type;
         }
 
         public DamageReduction(ConfigurationSection cfg) {
@@ -166,13 +163,13 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
                     (float) cfg.getDouble("base"),
                     (float) cfg.getDouble("factor"),
                     cfg.isSet("angle") ? (float) cfg.getDouble("angle") : null,
-                    cfg.isSet("types") ? StringUtil.splitByComma(cfg.getString("types")).stream().map(TerraNamespaceKey::from).toList() : null
+                    TerraNamespaceKey.from(cfg.getString("type"))
             );
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(base, factor, horizontalBlockingAngle, types);
+            return Objects.hash(base, factor, horizontalBlockingAngle, type);
         }
     }
 }

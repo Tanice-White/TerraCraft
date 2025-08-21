@@ -5,22 +5,16 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.events.entity.TerraSkillUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.items.components.SkillComponent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
-import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.helper.mythicmobs.MMHelper;
-import io.github.tanice.terraCraft.core.utils.helper.mythicmobs.TerraDamageMechanic;
-import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
@@ -72,11 +66,6 @@ public final class SkillManager implements TerraSkillManager {
         this.loadResourceFiles();
 
         TerraSchedulers.async().repeat(this::cleanup, 2, CLEAN_UP_CD);
-
-        /* 可用技能更新 */
-        TerraEvents.subscribe(TerraSkillUpdateEvent.class).priority(EventPriority.MONITOR).ignoreCancelled(true).handler(event -> {
-            this.updateAvailableSkills(event.getEntity());
-        }).register();
     }
 
     public void reload() {

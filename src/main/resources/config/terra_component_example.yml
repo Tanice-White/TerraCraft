@@ -1,0 +1,56 @@
+# 所有额外组件都有 updatable 关键词
+
+buff:
+  updatable: false # 默认为true
+  hold:
+    - 自定义buff0
+  attack_self:
+    - 自定义buff1
+  attack:
+    - 自定义buff2
+  defence_self:
+    - 自定义buff3
+  defence:
+    - 自定义buff4
+
+commands:  # @self会被替换成使用者
+  - "give @self minecraft:arrow 5"
+  - "effect give @self minecraft:strength 30 1"
+
+damage_type: MELEE  # 默认Other  # 可取值 MELEE,MAGIC,RANGED,ROUGE,SUMMON,OTHER,ENVIRONMENT
+
+terra_durability:
+  damage: 5
+  max_damage: 10
+  break_loss: false
+
+gem:
+  inlay_chance: 0.7  # 镶嵌成功概率
+  inlay_fail_loss: false
+  dismantle_chance: 0.6  # 拆卸成功概率
+  dismantle_fail_loss: false
+
+gem_holder:
+  limit: 2  # 宝石槽位数量限制
+  gems:
+    - 宝石物品内部名
+
+level:
+  lvl: 0  # 设置等级
+  template: 等级模板内部名
+
+# TODO 待确定
+terra_meta:
+  section: base  # 可选 TIMER, BEFORE_DAMAGE, BASE, ADD, MULTIPLY, FIX, BETWEEN_DAMAGE_AND_DEFENCE, AFTER_DAMAGE, ERROR, INNER
+  # 其中 BASE, ADD, MULTIPLY, FIX 表示计算meta 其余的会运行js脚本
+  meta:
+    attribute:
+    damage_type:
+
+quality:
+  group: 可用品质组名
+  quality: 默认品质名
+
+skills:
+  - skill文件夹配置的Terra内部名称(不是Mythic名称)
+  - skill2

@@ -1,43 +1,41 @@
 package io.github.tanice.terraCraft.bukkit.utils.events;
 
-import com.google.common.reflect.TypeToken;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
 
 import java.util.Objects;
 
 public final class TerraEvents {
-
-    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> eventClass) {
-        Objects.requireNonNull(eventClass, "eventClass cannot be null");
-        return EventSubscriptionBuilder.newBuilder(eventClass, eventClass);
-    }
-
-    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> eventClass, EventPriority priority) {
-        return subscribe(eventClass).priority(priority);
-    }
-
-    @SafeVarargs
-    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> superType, Class<? extends T>... eventClasses) {
-        Objects.requireNonNull(superType, "superType cannot be null");
-        Objects.requireNonNull(eventClasses, "eventClasses cannot be null");
-        return EventSubscriptionBuilder.newBuilder(superType, eventClasses);
-    }
-
-    @SafeVarargs
-    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> superType, EventPriority priority, Class<? extends T>... eventClasses) {
-        return subscribe(superType, eventClasses).priority(priority);
-    }
-
-    @SafeVarargs
-    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(TypeToken<T> type, Class<? extends T>... eventClasses) {
-        Objects.requireNonNull(type, "type cannot be null");
-        @SuppressWarnings("unchecked")
-        Class<T> superType = (Class<T>) type.getRawType();
-        return subscribe(superType, eventClasses);
-    }
+//
+//    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> eventClass) {
+//        Objects.requireNonNull(eventClass, "eventClass cannot be null");
+//        return EventSubscriptionBuilder.newBuilder(eventClass, eventClass);
+//    }
+//
+//    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> eventClass, EventPriority priority) {
+//        return subscribe(eventClass).priority(priority);
+//    }
+//
+//    @SafeVarargs
+//    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> superType, Class<? extends T>... eventClasses) {
+//        Objects.requireNonNull(superType, "superType cannot be null");
+//        Objects.requireNonNull(eventClasses, "eventClasses cannot be null");
+//        return EventSubscriptionBuilder.newBuilder(superType, eventClasses);
+//    }
+//
+//    @SafeVarargs
+//    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(Class<T> superType, EventPriority priority, Class<? extends T>... eventClasses) {
+//        return subscribe(superType, eventClasses).priority(priority);
+//    }
+//
+//    @SafeVarargs
+//    public static <T extends Event> EventSubscriptionBuilder<T> subscribe(TypeToken<T> type, Class<? extends T>... eventClasses) {
+//        Objects.requireNonNull(type, "type cannot be null");
+//        @SuppressWarnings("unchecked")
+//        Class<T> superType = (Class<T>) type.getRawType();
+//        return subscribe(superType, eventClasses);
+//    }
 
     public static void call(Event event) {
         Objects.requireNonNull(event, "event cannot be null");

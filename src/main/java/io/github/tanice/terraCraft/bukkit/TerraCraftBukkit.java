@@ -12,6 +12,7 @@ import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.listeners.DamageListener;
 import io.github.tanice.terraCraft.bukkit.listeners.ItemListener;
 import io.github.tanice.terraCraft.bukkit.listeners.HelperListener;
+import io.github.tanice.terraCraft.bukkit.listeners.TerraEventListener;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
 import io.github.tanice.terraCraft.core.buffs.BuffManager;
@@ -20,7 +21,6 @@ import io.github.tanice.terraCraft.core.items.ItemManager;
 import io.github.tanice.terraCraft.core.players.PlayerDataManager;
 import io.github.tanice.terraCraft.core.skills.SkillManager;
 import io.github.tanice.terraCraft.core.utils.database.DatabaseManager;
-import io.github.tanice.terraCraft.core.utils.helper.asm.ASMHelper;
 import io.github.tanice.terraCraft.core.utils.js.JSEngineManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,17 +40,23 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private DamageListener damageListener;
     private ItemListener itemListener;
     private HelperListener helperListener;
+    private TerraEventListener terraEventListener;
 
     /* 更改finalDamage方法 */
-    static {
-        ASMHelper.applyModification();
-    }
+//    static {
+//        ASMHelper.applyModification();
+//    }
 
     @Override
     public void onEnable() {
         instance = this;
         configManager = new ConfigManager(this);
         configManager.saveDefaultConfig();
+
+        helperListener = new HelperListener();
+        itemListener = new ItemListener();
+        damageListener = new DamageListener();
+        terraEventListener = new TerraEventListener();
 
         jsEngineManager = new JSEngineManager();
         databaseManager = new DatabaseManager(this);
@@ -60,15 +66,15 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
         entityAttributeManager = new EntityAttributeManager();
         playerDataManager = new PlayerDataManager();
-
-        itemListener = new ItemListener();
-        damageListener = new DamageListener();
-        helperListener = new HelperListener();
-
     }
 
     @Override
     public void onDisable() {
+        if (helperListener != null) helperListener.unload();
+        if (itemListener != null) itemListener.unload();
+        if (damageListener != null) damageListener.unload();
+        if (terraEventListener != null) terraEventListener.unload();
+
         if (jsEngineManager != null) jsEngineManager.close();
         if (configManager != null) configManager.unload();
         if (buffManager != null) buffManager.unload();
@@ -76,14 +82,19 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         if (skillManager != null) skillManager.unload();
         if (entityAttributeManager != null) entityAttributeManager.unload();
         if (playerDataManager != null) playerDataManager.unload();
-        TerraSchedulers.shutdown();
         if (databaseManager != null) databaseManager.unload();
+        TerraSchedulers.shutdown();
     }
 
     @Override
     public void reload() {
         configManager.reload();
         databaseManager.reload();
+
+        helperListener.reload();
+        itemListener.reload();
+        damageListener.reload();
+        terraEventListener.reload();
 
         jsEngineManager.reload();
         buffManager.reload();
@@ -135,5 +146,9 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     @Override
     public TerraPlayerDataManager getPlayerDataManager() {
         return this.playerDataManager;
+    }
+
+    public HelperListener getHelperListener() {
+        return this.helperListener;
     }
 }

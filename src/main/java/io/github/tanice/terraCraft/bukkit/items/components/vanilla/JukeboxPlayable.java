@@ -12,17 +12,21 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 
 public class JukeboxPlayable implements TerraJukeboxPlayable {
-    private final TerraNamespaceKey music;
+    private final TerraNamespaceKey musicId;
 
-    public JukeboxPlayable(TerraNamespaceKey music) {
-        this.music = music;
+    public JukeboxPlayable(String musicId) {
+        this.musicId = TerraNamespaceKey.from(musicId);
     }
 
     @Override
     public void apply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21)) {
             NBT.modifyComponents(item, nbt -> {
-                nbt.setString(MINECRAFT_PREFIX + "jukebox_playable", music.get());
+                if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
+                    nbt.setString(MINECRAFT_PREFIX + "jukebox_playable", musicId.get());
+                } else {
+                    nbt.getOrCreateCompound(MINECRAFT_PREFIX + "jukebox_playable").setString("song", musicId.get());
+                }
             });
         } else TerraCraftLogger.warning("Jukebox playable component is only supported in Minecraft 1.21 or newer versions");
     }
@@ -46,6 +50,6 @@ public class JukeboxPlayable implements TerraJukeboxPlayable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(music);
+        return Objects.hash(musicId);
     }
 }

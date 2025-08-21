@@ -13,36 +13,9 @@ public interface TerraAttributeModifiersComponent extends TerraBaseComponent {
     void addAttributeModifier(String id, String attribute, double amount, String op, @Nullable String slot, @Nullable String displayType, @Nullable String extraValue);
 
     enum Operation {
-        ADD(0),
-        ADD_NUMBER(0),
-        MULTIPLY_BASE(1),
-        ADD_SCALAR(1),
-        MULTIPLY(2),
-        MULTIPLY_SCALAR(2);
-
-        private final int operation;
-        private static final HashMap<String, Operation> BY_ALIAS;
-
-        Operation(int operation) {
-            this.operation = operation;
-        }
-
-        @Nullable
-        public static Operation parse(String value) {
-            return BY_ALIAS.get(value);
-        }
-
-        public int getOperation() {
-            return this.operation;
-        }
-
-        static {
-            BY_ALIAS = new HashMap<>();
-            for (Operation value : Operation.values()) {
-                BY_ALIAS.put(value.name(), value);
-                BY_ALIAS.put(String.valueOf(value.operation), value);
-            }
-        }
+        ADD_VALUE,
+        ADD_MULTIPLY_BASE,
+        ADD_MULTIPLY_TOTAL;
     }
 
     enum DisplayType {

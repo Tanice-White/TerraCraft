@@ -22,16 +22,16 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
     @Nullable
     private final Integer counts;
 
-    public UseRemainderComponent(TerraNamespaceKey itemId, @Nullable ReadWriteNBT component, @Nullable Integer counts) {
+    public UseRemainderComponent(TerraNamespaceKey itemId, @Nullable String componentString, @Nullable Integer counts) {
         this.itemId = itemId;
-        this.component = component;
+        this.component = componentString == null ? null : NBT.parseNBT(componentString);
         this.counts = counts;
     }
 
     public UseRemainderComponent(ConfigurationSection cfg) {
         this(
                 TerraNamespaceKey.from(cfg.getString("id")),
-                cfg.isSet("component") ? NBT.parseNBT(cfg.getString("component")) : null,
+                cfg.isSet("component") ? cfg.getString("component") : null,
                 cfg.isSet("count") ? cfg.getInt("count") : null
         );
     }

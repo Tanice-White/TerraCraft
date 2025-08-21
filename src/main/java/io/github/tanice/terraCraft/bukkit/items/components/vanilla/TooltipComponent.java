@@ -37,7 +37,7 @@ public class TooltipComponent implements TerraTooltipComponent {
     public TooltipComponent(ConfigurationSection cfg) {
         this(
                 cfg.isSet("hide_tooltip") ? cfg.getBoolean("hide_tooltip") : null,
-                cfg.isSet("hide") ? cfg.getStringList("hide") : null,
+                cfg.isSet("hide_tags") ? cfg.getStringList("hide_tags") : null,
                 cfg.getString("style")
         );
     }
@@ -54,7 +54,7 @@ public class TooltipComponent implements TerraTooltipComponent {
             } else {
                 if (hideTooltip != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
                     NBT.modifyComponents(item, nbt -> {
-                        nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + ".hide_tooltip");
+                        nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "hide_tooltip");
                     });
                 }
                 // TODO 恢复使用NBT(但是NBT更新断层)
@@ -67,12 +67,13 @@ public class TooltipComponent implements TerraTooltipComponent {
                 }
             }
         }
-
-        if (tooltipStyle != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item, nbt -> {
-                nbt.setString(MINECRAFT_PREFIX + "tooltip_style", tooltipStyle);
-            });
-        } else TerraCraftLogger.warning("Tooltip style component is only supported in Minecraft 1.21.2 or newer versions");
+        if (tooltipStyle != null) {
+            if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
+                NBT.modifyComponents(item, nbt -> {
+                    nbt.setString(MINECRAFT_PREFIX + "tooltip_style", tooltipStyle);
+                });
+            } else TerraCraftLogger.warning("Tooltip style component is only supported in Minecraft 1.21.2 or newer versions");
+        }
     }
 
     public static void clear(TerraBaseItem item) {

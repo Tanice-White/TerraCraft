@@ -57,7 +57,7 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
         this.limit = cfg.getInt("limit");
         this.gems = new ArrayList<>();
         TerraItemManager itemManager = TerraCraftBukkit.inst().getItemManager();
-        for (String name : StringUtil.splitByComma(cfg.getString("gems"))) {
+        for (String name : cfg.getStringList("gems")) {
             itemManager.getItem(name).ifPresentOrElse(terraItem -> {
                 ItemStack item = terraItem.getBukkitItem();
                 if (GemComponent.from(item) != null) this.gems.add(item);

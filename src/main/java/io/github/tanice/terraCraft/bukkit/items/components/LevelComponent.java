@@ -41,7 +41,7 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     public LevelComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
         this.level = cfg.isSet("lvl") ? cfg.getInt("lvl") : null;
-        this.levelTemplate = cfg.getString("lvlTemplate");
+        this.levelTemplate = cfg.getString("template");
     }
 
     @Nullable

@@ -6,6 +6,7 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.vanilla.TerraConsumableComponent;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTEffect;
+import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTPotion;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTSound;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
@@ -30,7 +31,7 @@ public class ConsumableComponent implements TerraConsumableComponent {
     @Nullable
     private final Boolean hasConsumeParticles;
 
-    private final List<NBTEffect> onConsumeEffects;
+    private final List<NBTEffect> effects;
     @Nullable
     private final NBTSound sound;
 
@@ -38,7 +39,7 @@ public class ConsumableComponent implements TerraConsumableComponent {
         this.animation = animation;
         this.consumeSeconds = consumeSeconds;
         this.hasConsumeParticles = hasConsumeParticles;
-        this.onConsumeEffects = new ArrayList<>();
+        this.effects = new ArrayList<>();
         this.sound = sound;
     }
 
@@ -49,6 +50,10 @@ public class ConsumableComponent implements TerraConsumableComponent {
                 cfg.isSet("particle") ? cfg.getBoolean("particle") : null,
                 new NBTSound(cfg.isSet("sound.range") ? (float) cfg.getDouble("sound.range") : null, TerraNamespaceKey.from(cfg.getString("sound.id")))
         );
+        ConfigurationSection sub = cfg.getConfigurationSection("effects");
+        if (sub != null) {
+            for (String key : sub.getKeys(false)) this.effects.add(NBTEffect.from(key, sub.getConfigurationSection(key)));
+        }
     }
 
     @Override
@@ -69,7 +74,7 @@ public class ConsumableComponent implements TerraConsumableComponent {
                 if (hasConsumeParticles != null) component.setBoolean("has_consume_particles", hasConsumeParticles);
 
                 ReadWriteNBTCompoundList compoundList = component.getCompoundList("on_consume_effects");
-                for (NBTEffect ce : onConsumeEffects) ce.addToCompound(compoundList.addCompound());
+                for (NBTEffect ce : effects) ce.addToCompound(compoundList.addCompound());
                 if (sound != null) sound.addToCompound(component.getOrCreateCompound("sound"));
             });
 
@@ -94,12 +99,7 @@ public class ConsumableComponent implements TerraConsumableComponent {
     }
 
     @Override
-    public void addEffect(NBTEffect effect) {
-        this.onConsumeEffects.add(effect);
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hash(animation, consumeSeconds, hasConsumeParticles, onConsumeEffects, sound);
+        return Objects.hash(animation, consumeSeconds, hasConsumeParticles, effects, sound);
     }
 }

@@ -5,8 +5,6 @@ import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTEffect;
 
 public interface TerraConsumableComponent extends TerraBaseComponent {
 
-    void addEffect(NBTEffect effect);
-
     enum Animation {
         NONE,
         EAT,

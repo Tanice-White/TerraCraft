@@ -50,11 +50,11 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
 
     public BuffComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.hold = StringUtil.splitByComma(cfg.getString("hold"));
-        this.attackSelf = StringUtil.splitByComma(cfg.getString("attack_self"));
-        this.attack = StringUtil.splitByComma(cfg.getString("attack"));
-        this.defenseSelf = StringUtil.splitByComma(cfg.getString("defense_self"));
-        this.defense = StringUtil.splitByComma(cfg.getString("defense"));
+        this.hold = cfg.getStringList("hold");
+        this.attackSelf = cfg.getStringList("attack_self");
+        this.attack = cfg.getStringList("attack");
+        this.defenseSelf = cfg.getStringList("defense_self");
+        this.defense = cfg.getStringList("defense");
     }
 
     @Nullable

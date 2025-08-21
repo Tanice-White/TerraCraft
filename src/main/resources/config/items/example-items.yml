@@ -1,204 +1,147 @@
-# 所支持的 minimessage 格式
-# <gradient>TEXT_TO_DISPLAY</gradient>
-# <#fffff>TEXT_TO_DISPLAY<#0fffff>TEXT_TO_DISPLAY.....
-
-# type是 Item 则不要写占位符，不会主动识别
-
-物品内部名:
-  type: item  # 默认item  有 gem item consumable material(简化的item) 四个类型
-  id: stone_sword  # 对应原版物品ID
-  display_name: <gradient:#ffffff:#fc4828>我是测试，你是什么(MiniMessage)</gradient>  # 武器在游戏内呈现的名称
-  custom_model_data: 1000  # 物品自定义模型或贴图
-  amount: 1  # 每次给与(制作)的数量  默认为1
-  max_stack: 1  # 最大堆叠数量(不设置默认1) [可堆叠则一定不可破坏]
-  loss_when_break: false  # 耐久消耗完成后是否丢失物品(默认为true)
-  slot: MainHand  # (所有配置的属性，包含技能等)生效位置 默认为原版物品生效位置
-  cancel_damage: false  # 是否取消所有伤害(包括技能伤害)
-  damage_type: MELEE  # 战士类
-  attrs:
-    attack_damage: 10  # 武器面板伤害
-    entity_interaction_range: 1  # 实体交互触发距离 当值小于_3时可以取消近战伤害(玩家的实体交互距离时3)____法书可以使用
-    attack_speed: -2  # 武器_每秒可攻击次数近似
-    # [https://bukkit.windit.net/javadoc/org/bukkit/attribute/Attribute.html] 基本能增加
-    critical_strike_chance: 0.2  # 设置物品技能暴击和武器本体攻击暴击概率(0_1), 此时暴击率为20%, 默认为 0
-    critical_strike_damage: 1.2  # 设置物品技能和攻击的暴击伤害加成(此时暴击造成面板伤害的120%) 默认为 0 即暴击0伤害
-  lore_template: default  # 在 /lore/lore_template [模板名称] 下  不写则只显示下方的lore内容
-  lore:  # 武器介绍/武器描述  对应模板名称中的 item_lore关键词
-    - <gradient:#fcd228:#fc4828>这是武器的描述</gradient>
-  hide_flags:  # 隐藏原版属性 [参考 https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html]
-    #    - ATTRIBUTES  # 不需要写前面的 "HIDE_"
-    - UNBREAKABLE
-  skills:  # 将 <技能名1>... 附加在武器上
-    - "测试MythicMobs技能-青风斩"
-    # - 技能名2
-  qualities:  # 将 在quality文件夹下  <品质组1>...  的所有品质按照权重随机添加到本武器上  不配置则默认没有
-    - 品质组名
-    - 品质组名1
-  soul_bind: true  # 灵魂绑定 如果绑定则无法丢出(能放到容器中) 默认false
-  level_template: 示例武器升级模板  # 在 /level_up/任意文件名内的 [升级模板名] 下
-  gem_stack: 3  # 宝石槽位数量(所有宝石通用) 默认为0
-  # 增加 buff [buff内部名] [#持续tick] [%触发概率] [@self/@other](其中@other可省略)
-  hold_buff:  # 只给自己, 只要穿戴或手持就会持续生效, 只能写 buff 内部名称
-    - "测试持续掉血"
-  attack_buff:  # 默认 @other
-    - "测试持续掉血 @other #200 %60"
-    - "测试增益_1_damage_add @self"  # 给自己名为 "测试增益_1_damage_add" 的 buff
-  defence_buff:  # 默认 @other
-    - "测试吸血 self"  # 给自己一个测试吸血的buff，概率在测试吸血中配置
-  # quality 预设 (不在qualities内则会置空)
-  quality:
-  # level 预设 (不符合升级模板内则会置为模板中的最低等级)
-  level: 0
-  # CustomNBT 用于插件兼容
-  nbt:
-    # namespace:key :value 的格式，具体参考目标插件NBT的写入格式 (大小写严格判定)
-    # 这里使用mm中mmc的技能嵌入格式
-    # mythicmobs:type: 青风
-
-盔甲内部名_头:
-  id: leather_helmet
-  display_name: <gradient:#fcd228:#ffffff>盔甲内部名_头</gradient>  # 武器在游戏内呈现的名称
-  custom_model_data: 1001  # 物品自定义模型或贴图
-  attrs:
-    armor: 5  # 护甲值
-    critical_strike_chance: 1
-    knockback_resistance: 0.1  # 抗击退效果
-  color: "#ffffff"  # rgb颜色配合 custom_model_data 使用(由于＃会转义为注释, 请务必使用双引号)
-  slot: head  # (所有配置的属性，包含技能等)生效位置 默认为ANY
-  lore_template: default
+全知全能:
+  display_name: "<red>测试用的"
+  custom_model_data: 10086
+  dyed_color: 0xFF5500
   lore:
-    - <gradient:#fcd228:#fc4828>盔甲描述测试</gradient>
-  qualities: # 将 在quality文件夹下  <品质组1>...  的所有品质按照权重随机添加到本武器上  不配置则默认没有
-    - 品质组名
-    - 品质组名1
-  soul_bind: true  # 灵魂绑定 如果绑定则无法丢出(能放到容器中) 默认false
-  skills:
-    - "测试蹲下"
-    - "测试起身"
+    - "<gray>所有支持的组件都来一便"
+    - "<yellow>全是bug :("
+  max_stack_size: 1
+  attributes:
+    random_id_1:
+      attr: ATTACK_DAMAGE
+      amount: 5.0
+      operation: add_value
+      slot: offhand
+    random_id_2:
+      attr: ATTACK_KNOCKBACK
+      amount: 0.2
+      operation: add_value
+      slot: mainhand
+  blocks_attacks:
+    delay_seconds: 2
+    base: 1
+    factor: 0.5
+    threshold: 90
+    pass: arrow
+    cooldown_scale: 1
+    reduction:  # 未指定能阻挡一切伤害
+      random_key:
+        base: 4
+        factor: 0.5
+        angle: 180
+        types:  # 此规则对哪些伤害有效，未指定则对所有伤害有效
+          - magic
+    block_sound:
+      id: block.campfire.crackle
+      range: 8
+    disable_sound:
+      id: block.end_portal.spawn
+      range: 16
+  break_sound:
+    id: block.end_portal_frame.fill
+    range: 16
+  consumable:
+    animation: eat
+    consume_seconds: 5
+    particle: true
+    sound:
+      id: block.anvil.land
+      range: 16
+    effects:
+      apply_effects:
+        chance: 0.5
+        potions:
+          slowness:
+            duration: 200
+            amplifier: 2
+            icon: false
+            particles: true
+  ori_durability:
+    damage: 50
+    max_damage: 51
+    unbreakable: false
 
-盔甲内部名_胸甲:
-  id: leather_chestplate
-  display_name: <gradient:#fcd228:#ffffff>盔甲内部名_胸甲</gradient>  # 武器在游戏内呈现的名称
-  custom_model_data: 1001  # 物品自定义模型或贴图
-  attrs:
-    armor: 5  # 护甲值
-    critical_strike_chance: 0.1
-    critical_strike_damage: 1.8
-  color: "#ffffff"  # rgb颜色配合 custom_model_data 使用(由于＃会转义为注释, 请务必使用双引号)
-  slot: chest  # (所有配置的属性，包含技能等)生效位置 默认为ANY
-  lore_template: default
-  lore:
-    - <gradient:#fcd228:#fc4828>盔甲描述测试</gradient>
-  skills:
-    - "测试蹲下左键"
-    - "测试蹲下右键"
+  resistant: is_fire
 
-盔甲内部名_裤子:
-  id: leather_leggings
-  display_name: <gradient:#fcd228:#ffffff>盔甲内部名_裤子</gradient>  # 武器在游戏内呈现的名称
-  custom_model_data: 1001  # 物品自定义模型或贴图
-  attrs:
-    armor: 5  # 护甲值
-    attack_damage: 10
-  color: "#ffffff"  # rgb颜色配合 custom_model_data 使用(由于＃会转义为注释, 请务必使用双引号)
-  slot: leggings  # (所有配置的属性，包含技能等)生效位置 默认为ANY
-  lore_template: default
-  lore:
-    - <gradient:#fcd228:#fc4828>盔甲描述测试</gradient>
-  skills:
-    - "测试左键"
-    - "测试右键"
-
-盔甲内部名_鞋子:
-  id: leather_boots
-  display_name: <gradient:#fcd228:#ffffff>盔甲内部名_鞋子</gradient>  # 武器在游戏内呈现的名称
-  custom_model_data: 1001  # 物品自定义模型或贴图
-  attrs:
-    armor: 2  # 护甲值
-    pre_armor_reduction: 0.5
-  color: "#ffffff"  # rgb颜色配合 custom_model_data 使用(由于＃会转义为注释, 请务必使用双引号)
-  slot: boots  # (所有配置的属性，包含技能等)生效位置 默认为ANY
-  lore_template: default
-  lore:
-    - <gradient:#fcd228:#fc4828>盔甲描述测试</gradient>
-  skills:
-    - "测试跳起左键"
-    - "测试跳起右键"
-
-测试防御后减伤_苹果:
-  id: apple
-  display_name: <gradient:#fcd228:#ffffff>测试防御后减伤_苹果</gradient>  # 武器在游戏内呈现的名称
-  custom_model_data: 1001  # 物品自定义模型或贴图
-  attrs:
-    after_armor_reduction: 0.5
-  slot: offhand  # (所有配置的属性，包含技能等)生效位置 默认为ANY
-  lore_template: default
-  lore:
-    - <gradient:#fcd228:#fc4828>测试防御后减伤_苹果测试</gradient>
-    - 我可能可以帮你躲一剑？
-  hold_buff:
-    - 测试闪避
-  skills:
-    - "测试射箭"
-
-测试宝石1:  # 内部名
-  # 只会识别以下7个key
-  # modifiers部分同等级以及品质(无颜色代码)一样的要求
-  id: coal
-  custom_model_data: 2000
-  display_name: <yellow>力量宝石V</yellow>
-  type: gem
-  chance: 0.9  # 镶嵌成功率  默认为 1
-  loss_when_failed: true  # 镶嵌失败是否修丢失
-  unbreakable: true
-  hide_flags:
-    - UNBREAKABLE
-  lore:
-    - "这是一个宝石1"
-  attrs:
-    attack_damage: -0.1  # 伤害减少0.1
-
-测试宝石2:
-  id: coal
-  custom_model_data: 2001
-  type: gem
-  lore:
-    - "这是一个宝石2"
-  attrs:
-    attack_damage: +10
-
-# 可使用物品都是永久更改
-可食用物:
-  id: apple  # 自定义任意物品
-  type: consumable
-  cd: 60  # 食用cd (单位为秒)  负数表示不限制(默认不限制)
-  times: 1  # 食用次数  负数表示不限制(默认不限制)
-  sound: "entity.generic.drink 1.0 1.0"  # [作用域:音效名称][音量][音调]  # 不能少任何部分, 默认无音效, 作用域默认minecraft
-  # 具体修改项
-  health: 5
-  max_health: 25  # 最大生命值 +25
-  mana: 50  # 人物蓝量 +10
-  max_mana: 50  # 最大蓝量 +50
-  food: +5 # 饱食度 +5
-  saturation: 6  # 饱和 +6
-  level: 1  # 等级 +1
-  effect:  # 原版buff
-    - "glowing 1 40"  # 表示食用后给予使用者发光1, 持续40个tick (1s=20tick)  # 这里的等级就是游戏中的效果等级，不需要额外-1
-  buff:  # 自定义buff
-    - "测试持续掉血 #20"  # 持续时间 10个tick的内部名为 测试持续掉血 的 buff  [buff名] [#持续tick] [%概率]  # 可以只写buff名，其余使用buff配置中的默认值
-  command:  # 执行指令 使用 @self 做玩家名称占位符
-    - ""
-  lore:
-    - "<green>吃了我大大滴好:)</green>"
-
-可以kuku吃的东西:
-  id: coal
-  type: consumable
-  sound: "entity.generic.drink 1.0 1.0"
-  health: 5
-  food: +5
-  saturation: 20
-  effect:
-    - "glowing 1 40"  # 表示食用后给予使用者发光1, 持续40个tick (1s=20tick)  # 这里的等级就是游戏中的效果等级，不需要额外-1
-  lore:
-    - "<yellow>吃!:)</yellow>"
+  death_protection:
+    apply_effects:  # apply_effects,play_sound,remove_effects,clear_all_effects,teleport_randomly
+      chance: 0.5
+      potions:
+        slowness:
+          duration: 200
+          amplifier: 2
+          icon: false
+          particles: true
+  enchant:
+    value: 90
+    enchants:
+      - "sharpness 3"
+      - "unbreaking 2"
+  glint: true
+  equippable:
+    allow:
+      - player
+    # asset: 装备模型命名空间ID
+    # camera: 纹理命名空间ID   例子：带上南瓜头的玩家视角纹理
+    can_shear: true
+    damage_on_hurt: true
+    equip_on_interact: true
+    equip_sound:
+      id: bucket.empty_water
+      range: 16
+    dispensable:
+    shearing_sound:
+      id: bottle.dragonbreath
+    slot: head
+    swappable: true
+  food:
+    always_eat: false     # 是否可随时食用（无视饱食度）
+    nutrition: 8          # 饱食度
+    saturation: 0.6       # 饱和
+  glider:  # 写了就行, 无视值
+  # 可播放组件
+  music_disc: cat  # 唱片机曲目命名空间ID
+  # 药水效果
+  potion:
+    color: "#FF0000"
+    name: "强效治疗药水"
+    id: minecraft:healing
+    duration_scale: 1.5
+    potions:
+      regeneration:
+        duration: 600
+        amplifier: 2
+      absorption:
+        duration: 300
+        amplifier: 1
+  rarity: epic  # COMMON,UNCOMMON,RARE,EPIC,
+  repair:
+    cost: 10 # 累计惩罚值
+    items:
+      - stone
+  tool:
+    creative_destroy: false
+    damage_per_block: 10
+    default_speed: 0.1
+    rules:
+      random_key:
+        items:
+          - minecraft:bedrock
+          - minecraft:stone
+        drop: true
+        speed: 8.0
+  tooltip:
+    hide_tooltip: false  # 不隐藏提示框
+    hide_tags:  # 1.20.5之后写组件名，之前写hide_flags中的值
+      - attribute
+    # style: 物品提示框外观命名空间id
+  use_cooldown:
+    group: terra_group_1  # 同组物品的冷却共享
+    seconds: 5
+  use_remainder:
+    id: snowball
+    component: "{\"custom_name\":\"??\"}"  # 正常格式：{custom_name:'{"color":"yellow","text":"打咩哟"}'}
+    count: 1
+  weapon:
+    disable_shield_seconds: 5
+    damage_per_attack: 2

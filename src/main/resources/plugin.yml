@@ -10,7 +10,6 @@ load: STARTUP
 prefix: TerraCraft
 depend: [NBTAPI]
 softdepend: [MythicMobs]
-loadbefore: [MythicMobs]
 
 commands:
   terracraft:

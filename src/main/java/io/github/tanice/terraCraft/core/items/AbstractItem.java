@@ -79,10 +79,10 @@ public abstract class AbstractItem implements TerraBaseItem {
             if (sub != null) vanillaComponents.add(new CustomDataComponent(sub));
         }
         if (cfg.isSet("!custom_data")) CustomDataComponent.remove(this);
-        if (cfg.isSet("cmd")) {
-            vanillaComponents.add(new CustomModelDataComponent(cfg.getInt("cmd")));
+        if (cfg.isSet("custom_model_data")) {
+            vanillaComponents.add(new CustomModelDataComponent(cfg.getInt("custom_model_data")));
         }
-        if (cfg.isSet("!cmd")) CustomModelDataComponent.remove(this);
+        if (cfg.isSet("!custom_model_data")) CustomModelDataComponent.remove(this);
         if (cfg.isSet("display_name")) {
             vanillaComponents.add(new CustomNameComponent(cfg.getString("display_name")));
         }
@@ -125,24 +125,21 @@ public abstract class AbstractItem implements TerraBaseItem {
             if (sub != null) vanillaComponents.add(new FoodComponent(sub));
         }
         if (cfg.isSet("!food")) FoodComponent.remove(this);
-        if (cfg.isSet("glider")) {
-            sub = cfg.getConfigurationSection("glider");
-            if (sub != null) vanillaComponents.add(new GliderComponent());
-        }
+        if (cfg.isSet("glider")) vanillaComponents.add(new GliderComponent());
         if (cfg.isSet("!glider")) GliderComponent.remove(this);
-        if (cfg.isSet("record")) {
-            vanillaComponents.add(new JukeboxPlayable(TerraNamespaceKey.from(cfg.getString("record"))));
+        if (cfg.isSet("music_disc")) {
+            vanillaComponents.add(new JukeboxPlayable(cfg.getString("music_disc")));
         }
-        if (cfg.isSet("!record")) JukeboxPlayable.remove(this);
+        if (cfg.isSet("!music_disc")) JukeboxPlayable.remove(this);
         if (cfg.isSet("lore")) {
             sub = cfg.getConfigurationSection("lore");
             if (sub != null) vanillaComponents.add(new LoreComponent(cfg.getStringList("lore").stream().map(MiniMessageUtil::serialize).toList()));
         }
         if (cfg.isSet("!lore")) LoreComponent.remove(this);
-        if (cfg.isSet("stack")) {
-            vanillaComponents.add(new MaxStackSizeComponent(cfg.getInt("stack")));
+        if (cfg.isSet("max_stack_size")) {
+            vanillaComponents.add(new MaxStackSizeComponent(cfg.getInt("max_stack_size")));
         }
-        if (cfg.isSet("!stack")) MaxStackSizeComponent.remove(this);
+        if (cfg.isSet("!max_stack_size")) MaxStackSizeComponent.remove(this);
         if (cfg.isSet("potion")) {
             sub = cfg.getConfigurationSection("potion");
             if (sub != null) vanillaComponents.add(new PotionComponent(sub));

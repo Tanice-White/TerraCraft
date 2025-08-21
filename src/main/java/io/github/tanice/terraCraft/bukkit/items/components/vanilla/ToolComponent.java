@@ -44,7 +44,7 @@ public class ToolComponent implements TerraToolComponent {
         if (sub == null)  return;
         ConfigurationSection tmp;
         for (String key : sub.getKeys(false)) {
-            tmp = cfg.getConfigurationSection(key);
+            tmp = sub.getConfigurationSection(key);
             if (tmp == null) continue;
             this.rules.add(new DigConfig(tmp));
         }

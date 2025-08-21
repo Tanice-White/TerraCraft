@@ -29,7 +29,7 @@ public class NBTEffect {
     }
 
     @Nullable
-    public static NBTEffect from(String type,@Nullable ConfigurationSection cfg) {
+    public static NBTEffect from(String type, @Nullable ConfigurationSection cfg) {
         if (cfg == null) return null;
         Float chance = cfg.isSet("chance") ? (float) cfg.getDouble("chance") : null;
         switch (type) {

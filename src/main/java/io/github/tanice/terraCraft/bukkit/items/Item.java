@@ -72,8 +72,8 @@ public class Item extends AbstractItem implements TerraItem {
             sub = cfg.getConfigurationSection("level");
             if (sub != null) levelComponent = new LevelComponent(sub);
         }
-        if (cfg.isSet("meta")) {
-            sub = cfg.getConfigurationSection("meta");
+        if (cfg.isSet("terra_meta")) {
+            sub = cfg.getConfigurationSection("terra_meta");
             if (sub != null) metaComponent = new MetaComponent(sub);
         }
         if (cfg.isSet("quality")) {

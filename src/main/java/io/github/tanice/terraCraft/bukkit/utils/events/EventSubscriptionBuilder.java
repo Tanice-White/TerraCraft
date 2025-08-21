@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -81,9 +82,7 @@ public final class EventSubscriptionBuilder<T extends Event> {
 
         for (Class<? extends T> eventClass : eventClasses) {
             Listener listener = createListener(eventClass);
-            if (!configureEventHandlerAnnotation(listener, eventClass)) {
-                continue;
-            }
+            if (!configureEventHandlerAnnotation(listener, eventClass)) continue;
             Bukkit.getPluginManager().registerEvents(listener, TerraCraftBukkit.inst());
         }
     }
@@ -94,18 +93,18 @@ public final class EventSubscriptionBuilder<T extends Event> {
     private Listener createListener(Class<? extends T> eventClass) {
         return new Listener() {
             @EventHandler(priority = EventPriority.NORMAL) // 临时默认值，后续会被替换
-            public void onEvent(T event) {
+            public void onEvent(Event event) {
                 try {
+                    if (!eventClass.isInstance(event)) return;
+                    T typedEvent = eventClass.cast(event);
                     // 过滤已取消的事件
-                    if (ignoreCancelled && event instanceof Cancellable && ((Cancellable) event).isCancelled()) {
-                        return;
-                    }
+                    if (ignoreCancelled && event instanceof Cancellable && ((Cancellable) event).isCancelled()) return;
                     // 确保事件类型匹配（防御性检查）
-                    if (eventClass.isInstance(event)) {
-                        handler.accept(event);
-                    }
+                    if (eventClass.isInstance(event)) handler.accept(typedEvent);
+
                 } catch (Exception e) {
                     TerraCraftLogger.error("Error handling event " + eventClass.getSimpleName() + " " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         };
@@ -116,8 +115,9 @@ public final class EventSubscriptionBuilder<T extends Event> {
      */
     private boolean configureEventHandlerAnnotation(Listener listener, Class<? extends T> eventClass) {
         try {
-            Method method = listener.getClass().getDeclaredMethod("onEvent", eventType);
+            Method method = listener.getClass().getDeclaredMethod("onEvent", Event.class);
             EventHandler annotation = method.getAnnotation(EventHandler.class);
+            TerraCraftLogger.success(Arrays.toString(annotation.getClass().getDeclaredFields()));
             Field field = annotation.getClass().getDeclaredField("memberValues");
             field.setAccessible(true);
             @SuppressWarnings("unchecked")
@@ -126,7 +126,8 @@ public final class EventSubscriptionBuilder<T extends Event> {
             values.put("ignoreCancelled", ignoreCancelled);
             return true;
         } catch (Exception e) {
-            TerraCraftLogger.error("Failed to configure event annotation for " + eventClass.getSimpleName() + " " + e.getMessage());
+            TerraCraftLogger.error("Failed to configure event annotation for " + eventClass.getSimpleName() + ": " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

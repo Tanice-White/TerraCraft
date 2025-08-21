@@ -45,8 +45,8 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     public DurabilityComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
         this.damage = cfg.isSet("damage") ? cfg.getInt("damage") : null;
-        this.maxDamage = cfg.getInt("maxDamage", 1);
-        this.breakLoss = cfg.isSet("break_loss") ? cfg.getBoolean("breakLoss") : null;
+        this.maxDamage = cfg.getInt("max_damage", 1);
+        this.breakLoss = cfg.isSet("break_loss") ? cfg.getBoolean("break_loss") : null;
     }
 
     @Nullable

@@ -3,15 +3,12 @@ package io.github.tanice.terraCraft.core.attribute;
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.events.entity.TerraAttributeUpdateEvent;
-import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.EntityAttributeCalculator;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.EventPriority;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -39,11 +36,6 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
         calculatorMap = new ConcurrentHashMap<>();
 
         TerraSchedulers.async().repeat(this::cleanup, 1, CLEAN_UP_CD);
-
-        TerraEvents.subscribe(TerraAttributeUpdateEvent.class)
-                .ignoreCancelled(true)
-                .priority(EventPriority.MONITOR).handler(event -> this.updateAttribute(event.getEntity()))
-                .register();
     }
 
     public void reload() {

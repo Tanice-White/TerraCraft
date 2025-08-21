@@ -36,7 +36,7 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
 
     public QualityComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.qualityGroup = cfg.getString("qualityGroup");
+        this.qualityGroup = cfg.getString("group");
         this.quality = cfg.getString("quality");
     }
 

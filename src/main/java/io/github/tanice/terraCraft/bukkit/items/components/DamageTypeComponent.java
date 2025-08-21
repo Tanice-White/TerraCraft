@@ -35,7 +35,7 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
 
     public DamageTypeComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.type = safeValueOf(DamageFromType.class, cfg.getString("type"), DamageFromType.OTHER);
+        this.type = safeValueOf(DamageFromType.class, cfg.getString("damage_type"), DamageFromType.OTHER);
     }
 
     @Nullable

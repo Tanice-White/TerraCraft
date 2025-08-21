@@ -39,19 +39,25 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
     public AttributeModifiersComponent(ConfigurationSection cfg) {
         modifiers = new ArrayList<>();
 
+        ConfigurationSection sub;
         for (String key : cfg.getKeys(false)) {
             if (key.isBlank()) {
                 TerraCraftLogger.warning("Attribute modifier cannot have a blank key");
                 continue;
             }
+            sub = cfg.getConfigurationSection(key);
+            if (sub == null) {
+                TerraCraftLogger.warning("Invalid Attribute format under: " + key);
+                return;
+            }
             modifiers.add(new AttributeModifierComponent(
                     key,
-                    cfg.getString("attr"),
-                    cfg.isSet("amount") ? cfg.getDouble("amount") : 1,
-                    cfg.getString("op"),
-                    cfg.getString("slot"),
-                    cfg.getString("display_type"),
-                    cfg.getString("value")
+                    sub.getString("attr"),
+                    sub.isSet("amount") ? sub.getDouble("amount") : 1,
+                    sub.getString("op"),
+                    sub.getString("slot"),
+                    sub.getString("display_type"),
+                    sub.getString("value")
             ));
         }
     }
@@ -71,8 +77,8 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
                 for (AttributeModifierComponent modifier : modifiers) {
                     component = compoundList.addCompound();
                     component.setDouble("amount", modifier.amount);
-                    component.setString("type", modifier.attributeType.getBukkitAttribute().name());
-                    component.setString("operation", "Op" + modifier.op.getOperation());
+                    component.setString("type", modifier.attributeType.getAttributeKey().asString());
+                    component.setString("operation", modifier.op.name().toLowerCase());
                     if (ServerVersion.isBefore(MinecraftVersions.v1_21_1)) {
                         component.setString("name", modifier.id.get());
                         component.getIntArrayList("uuid");
@@ -98,7 +104,7 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
                     component.setDouble("Amount", modifier.amount);
                     component.setString("AttributeName", modifier.attributeType.getBukkitAttribute().toString());
                     component.setString("Name", modifier.id.get());
-                    component.setString("Operation", "Op" + modifier.op.getOperation());
+                    component.setString("Operation", modifier.op.name().toLowerCase());
                     component.setUUID("UUID", UUID.randomUUID());
                     if (modifier.slot != null && modifier.slot != TerraEquipmentSlot.ANY) component.setString("Slot", modifier.slot.getStandardName());
                 }
@@ -147,10 +153,10 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
         private final Component extraValue;
 
         public AttributeModifierComponent(String id, String attribute, double amount, String op, @Nullable String slot, @Nullable String displayType, @Nullable String extraValue) {
-            this.id = new TerraNamespaceKey(id);
+            this.id = TerraNamespaceKey.from(id);
             this.attributeType = BukkitAttribute.get(attribute);
             this.amount = amount;
-            this.op = safeValueOf(Operation.class, op, Operation.ADD);
+            this.op = safeValueOf(Operation.class, op, Operation.ADD_VALUE);
             this.slot = safeValueOf(TerraEquipmentSlot.class, slot, null);
             this.displayType = safeValueOf(DisplayType.class, displayType, DisplayType.DEFAULT);
             this.extraValue = extraValue == null ? Component.empty() : MiniMessageUtil.serialize(extraValue);

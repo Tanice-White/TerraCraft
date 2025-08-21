@@ -1,77 +1,35 @@
 package io.github.tanice.terraCraft.bukkit.listeners;
 
-import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
+import io.github.tanice.terraCraft.bukkit.listeners.helper.MythicListener;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
-import io.github.tanice.terraCraft.core.utils.helper.mythicmobs.TerraDamageMechanic;
-import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
 
-public class HelperListener {
+public class HelperListener implements Listener {
 
     private static final String MM = "MythicMobs";
+    private MythicListener mythicListener;
 
     public HelperListener() {
-
-        TerraEvents.subscribe(PluginEnableEvent.class).priority(EventPriority.HIGHEST).handler(event -> {
-            if (event.getPlugin().getName().equals(MM)) {
-                /* terraDamage */
-                TerraEvents.subscribe(MythicMechanicLoadEvent.class).priority(EventPriority.HIGH).handler(e -> {
-                    if (e.getMechanicName().equalsIgnoreCase("terraDamage") || e.getEventName().equalsIgnoreCase("td")) {
-                        e.register(new TerraDamageMechanic(e.getConfig()));
-                    }
-                }).register();
-                /* trigger */
-                triggerRegister();
-                TerraCraftLogger.success("MythicMobs detected, skills available");
-            }
-        }).register();
+        TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
     }
 
-    private void triggerRegister() {
-        /* 下蹲 */
-        TerraEvents.subscribe(PlayerToggleSneakEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
-            Player player = event.getPlayer();
-            TerraSkillManager.Trigger trigger = player.isSneaking() ? TerraSkillManager.Trigger.CROUCH_UP : TerraSkillManager.Trigger.CROUCH_DOWN;
-            TerraCraftBukkit.inst().getSkillManager().castSkill(player, trigger);
-        }).register();
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPluginEnable(PluginEnableEvent event) {
+        if (event.getPlugin().getName().equals(MM) && mythicListener == null) {
+            mythicListener = new MythicListener();
+            TerraCraftLogger.success("MythicMobs Detected, skills available");
+        }
+    }
 
-        /* 玩家释放技能（右键/左键等交互） */
-        TerraEvents.subscribe(PlayerInteractEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
-            Action action = event.getAction();
-            Player player = event.getPlayer();
-            TerraSkillManager.Trigger trigger;
+    public void reload() {
 
-            if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-                if (!player.isOnGround() && !player.isSwimming()) {
-                    trigger = TerraSkillManager.Trigger.JUMP_LEFT;
-                } else {
-                    trigger = player.isSneaking() ? TerraSkillManager.Trigger.CROUCH_LEFT : TerraSkillManager.Trigger.LEFT_CLICK;
-                }
-            } else {
-                if (!player.isOnGround() && !player.isSwimming()) {
-                    trigger = TerraSkillManager.Trigger.JUMP_RIGHT;
-                } else {
-                    trigger = player.isSneaking() ? TerraSkillManager.Trigger.CROUCH_RIGHT : TerraSkillManager.Trigger.RIGHT_CLICK;
-                }
-            }
-            TerraCraftBukkit.inst().getSkillManager().castSkill(player, trigger);
-        }).register();
+    }
 
-        /* 弓箭离弦 */
-        TerraEvents.subscribe(EntityShootBowEvent.class).priority(EventPriority.HIGH).ignoreCancelled(true).handler(event -> {
-            LivingEntity entity = event.getEntity();
-            if (entity instanceof Player player) {
-                TerraCraftBukkit.inst().getSkillManager().castSkill(player, TerraSkillManager.Trigger.SHOOT);
-            }
-        }).register();
+    public void unload() {
+
     }
 }

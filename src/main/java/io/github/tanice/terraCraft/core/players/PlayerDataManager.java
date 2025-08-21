@@ -4,13 +4,10 @@ import io.github.tanice.terraCraft.api.players.TerraPlayerData;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.events.entity.TerraPlayerDataLimitChangeEvent;
-import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -33,11 +30,6 @@ public class PlayerDataManager implements TerraPlayerDataManager {
 
         TerraSchedulers.async().repeat(this::processManaRecovery, 2, MANA_RECOVERY_CD);
         TerraSchedulers.async().repeat(this::cleanup, 1, CLEAN_UP_CD);
-
-        TerraEvents.subscribe(TerraPlayerDataLimitChangeEvent.class)
-                .priority(EventPriority.MONITOR)
-                .handler( event -> this.changePlayerDataLimit(event.getEntity(), event.getDeltaPlayerData()))
-                .register();
     }
 
     public void reload() {

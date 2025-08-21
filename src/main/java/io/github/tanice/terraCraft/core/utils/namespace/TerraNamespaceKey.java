@@ -14,7 +14,7 @@ public class TerraNamespaceKey {
     }
 
     public TerraNamespaceKey(String key) {
-        this.namespace = TerraCraftBukkit.inst().getName();
+        this.namespace = TerraCraftBukkit.inst().getName().toLowerCase();
         this.key = key;
     }
 
@@ -29,7 +29,7 @@ public class TerraNamespaceKey {
         if (namespaceKey.contains(":")) {
             String[] split = namespaceKey.split(":");
             return new TerraNamespaceKey(split[0], split[1]);
-        } else return new TerraNamespaceKey(namespaceKey);
+        } else return TerraNamespaceKey.minecraft(namespaceKey);
     }
 
     public String get() {

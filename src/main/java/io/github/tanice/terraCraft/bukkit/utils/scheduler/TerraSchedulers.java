@@ -44,6 +44,11 @@ public final class TerraSchedulers {
         asyncExecutor.shutdown();
     }
 
+    public static void clear() {
+        syncExecutor.clear();
+        asyncExecutor.clear();
+    }
+
     private static void stateCheck() {
         if (closing.get()) throw new IllegalStateException("TerraSyncExecutor is shutting down");
     }
@@ -112,6 +117,12 @@ public final class TerraSchedulers {
         @Override
         public void shutdown() {
             closing.set(true);
+            for (int bid : tasks.values()) Bukkit.getScheduler().cancelTask(bid);
+            tasks.clear();
+        }
+
+        @Override
+        public void clear() {
             for (int bid : tasks.values()) Bukkit.getScheduler().cancelTask(bid);
             tasks.clear();
         }
@@ -209,6 +220,12 @@ public final class TerraSchedulers {
                 Thread.currentThread().interrupt();
             }
         }
+
+        @Override
+        public void clear() {
+            for (Future<?> future : tasks.values()) future.cancel(true);
+            tasks.clear();
+        }
     }
 
     /**
@@ -229,7 +246,6 @@ public final class TerraSchedulers {
         @Override
         public void run(Runnable task) {
             TerraSchedulers.stateCheck();
-
             executor.execute(task);
         }
 

@@ -14,6 +14,7 @@ import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.buffs.impl.AttributeBuff;
 import io.github.tanice.terraCraft.core.buffs.impl.BuffRecord;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -112,7 +113,7 @@ public final class BuffManager implements TerraBuffManager {
 
     @Override
     public void loadPlayerBuffs(Player player) {
-        if (!TerraCraftBukkit.inst().getConfigManager().useMysql()) return;
+        if (!ConfigManager.useMysql()) return;
 
         TerraCraftBukkit.inst().getDatabaseManager().loadPlayerBuffRecords(player.getUniqueId().toString())
                 .thenAccept(records -> {
@@ -123,7 +124,7 @@ public final class BuffManager implements TerraBuffManager {
                         playerBuff.put(record.getBuff().getName(), record);
                     }
                     /* Debug */
-                    if (TerraCraftBukkit.inst().getConfigManager().isDebug()) {
+                    if (ConfigManager.isDebug()) {
                         StringBuilder s = new StringBuilder("Player " + player.getName() + " joined. Syncing buffs: ");
                         for (TerraBuffRecord record : records) s.append(record.getBuff().getDisplayName()).append(" ");
                         TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.BUFF, s.toString());
@@ -134,12 +135,12 @@ public final class BuffManager implements TerraBuffManager {
 
     @Override
     public void SaveAndClearPlayerBuffs(Player player) {
-        if (TerraCraftBukkit.inst().getConfigManager().useMysql()) {
+        if (ConfigManager.useMysql()) {
             ConcurrentMap<String, TerraBuffRecord> res = entityBuffs.get(player.getUniqueId());
             if (res == null) return;
             TerraCraftBukkit.inst().getDatabaseManager().saveBuffRecords(res.values());
 
-            if (TerraCraftBukkit.inst().getConfigManager().isDebug()) {
+            if (ConfigManager.isDebug()) {
                 StringBuilder s = new StringBuilder("Player " + player.getName() + " left. Saving buffs: ");
                 for (TerraBuffRecord r : res.values()) s.append(r.toString()).append(" ");
                 TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.BUFF, s.toString());

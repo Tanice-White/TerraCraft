@@ -5,6 +5,7 @@ import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalcul
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.EntityAttributeCalculator;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -77,7 +78,7 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
         if (computing.compareAndSet(false, true)) {
             TerraSchedulers.async().run(() -> processAttributeUpdate(uuid));
 
-            if (TerraCraftBukkit.inst().getConfigManager().isDebug()) {
+            if (ConfigManager.isDebug()) {
                 TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updating");
             }
             /* 计算中，标记为脏 */

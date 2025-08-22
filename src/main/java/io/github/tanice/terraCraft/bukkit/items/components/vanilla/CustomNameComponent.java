@@ -29,8 +29,8 @@ public class CustomNameComponent implements TerraCustomNameComponent {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (name != null) {
-                    nbt.setString(MINECRAFT_PREFIX + "custom_name", MiniMessageUtil.toNBTJson(name));
-                    nbt.setString(MINECRAFT_PREFIX + "item_name", MiniMessageUtil.toNBTJson(name));
+                    nbt.getOrCreateCompound(MINECRAFT_PREFIX + "custom_name").mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(name)));
+                    nbt.getOrCreateCompound(MINECRAFT_PREFIX + "custom_name").mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(name)));
                 }
             });
         } else {
@@ -38,6 +38,11 @@ public class CustomNameComponent implements TerraCustomNameComponent {
                 if (name != null) nbt.getOrCreateCompound("display").setString("Name", MiniMessageUtil.toNBTJson(name));
             });
         }
+    }
+
+    @Override
+    public String getComponentName() {
+        return "custom_name";
     }
 
     public static void clear(TerraBaseItem item) {

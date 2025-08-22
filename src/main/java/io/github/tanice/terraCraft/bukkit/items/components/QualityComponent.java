@@ -104,6 +104,11 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     }
 
     @Override
+    public String getComponentName() {
+        return "quality";
+    }
+
+    @Override
     public TerraBaseComponent updatePartial() {
         return new QualityComponent(null, this.qualityGroup, this.state);
     }

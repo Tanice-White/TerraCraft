@@ -28,6 +28,11 @@ public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintO
         } else TerraCraftLogger.warning("Enchantment glint override component is only supported in Minecraft 1.20.5 or newer versions");
     }
 
+    @Override
+    public String getComponentName() {
+        return "glint";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

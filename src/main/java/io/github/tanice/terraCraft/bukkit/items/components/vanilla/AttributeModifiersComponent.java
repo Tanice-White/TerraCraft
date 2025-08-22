@@ -113,6 +113,11 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
     }
 
     @Override
+    public String getComponentName() {
+        return "attribute";
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(modifiers);
     }

@@ -108,6 +108,11 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     }
 
     @Override
+    public String getComponentName() {
+        return "level";
+    }
+
+    @Override
     public TerraBaseComponent updatePartial() {
         return new LevelComponent(null, this.levelTemplate, this.state);
     }

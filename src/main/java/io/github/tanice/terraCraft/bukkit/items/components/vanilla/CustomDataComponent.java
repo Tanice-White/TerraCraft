@@ -28,6 +28,11 @@ public class CustomDataComponent implements TerraCustomDataComponent {
 
     }
 
+    @Override
+    public String getComponentName() {
+        return "custom_data";
+    }
+
     public static void clear(TerraBaseItem item) {
 
     }

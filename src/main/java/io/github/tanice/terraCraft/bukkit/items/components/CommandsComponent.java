@@ -112,4 +112,9 @@ public class CommandsComponent extends AbstractItemComponent implements TerraCom
     public void setCommands(@Nullable List<String> commands) {
         this.commands = commands;
     }
+
+    @Override
+    public String getComponentName() {
+        return "command";
+    }
 }

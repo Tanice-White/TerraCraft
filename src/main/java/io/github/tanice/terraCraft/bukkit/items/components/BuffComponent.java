@@ -8,7 +8,6 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.ComponentState;
 import io.github.tanice.terraCraft.api.items.components.TerraBuffComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
-import io.github.tanice.terraCraft.bukkit.utils.StringUtil;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import org.bukkit.configuration.ConfigurationSection;
@@ -209,5 +208,10 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
                 nbt.getStringList("defense").toListCopy(),
                 new ComponentState(nbt.getByte("state"))
         );
+    }
+
+    @Override
+    public String getComponentName() {
+        return "buff";
     }
 }

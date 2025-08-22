@@ -1,11 +1,9 @@
 package io.github.tanice.terraCraft.core.players;
 
-import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.players.TerraPlayerData;
-import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -46,14 +44,13 @@ public class PlayerData implements TerraPlayerData, Cloneable {
      * 创建用于玩家初始化的PlayerData对象
      */
     public static PlayerData newFrom(Player player) {
-        TerraConfigManager cm = TerraCraftBukkit.inst().getConfigManager();
         return new PlayerData(
                 player.getUniqueId().toString(),
-                cm.getOriginalMaxHealth(),
-                cm.getOriginalMaxHealth(),
-                cm.getOriginalMaxMana(),
-                cm.getOriginalMaxMana(),
-                cm.getOriginalManaRecoverySpeed(),
+                ConfigManager.getOriginalMaxHealth(),
+                ConfigManager.getOriginalMaxHealth(),
+                ConfigManager.getOriginalMaxMana(),
+                ConfigManager.getOriginalMaxMana(),
+                ConfigManager.getOriginalManaRecoverySpeed(),
                 new HashMap<>(0)
         );
     }

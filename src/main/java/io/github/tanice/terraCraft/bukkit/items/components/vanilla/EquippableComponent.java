@@ -120,6 +120,11 @@ public class EquippableComponent implements TerraEquippableComponent {
         } else TerraCraftLogger.warning("Equippable component is only supported in Minecraft 1.21.2 or newer versions");
     }
 
+    @Override
+    public String getComponentName() {
+        return "equippable";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

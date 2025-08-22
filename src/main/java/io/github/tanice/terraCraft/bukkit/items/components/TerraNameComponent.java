@@ -50,6 +50,11 @@ public class TerraNameComponent implements TerraInnerNameComponent {
     }
 
     @Override
+    public String getComponentName() {
+        return "terr_name";
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(name);
     }

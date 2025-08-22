@@ -8,18 +8,14 @@ import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalcul
 import io.github.tanice.terraCraft.api.buffs.BuffActiveCondition;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffManager;
 import io.github.tanice.terraCraft.api.buffs.TerraRunnableBuff;
-import io.github.tanice.terraCraft.api.config.TerraConfigManager;
-import io.github.tanice.terraCraft.api.items.TerraBaseItem;
-import io.github.tanice.terraCraft.api.items.TerraItem;
 import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.items.Item;
 import io.github.tanice.terraCraft.bukkit.items.components.BuffComponent;
 import io.github.tanice.terraCraft.bukkit.items.components.DamageTypeComponent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
-import io.github.tanice.terraCraft.bukkit.utils.adapter.TerraBukkitAdapter;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.skills.SkillDamageMeta;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -36,7 +32,6 @@ public final class DamageCalculator {
 
     private static final TerraEntityAttributeManager attributeManager = TerraCraftBukkit.inst().getEntityAttributeManager();
     private static final TerraJSEngineManager jsEngine = TerraCraftBukkit.inst().getJSEngineManager();
-    private static final TerraConfigManager configManager = TerraCraftBukkit.inst().getConfigManager();
     private static final Random rand = new Random();
 
     /** 非生物来源的物理伤害 */
@@ -166,8 +161,8 @@ public final class DamageCalculator {
 
     private static void applyFloatDamage(TerraDamageProtocol protocol) {
         double damage = protocol.getFinalDamage();
-        if (configManager.isDamageFloatEnabled()) {
-            double r = configManager.getDamageFloatRange();
+        if (ConfigManager.isDamageFloatEnabled()) {
+            double r = ConfigManager.getDamageFloatRange();
             damage *= rand.nextDouble(1 - r, 1 + r);
         }
         protocol.setFinalDamage(damage);
@@ -226,7 +221,7 @@ public final class DamageCalculator {
         TerraCalculableMeta dMeta = protocol.getDefenderCalculator().getMeta();
 
         damage *= (1 - dMeta.get(AttributeType.PRE_ARMOR_REDUCTION));
-        damage -= dMeta.get(AttributeType.ARMOR) * configManager.getWorldK();
+        damage -= dMeta.get(AttributeType.ARMOR) * ConfigManager.getWorldK();
         damage = Math.max(0, damage);
         damage *= (1 - dMeta.get(AttributeType.AFTER_ARMOR_REDUCTION));
         protocol.setFinalDamage(damage);
@@ -238,7 +233,7 @@ public final class DamageCalculator {
 
         damage *= (1 - dMeta.get(AttributeType.PRE_ARMOR_REDUCTION));
         if (!skillMeta.isIgnoreArmor())
-            damage -= dMeta.get(AttributeType.ARMOR) * configManager.getWorldK();
+            damage -= dMeta.get(AttributeType.ARMOR) * ConfigManager.getWorldK();
         damage = Math.max(0, damage);
         damage *= (1 - dMeta.get(AttributeType.AFTER_ARMOR_REDUCTION));
         protocol.setFinalDamage(damage);

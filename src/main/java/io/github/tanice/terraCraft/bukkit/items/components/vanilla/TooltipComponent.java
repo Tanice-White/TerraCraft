@@ -76,6 +76,11 @@ public class TooltipComponent implements TerraTooltipComponent {
         }
     }
 
+    @Override
+    public String getComponentName() {
+        return "tooltip";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

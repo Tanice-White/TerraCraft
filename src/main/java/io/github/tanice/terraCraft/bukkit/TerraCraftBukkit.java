@@ -2,13 +2,13 @@ package io.github.tanice.terraCraft.bukkit;
 
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffManager;
-import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.items.TerraItemManager;
 import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
+import io.github.tanice.terraCraft.bukkit.commands.ReloadCommand;
 import io.github.tanice.terraCraft.bukkit.commands.TerraCraftCommand;
 import io.github.tanice.terraCraft.bukkit.commands.item.GetCommand;
 import io.github.tanice.terraCraft.bukkit.listeners.DamageListener;
@@ -29,7 +29,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private static TerraCraftBukkit instance;
 
-    private ConfigManager configManager;
     private JSEngineManager jsEngineManager;
     private DatabaseManager databaseManager;
     private BuffManager buffManager;
@@ -54,8 +53,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        configManager = new ConfigManager(this);
-        configManager.saveDefaultConfig();
+        ConfigManager.load();
 
         helperListener = new HelperListener();
         itemListener = new ItemListener();
@@ -73,6 +71,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
         terraCraftCommand = new TerraCraftCommand(this);
         terraCraftCommand.register(new GetCommand());
+        terraCraftCommand.register(new ReloadCommand());
         terraCraftCommand.onload();
     }
 
@@ -85,7 +84,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         if (terraEventListener != null) terraEventListener.unload();
 
         if (jsEngineManager != null) jsEngineManager.close();
-        if (configManager != null) configManager.unload();
         if (buffManager != null) buffManager.unload();
         if (itemManager != null) itemManager.unload();
         if (skillManager != null) skillManager.unload();
@@ -97,7 +95,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
     @Override
     public void reload() {
-        configManager.reload();
+        TerraSchedulers.clear();
         databaseManager.reload();
 
         helperListener.reload();
@@ -120,11 +118,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     @Override
     public TerraBuffManager getBuffManager() {
         return this.buffManager;
-    }
-
-    @Override
-    public TerraConfigManager getConfigManager() {
-        return this.configManager;
     }
 
     @Override
@@ -155,9 +148,5 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     @Override
     public TerraPlayerDataManager getPlayerDataManager() {
         return this.playerDataManager;
-    }
-
-    public HelperListener getHelperListener() {
-        return this.helperListener;
     }
 }

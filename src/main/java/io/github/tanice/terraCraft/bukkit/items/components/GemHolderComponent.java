@@ -130,6 +130,11 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     }
 
     @Override
+    public String getComponentName() {
+        return "gem_holder";
+    }
+
+    @Override
     public TerraBaseComponent updatePartial() {
         return new GemHolderComponent(this.limit, null, this.state);
     }

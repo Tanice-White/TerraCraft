@@ -67,6 +67,11 @@ public class ToolComponent implements TerraToolComponent {
         } else TerraCraftLogger.warning("Tool component is only supported in Minecraft 1.20.5 or newer versions");
     }
 
+    @Override
+    public String getComponentName() {
+        return "tool";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

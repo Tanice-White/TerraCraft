@@ -81,6 +81,11 @@ public class ConsumableComponent implements TerraConsumableComponent {
         } else TerraCraftLogger.warning("Consumable component is only supported in Minecraft 1.21.2 or newer versions");
     }
 
+    @Override
+    public String getComponentName() {
+        return "consumable";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

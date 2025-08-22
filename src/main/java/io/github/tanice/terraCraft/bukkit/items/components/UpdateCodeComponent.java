@@ -47,6 +47,11 @@ public class UpdateCodeComponent implements TerraUpdateCodeComponent {
     }
 
     @Override
+    public String getComponentName() {
+        return "code";
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(code);
     }

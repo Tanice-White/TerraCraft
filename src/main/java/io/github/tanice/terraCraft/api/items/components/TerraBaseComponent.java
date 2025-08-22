@@ -1,5 +1,7 @@
 package io.github.tanice.terraCraft.api.items.components;
 
+import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import org.bukkit.inventory.ItemStack;
 
 public interface TerraBaseComponent {
@@ -12,10 +14,15 @@ public interface TerraBaseComponent {
     void apply(ItemStack item);
 
     /**
+     * 组件内部名称
+     */
+    String getComponentName();
+
+    /**
      * 组件是否可更新
      */
     default boolean canUpdate() {
-        return true;
+        return ConfigManager.getOriUpdateConfigMap().get(getComponentName());
     }
 
     /**

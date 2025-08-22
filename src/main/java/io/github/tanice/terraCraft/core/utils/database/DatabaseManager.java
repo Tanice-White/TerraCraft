@@ -5,12 +5,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffRecord;
-import io.github.tanice.terraCraft.api.config.TerraConfigManager;
 import io.github.tanice.terraCraft.api.players.TerraPlayerData;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.buffs.impl.BuffRecord;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.players.PlayerData;
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
 
     public DatabaseManager(TerraPlugin plugin) {
         this.plugin = plugin;
-        if (!plugin.getConfigManager().useMysql()) {
+        if (!ConfigManager.useMysql()) {
             TerraCraftLogger.info("Data synchronization without database.");
             return;
         }
@@ -57,11 +57,10 @@ public final class DatabaseManager implements TerraDatabaseManager {
      * 单独写 -> 考虑到 reload 后更改数据库
      */
     private void init(){
-        TerraConfigManager globalConfig = plugin.getConfigManager();
-        String url = "jdbc:mysql://" + globalConfig.getHost() + ":" + globalConfig.getPort() + "/" + globalConfig.getDatabase();
+        String url = "jdbc:mysql://" + ConfigManager.getHost() + ":" + ConfigManager.getPort() + "/" + ConfigManager.getDatabase();
         Properties properties = new Properties();
-        properties.setProperty("user", globalConfig.getUsername());
-        properties.setProperty("password", globalConfig.getPassword());
+        properties.setProperty("user", ConfigManager.getUsername());
+        properties.setProperty("password", ConfigManager.getPassword());
         properties.setProperty("useSSL", "false");
         properties.setProperty("autoReconnect", "true");
         try {
@@ -69,13 +68,13 @@ public final class DatabaseManager implements TerraDatabaseManager {
         } catch (SQLException e) {
             TerraCraftLogger.error("Database connection failed! Database synchronization disabled. (If this is your first time running the plugin, please modify database authentication information in the config file)");
             TerraCraftLogger.error(e.getMessage());
-            globalConfig.setUseMysql(false);
+            ConfigManager.setUseMysql(false);
             return;
         }
         if (this.createTables()) TerraCraftLogger.success("Database connected successfully");
         else {
             TerraCraftLogger.error("Failed to create database tables, database synchronization disabled");
-            globalConfig.setUseMysql(false);
+            ConfigManager.setUseMysql(false);
         }
     }
 

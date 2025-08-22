@@ -30,6 +30,11 @@ public class DyedColorComponent implements TerraDyedColor {
         } else TerraCraftLogger.warning("Dye color component is only supported in Minecraft 1.20.5 or newer versions");
     }
 
+    @Override
+    public String getComponentName() {
+        return "dyed_color";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

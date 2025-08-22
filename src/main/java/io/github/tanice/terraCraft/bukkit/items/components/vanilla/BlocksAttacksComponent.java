@@ -123,6 +123,11 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
         } else TerraCraftLogger.warning("Blocks attacks component is only supported in Minecraft 1.21.5 or newer versions");
     }
 
+    @Override
+    public String getComponentName() {
+        return "shield";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

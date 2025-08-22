@@ -169,4 +169,9 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
                 new ComponentState(nbt.getByte("state"))
         );
     }
+
+    @Override
+    public String getComponentName() {
+        return "gem";
+    }
 }

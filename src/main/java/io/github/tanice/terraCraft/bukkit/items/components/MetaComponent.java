@@ -143,4 +143,9 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
         double[] damageTypes = damageTypeList.stream().mapToDouble(Double::doubleValue).toArray();
         return new MetaComponent(new CalculableMeta(attributes, damageTypes, as), new ComponentState(nbt.getByte("state")));
     }
+
+    @Override
+    public String getComponentName() {
+        return "terra_meta";
+    }
 }

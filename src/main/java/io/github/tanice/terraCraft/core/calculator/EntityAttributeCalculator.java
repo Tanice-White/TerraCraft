@@ -9,6 +9,7 @@ import io.github.tanice.terraCraft.api.buffs.BuffActiveCondition;
 import io.github.tanice.terraCraft.api.buffs.TerraRunnableBuff;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import org.bukkit.entity.LivingEntity;
@@ -33,7 +34,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
     protected EnumMap<AttributeActiveSection, TerraCalculableMeta> transformTmp;
 
     public EntityAttributeCalculator(LivingEntity livingEntity) {
-        this.useDamageReductionBalance = TerraCraftBukkit.inst().getConfigManager().useDamageReductionBalanceForPlayer();
+        this.useDamageReductionBalance = ConfigManager.useDamageReductionBalanceForPlayer();
         this.transformTmp = new EnumMap<>(AttributeActiveSection.class);
         this.beforeList = new ArrayList<>();
         this.betweenList = new ArrayList<>();
@@ -80,7 +81,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         /* buff计算 */
         metas.addAll(TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffs(entity));
 
-        if (TerraCraftBukkit.inst().getConfigManager().isDebug()) {
+        if (ConfigManager.isDebug()) {
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, metas.size() + " metas in " + entity.getName());
         }
 

@@ -132,8 +132,7 @@ public abstract class AbstractItem implements TerraBaseItem {
         }
         if (cfg.isSet("!music_disc")) JukeboxPlayable.remove(this);
         if (cfg.isSet("lore")) {
-            sub = cfg.getConfigurationSection("lore");
-            if (sub != null) vanillaComponents.add(new LoreComponent(cfg.getStringList("lore").stream().map(MiniMessageUtil::serialize).toList()));
+            vanillaComponents.add(new LoreComponent(cfg.getStringList("lore").stream().map(MiniMessageUtil::serialize).toList()));
         }
         if (cfg.isSet("!lore")) LoreComponent.remove(this);
         if (cfg.isSet("max_stack_size")) {

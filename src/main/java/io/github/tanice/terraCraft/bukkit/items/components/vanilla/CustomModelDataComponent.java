@@ -27,6 +27,11 @@ public class CustomModelDataComponent implements TerraCustomModelDataComponent {
         } else NBT.modify(item, nbt -> {nbt.setInteger("CustomModelData", cmd);});
     }
 
+    @Override
+    public String getComponentName() {
+        return "custom_model_data";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

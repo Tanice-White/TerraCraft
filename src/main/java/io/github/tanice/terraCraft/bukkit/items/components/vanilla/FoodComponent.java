@@ -45,6 +45,11 @@ public class FoodComponent implements TerraFoodComponent {
         } else TerraCraftLogger.warning("Food component is only supported in Minecraft 1.20.5 or newer versions");
     }
 
+    @Override
+    public String getComponentName() {
+        return "food";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{

@@ -45,6 +45,11 @@ public class WeaponComponent implements TerraWeaponComponent {
 
     }
 
+    @Override
+    public String getComponentName() {
+        return "weapon";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

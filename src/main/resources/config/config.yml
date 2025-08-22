@@ -48,3 +48,33 @@ rarity_intensity: 0.5  # 越大压制越多
 original_max_health: 20
 original_max_mana: 50
 original_mana_recovery_speed: 0.2 #(每tick恢复0.4蓝量, 相当于1s恢复8)
+
+# 原版属性组件是否覆盖式更新
+update:
+  attribute: false  # false1
+  shield: true
+  break_sound: true
+  consumable: true
+  custom_data: false  # false2
+  custom_model_data: true
+  display_name: false  # false3
+  ori_durability: true
+  resistant: true
+  death_protection: true
+  dyed_color: true
+  enchant: true
+  glint: true
+  equippable: true
+  food: true
+  glider: true
+  music_disc: true
+  lore: true
+  max_stack_size: true
+  potion: true
+  rarity: true
+  repair: true
+  tool: true
+  tooltip: true
+  use_cooldown: true
+  use_remainder: true
+  weapon: true

@@ -1,7 +1,6 @@
 package io.github.tanice.terraCraft.core.config;
 
-import io.github.tanice.terraCraft.api.config.TerraConfigManager;
-import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
+import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,182 +14,45 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public final class ConfigManager implements TerraConfigManager {
-    private final TerraPlugin plugin;
+public final class ConfigManager {
 
     private static final String RESOURCE_FOLDER = "/config/";
 
-    private double version;
-    private boolean debug;
-    private boolean generateExamples;
-    private boolean generateDamageIndicator;
-    private String defaultPrefix;
-    private String criticalPrefix;
-    private double criticalLargeScale;
-    private double viewRange;
-    private double worldK;
-    private boolean damageFloat;
-    private double damageFloatRange;
-    private boolean useDamageReductionBalanceForPlayer;
-    private double originalCriticalStrikeAddition;
-    private boolean useMysql;
-    private String host;
-    private String port;
-    private String database;
-    private String username;
-    private String password;
-    private double originalMaxHealth;
-    private double originalMaxMana;
-    private double originalManaRecoverySpeed;
-    private double rarity_intensity;
+    private static double version;
+    private static boolean debug;
+    private static boolean generateExamples;
+    private static boolean generateDamageIndicator;
+    private static String defaultPrefix;
+    private static String criticalPrefix;
+    private static double criticalLargeScale;
+    private static double viewRange;
+    private static double worldK;
+    private static boolean damageFloat;
+    private static double damageFloatRange;
+    private static boolean useDamageReductionBalanceForPlayer;
+    private static double originalCriticalStrikeAddition;
+    private static boolean useMysql;
+    private static String host;
+    private static String port;
+    private static String database;
+    private static String username;
+    private static String password;
+    private static double originalMaxHealth;
+    private static double originalMaxMana;
+    private static double originalManaRecoverySpeed;
+    private static double rarityIntensity;
+    private static Map<String, Boolean> oriUpdateConfigMap;
 
-    public ConfigManager(TerraPlugin plugin) {
-        this.plugin = plugin;
-        load();
-    }
+    public static synchronized void load() {
+        File configFile = new File(TerraCraftBukkit.inst().getDataFolder(), "config.yml");
+        if (!configFile.exists())generateExampleConfig();
+        else if (generateExamples) generateExampleConfig();
 
-    public void reload() {
-        load();
-    }
-
-    public void unload() {
-
-    }
-
-    @Override
-    public double getVersion() {
-        return this.version;
-    }
-
-    @Override
-    public boolean isDebug() {
-        return this.debug;
-    }
-
-    @Override
-    public boolean shouldGenerateExamples() {
-        return this.generateExamples;
-    }
-
-    @Override
-    public boolean shouldGenerateDamageIndicator() {
-        return this.generateDamageIndicator;
-    }
-
-    @Override
-    public String getDefaultPrefix() {
-        return this.defaultPrefix;
-    }
-
-    @Override
-    public String getCriticalPrefix() {
-        return this.criticalPrefix;
-    }
-
-    @Override
-    public double getCriticalLargeScale() {
-        return this.criticalLargeScale;
-    }
-
-    @Override
-    public double getViewRange() {
-        return this.viewRange;
-    }
-
-    @Override
-    public double getWorldK() {
-        return this.worldK;
-    }
-
-    @Override
-    public boolean isDamageFloatEnabled() {
-        return this.damageFloat;
-    }
-
-    @Override
-    public double getDamageFloatRange() {
-        return this.damageFloatRange;
-    }
-
-    @Override
-    public boolean useDamageReductionBalanceForPlayer() {
-        return this.useDamageReductionBalanceForPlayer;
-    }
-
-    @Override
-    public double getOriginalCriticalStrikeAddition() {
-        return this.originalCriticalStrikeAddition;
-    }
-
-    @Override
-    public boolean useMysql() {
-        return this.useMysql;
-    }
-
-    @Override
-    public void setUseMysql(boolean useMysql) {
-        this.useMysql = useMysql;
-    }
-
-    @Override
-    public String getHost() {
-        return this.host;
-    }
-
-    @Override
-    public String getPort() {
-        return this.port;
-    }
-
-    @Override
-    public String getDatabase() {
-        return this.database;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public double getOriginalMaxHealth() {
-        return this.originalMaxHealth;
-    }
-
-    @Override
-    public double getOriginalMaxMana() {
-        return this.originalMaxMana;
-    }
-
-    @Override
-    public double getOriginalManaRecoverySpeed() {
-        return this.originalManaRecoverySpeed;
-    }
-
-    @Override
-    public double getRarityIntensity() {
-        return this.rarity_intensity;
-    }
-
-    @Override
-    public void saveDefaultConfig() {
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
-        if (!configFile.exists()){
-            generateExampleConfig();
-            return;
-        }
-        if (generateExamples) generateExampleConfig();
-    }
-
-    public synchronized void load() {
-        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
+        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(configFile);
         ConfigurationSection sub;
 
         version = cfg.getDouble("VERSION", -1);
@@ -206,7 +68,6 @@ public final class ConfigManager implements TerraConfigManager {
         damageFloatRange = cfg.getDouble("damage_float_range", 0D);
         useDamageReductionBalanceForPlayer = cfg.getBoolean("use_damage_reduction_balance_for_player", false);
         originalCriticalStrikeAddition = cfg.getDouble("original_critical_strike_addition", 0.2D);
-
         sub = cfg.getConfigurationSection("database");
         if (sub == null) {
             TerraCraftLogger.error("Global configuration file error, unable to connect to database");
@@ -226,16 +87,127 @@ public final class ConfigManager implements TerraConfigManager {
                 useMysql = false;
             }
         }
-
         originalMaxHealth = cfg.getDouble("original_max_health", 20D);
         originalMaxMana = cfg.getDouble("original_max_mana", 50D);
         originalManaRecoverySpeed = cfg.getDouble("original_mana_recovery_speed", 0.4D);
-        rarity_intensity = cfg.getDouble("rarity_intensity", 0.5D);
+        rarityIntensity = cfg.getDouble("rarity_intensity", 0.5D);
+        oriUpdateConfigMap = new HashMap<>();
+        sub = cfg.getConfigurationSection("update");
+        if (sub == null) TerraCraftLogger.error("Global configuration file error, there is no update config section");
+        else for (String key : sub.getKeys(false)) oriUpdateConfigMap.put(key, sub.getBoolean(key, false));
     }
 
-    private void generateExampleConfig() {
-        File targetFolder = plugin.getDataFolder();
-        URL sourceUrl = plugin.getClass().getResource("");
+    public void reload() {
+        load();
+    }
+
+    public void unload() {
+
+    }
+
+    public static double getVersion() {
+        return version;
+    }
+
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    public static boolean shouldGenerateExamples() {
+        return generateExamples;
+    }
+
+    public static boolean shouldGenerateDamageIndicator() {
+        return generateDamageIndicator;
+    }
+
+    public static String getDefaultPrefix() {
+        return defaultPrefix;
+    }
+
+    public static String getCriticalPrefix() {
+        return criticalPrefix;
+    }
+
+    public static double getCriticalLargeScale() {
+        return criticalLargeScale;
+    }
+
+    public static double getViewRange() {
+        return viewRange;
+    }
+
+    public static double getWorldK() {
+        return worldK;
+    }
+
+    public static boolean isDamageFloatEnabled() {
+        return damageFloat;
+    }
+
+    public static double getDamageFloatRange() {
+        return damageFloatRange;
+    }
+
+    public static boolean useDamageReductionBalanceForPlayer() {
+        return useDamageReductionBalanceForPlayer;
+    }
+
+    public static double getOriginalCriticalStrikeAddition() {
+        return originalCriticalStrikeAddition;
+    }
+
+    public static boolean useMysql() {
+        return useMysql;
+    }
+
+    public static void setUseMysql(boolean use) {
+        useMysql = use;
+    }
+
+    public static String getHost() {
+        return host;
+    }
+
+    public static String getPort() {
+        return port;
+    }
+
+    public static String getDatabase() {
+        return database;
+    }
+
+    public static String getUsername() {
+        return username;
+    }
+
+    public static String getPassword() {
+        return password;
+    }
+
+    public static double getOriginalMaxHealth() {
+        return originalMaxHealth;
+    }
+
+    public static double getOriginalMaxMana() {
+        return originalMaxMana;
+    }
+
+    public static double getOriginalManaRecoverySpeed() {
+        return originalManaRecoverySpeed;
+    }
+
+    public static double getRarityIntensity() {
+        return rarityIntensity;
+    }
+
+    public static Map<String, Boolean> getOriUpdateConfigMap() {
+        return oriUpdateConfigMap;
+    }
+
+    private static void generateExampleConfig() {
+        File targetFolder = TerraCraftBukkit.inst().getDataFolder();
+        URL sourceUrl = TerraCraftBukkit.inst().getClass().getResource("");
         if (sourceUrl == null) {
             TerraCraftLogger.error("The plugin package is incomplete, please re_download it!");
             return;

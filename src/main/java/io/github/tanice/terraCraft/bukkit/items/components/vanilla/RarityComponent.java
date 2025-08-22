@@ -33,6 +33,11 @@ public class RarityComponent implements TerraRarityComponent {
 
     }
 
+    @Override
+    public String getComponentName() {
+        return "rarity";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt ->{

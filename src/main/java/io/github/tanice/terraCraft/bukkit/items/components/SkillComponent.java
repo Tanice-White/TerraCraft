@@ -119,4 +119,9 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
                 new ComponentState(nbt.getByte("state"))
         );
     }
+
+    @Override
+    public String getComponentName() {
+        return "skill";
+    }
 }

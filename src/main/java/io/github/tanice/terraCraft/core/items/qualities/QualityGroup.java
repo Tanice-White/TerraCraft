@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.core.items.qualities;
 
 import io.github.tanice.terraCraft.api.items.qualities.TerraQuality;
 import io.github.tanice.terraCraft.api.items.qualities.TerraQualityGroup;
-import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -31,7 +31,7 @@ public class QualityGroup implements TerraQualityGroup {
     public QualityGroup(String name, ConfigurationSection cfg) {
         this.rand = new Random();
         this.name = name;
-        this.rarityIntensity = TerraCraftBukkit.inst().getConfigManager().getRarityIntensity();
+        this.rarityIntensity = ConfigManager.getRarityIntensity();
 
         this.qualities = new ArrayList<>();
         this.loadResource(cfg);

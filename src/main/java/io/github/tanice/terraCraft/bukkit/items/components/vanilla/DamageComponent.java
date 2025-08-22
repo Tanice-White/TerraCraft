@@ -56,6 +56,11 @@ public class DamageComponent implements TerraDamageComponent {
         }
     }
 
+    @Override
+    public String getComponentName() {
+        return "ori_durability";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

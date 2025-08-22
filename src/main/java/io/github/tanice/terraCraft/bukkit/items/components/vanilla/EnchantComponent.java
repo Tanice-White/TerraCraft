@@ -94,6 +94,11 @@ public class EnchantComponent implements TerraEnchantComponent {
         }
     }
 
+    @Override
+    public String getComponentName() {
+        return "enchant";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

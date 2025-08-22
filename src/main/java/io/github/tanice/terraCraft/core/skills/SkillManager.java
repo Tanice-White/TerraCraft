@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.items.components.SkillComponent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.utils.helper.mythicmobs.MMHelper;
 import org.bukkit.Bukkit;
@@ -111,7 +112,7 @@ public final class SkillManager implements TerraSkillManager {
             if (isSkillCooldownReady(player, skill.getSkillName(), currentTime) && MMHelper.castSkill(player, skill.getMythicSkillName())) {
                 setSkillCooldown(player, skill, (long) (skill.getCd() * 1000L * skillCooldown) + currentTime);
                 // TODO 设置蓝蚝
-                if (TerraCraftBukkit.inst().getConfigManager().isDebug()) {
+                if (ConfigManager.isDebug()) {
                     TerraCraftLogger.error("Player: " + player.getName() + " casting skill: " + skill.getSkillName()
                             + "(" + skill.getMythicSkillName() + ")" + ", mana cost: " + skill.getManaCost() * manaCost
                             + ", cd: " + skill.getCd() * skillCooldown + " * 1000 ms"
@@ -171,7 +172,7 @@ public final class SkillManager implements TerraSkillManager {
         if (computing.compareAndSet(false, true)) {
             TerraSchedulers.async().run(() -> updateAvailableSkills(player));
 
-            if (TerraCraftBukkit.inst().getConfigManager().isDebug())
+            if (ConfigManager.isDebug())
                 TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL, "Player " + player.getName() + " available skills updated");
 
             /* 计算中，标记为脏 */
@@ -209,7 +210,7 @@ public final class SkillManager implements TerraSkillManager {
                 }
             }
             /* DEBUG */
-            if (TerraCraftBukkit.inst().getConfigManager().isDebug()) {
+            if (ConfigManager.isDebug()) {
                 Trigger triggerType;
                 Set<SkillRowData> skillSet;
                 for (Map.Entry<Trigger, Set<SkillRowData>> entry : tsm.entrySet()) {

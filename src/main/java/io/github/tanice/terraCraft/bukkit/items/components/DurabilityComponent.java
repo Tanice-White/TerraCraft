@@ -119,6 +119,11 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     }
 
     @Override
+    public String getComponentName() {
+        return "terra_durability";
+    }
+
+    @Override
     public TerraBaseComponent updatePartial() {
         return new DurabilityComponent(null, this.maxDamage, this.breakLoss, this.state);
     }

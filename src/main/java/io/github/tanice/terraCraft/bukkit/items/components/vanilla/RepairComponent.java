@@ -59,6 +59,11 @@ public class RepairComponent implements TerraRepairComponent {
         }
     }
 
+    @Override
+    public String getComponentName() {
+        return "repair";
+    }
+
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {

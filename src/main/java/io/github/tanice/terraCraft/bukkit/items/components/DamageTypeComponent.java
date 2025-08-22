@@ -112,4 +112,9 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     public void setType(DamageFromType type) {
         this.type = type;
     }
+
+    @Override
+    public String getComponentName() {
+        return "damage_type";
+    }
 }

@@ -1,5 +1,7 @@
 package io.github.tanice.terraCraft.api.items.components;
 
+import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTBuff;
+
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public interface TerraBuffComponent extends TerraBaseComponent {
     /**
      * 获取持有时给予自身的Buff列表
      */
-    List<String> getHold();
+    List<NBTBuff> getHold();
 
     /**
      * 设置持有时给予自身的Buff列表
@@ -18,7 +20,7 @@ public interface TerraBuffComponent extends TerraBaseComponent {
     /**
      * 获取攻击时给予自身的Buff列表
      */
-    List<String> getAttackSelf();
+    List<NBTBuff> getAttackSelf();
 
     /**
      * 设置攻击时时给予自身的Buff列表
@@ -28,7 +30,7 @@ public interface TerraBuffComponent extends TerraBaseComponent {
     /**
      * 获取攻击目标时给予目标的Buff列表
      */
-    List<String> getAttack();
+    List<NBTBuff> getAttack();
 
     /**
      * 设置攻击目标时给予对方的Buff列表
@@ -38,7 +40,7 @@ public interface TerraBuffComponent extends TerraBaseComponent {
     /**
      * 获取防御时给予自身的Buff列表
      */
-    List<String> getDefenseSelf();
+    List<NBTBuff> getDefenseSelf();
 
     /**
      * 设置自身防御时给予自身的Buff列表
@@ -48,7 +50,7 @@ public interface TerraBuffComponent extends TerraBaseComponent {
     /**
      * 获取防御时给予对方的Buff列表
      */
-    List<String> getDefense();
+    List<NBTBuff> getDefense();
 
     /**
      * 设置防御时给予目标的Buff列表

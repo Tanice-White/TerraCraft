@@ -71,6 +71,7 @@ public final class EquipmentUtil {
      * 通过耐久判断物品是否需要计入属性
      */
     public static boolean validDurability(ItemStack item) {
+        if (item == null || item.isEmpty()) return false;
         TerraDurabilityComponent durabilityComponent = DurabilityComponent.from(item);
         return durabilityComponent == null || !durabilityComponent.broken();
     }

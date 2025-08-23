@@ -26,6 +26,7 @@ public class DamageListener implements Listener {
     }
 
     /* 原版有源伤害 */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity entityAttacker = event.getDamager();
         Entity entityDefender = event.getEntity();
@@ -46,10 +47,11 @@ public class DamageListener implements Listener {
                 double d = DamageCalculator.calculate(attacker, defender, event.getDamage()).getFinalDamage();
                 defender.damage(d);
             }
+        } else {
+            /* 仅仅是伤害 */
+            defender.damage(DamageCalculator.calculate(defender, event.getDamage()).getFinalDamage());
+            event.setCancelled(true);
         }
-        /* 仅仅是伤害 */
-        defender.damage(DamageCalculator.calculate(defender, event.getDamage()).getFinalDamage());
-        event.setCancelled(true);
     }
 
     public void reload() {

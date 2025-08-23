@@ -1,16 +1,17 @@
-package io.github.tanice.terraCraft.bukkit.commands;
+package io.github.tanice.terraCraft.bukkit.commands.plugin;
 
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.commands.SubCommand;
 import org.bukkit.command.CommandSender;
 
-public class ReloadCommand extends SubCommand{
+public class ReloadCommand extends SubCommand {
     @Override
     public String getName() {
         return "reload";
     }
 
     public String getDescription() {
-        return "重载插件物品";
+        return "reload terracraft";
     }
 
     @Override

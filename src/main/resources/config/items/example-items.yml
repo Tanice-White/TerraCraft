@@ -174,11 +174,32 @@
   resistant: is_fire
   rarity: epic  # COMMON,UNCOMMON,RARE,EPIC,
 
-buff测试武器:
+buff测试武器1:
   id: golden_axe
-  display_name: "<yellow>"
+  display_name: "<yellow>buff[神迹]测试武器"
   max_stack_size: 1
   lore:
-    - "<green>所有支持的组件都来一套"
     - "<yellow>[神迹] <red>会覆盖 <yellow>[流血]"
+  buff:
+    hold:
+      - "测试增益_1_damage_add"
+    # attack_self:
+    attack:
+      - "全面增益测试"
+    # defense_self:
+    # defense:
+
+buff测试武器2:
+  id: iron_axe
+  display_name: "<yellow>buff[流血]测试武器"
+  max_stack_size: 1
+  lore:
     - "<yellow>[流血] <red>和 <yellow>[吸血] 冲突"
+  buff:
+    hold:
+      - "吸血"
+    # attack_self:
+    attack:
+      - "流血"
+    # defense_self:
+    # defense:

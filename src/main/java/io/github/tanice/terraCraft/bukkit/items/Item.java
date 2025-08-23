@@ -46,47 +46,79 @@ public class Item extends AbstractItem implements TerraItem {
         ConfigurationSection sub;
         if (cfg.isSet("buff")) {
             sub = cfg.getConfigurationSection("buff");
-            if (sub != null) buffComponent = new BuffComponent(sub);
+            if (sub != null) {
+                buffComponent = new BuffComponent(sub);
+                buffComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("command")) {
             sub = cfg.getConfigurationSection("command");
-            if (sub != null) commandsComponent = new CommandsComponent(sub);
+            if (sub != null) {
+                commandsComponent = new CommandsComponent(sub);
+                commandsComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("damage_type")) {
             sub = cfg.getConfigurationSection("damage_type");
-            if (sub != null) damageTypeComponent = new DamageTypeComponent(sub);
+            if (sub != null) {
+                damageTypeComponent = new DamageTypeComponent(sub);
+                damageTypeComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("terra_durability")) {
             sub = cfg.getConfigurationSection("durability");
-            if (sub != null) durabilityComponent = new DurabilityComponent(sub);
+            if (sub != null) {
+                durabilityComponent = new DurabilityComponent(sub);
+                durabilityComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("gem")) {
             sub = cfg.getConfigurationSection("gem");
-            if (sub != null) gemComponent = new GemComponent(sub);
+            if (sub != null) {
+                gemComponent = new GemComponent(sub);
+                gemComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("gem_holder")) {
             sub = cfg.getConfigurationSection("gem_holder");
-            if (sub != null) gemHolderComponent = new GemHolderComponent(sub);
+            if (sub != null) {
+                gemHolderComponent = new GemHolderComponent(sub);
+                gemHolderComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("level")) {
             sub = cfg.getConfigurationSection("level");
-            if (sub != null) levelComponent = new LevelComponent(sub);
+            if (sub != null) {
+                levelComponent = new LevelComponent(sub);
+                levelComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("terra_meta")) {
             sub = cfg.getConfigurationSection("terra_meta");
-            if (sub != null) metaComponent = new MetaComponent(sub);
+            if (sub != null) {
+                metaComponent = new MetaComponent(sub);
+                metaComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("quality")) {
             sub = cfg.getConfigurationSection("quality");
-            if (sub != null) qualityComponent = new QualityComponent(sub);
+            if (sub != null) {
+                qualityComponent = new QualityComponent(sub);
+                qualityComponent.apply(bukkitItem);
+            }
         }
         if (cfg.isSet("skill")) {
             sub = cfg.getConfigurationSection("skill");
-            if (sub != null) skillComponent = new SkillComponent(sub);
+            if (sub != null) {
+                skillComponent = new SkillComponent(sub);
+                skillComponent.apply(bukkitItem);
+            }
         }
 
-        this.terraNameComponent = new TerraNameComponent(id);
-        this.updateCodeComponent = new UpdateCodeComponent(this.hashCode());
+        terraNameComponent = new TerraNameComponent(id);
+        terraNameComponent.apply(bukkitItem);
+        updateCodeComponent = new UpdateCodeComponent(this.hashCode());
+        updateCodeComponent.apply(bukkitItem);
     }
 
     @Override

@@ -14,7 +14,7 @@
   condition: all  # attacker defender all -> 决定 buff 持有者作为哪一方能够生效
   duration: 200  # 正常获取的持续tick
   mutex:  # 和本buff冲突的buff名  用逗号分隔 "冲突buff1,冲突buff2,...."
-  override: "持续掉血" # 本buff会覆盖的buff名
+  override: "流血" # 本buff会覆盖的buff名
   meta:
     damage: 0
     armor: 100

@@ -16,6 +16,7 @@ import io.github.tanice.terraCraft.bukkit.items.components.DamageTypeComponent;
 import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.utils.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.skills.SkillDamageMeta;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -41,6 +43,7 @@ public final class DamageCalculator {
 
     /** 物理攻击伤害 */
     public static TerraDamageProtocol calculate(@Nullable LivingEntity attacker, LivingEntity defender, double oriDamage) {
+
         TerraAttributeCalculator attackerCalculator = attacker == null ? null : attributeManager.getAttributeCalculator(attacker);
         TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
 
@@ -73,7 +76,7 @@ public final class DamageCalculator {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
             return protocol;
         }
-
+        activateBuffForAttackerAndDefender(attacker, defender);
         return protocol;
     }
 
@@ -115,7 +118,7 @@ public final class DamageCalculator {
         if (attacker == null) return DamageFromType.OTHER;
 
         EntityEquipment equipment = attacker.getEquipment();
-        if (equipment == null) return DamageFromType.OTHER;
+        if (equipment == null || equipment.getItemInMainHand().isEmpty()) return DamageFromType.OTHER;
         DamageTypeComponent damageTypeComponent = DamageTypeComponent.from(equipment.getItemInMainHand());
         return damageTypeComponent == null ? DamageFromType.OTHER : damageTypeComponent.getType();
     }

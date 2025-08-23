@@ -4,12 +4,14 @@ import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffRecord;
 import io.github.tanice.terraCraft.api.buffs.TerraRunnableBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraTimerBuff;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public class BuffRecord implements TerraBuffRecord {
-    private final UUID uuid;
+    private final WeakReference<LivingEntity> entityReference;
     private TerraBaseBuff buff;
     
     private boolean permanent;
@@ -24,7 +26,7 @@ public class BuffRecord implements TerraBuffRecord {
     }
 
     public BuffRecord(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent) {
-        this.uuid = entity.getUniqueId();
+        this.entityReference = new WeakReference<>(entity);
         this.buff = buff;
 
         this.permanent = isPermanent;
@@ -36,7 +38,7 @@ public class BuffRecord implements TerraBuffRecord {
     }
 
     public BuffRecord(String uuid, TerraBaseBuff buff, int cooldownCounter, int durationCounter) {
-        this.uuid = UUID.fromString(uuid);
+        this.entityReference = new WeakReference<>(Bukkit.getPlayer(UUID.fromString(uuid)));
         this.buff = buff;
 
         this.permanent = false;
@@ -65,8 +67,8 @@ public class BuffRecord implements TerraBuffRecord {
     }
 
     @Override
-    public UUID getId() {
-        return this.uuid;
+    public WeakReference<LivingEntity> getEntityReference() {
+        return this.entityReference;
     }
 
     @Override

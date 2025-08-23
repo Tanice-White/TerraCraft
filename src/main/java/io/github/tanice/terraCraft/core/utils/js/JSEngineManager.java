@@ -69,7 +69,6 @@ public final class JSEngineManager implements TerraJSEngineManager, AutoCloseabl
             Value exports = jsContext.eval(
                     Source.newBuilder("js", path.toFile())
                             .mimeType("application/javascript+module")
-                            .name(jsFileName)
                             .build()
             );
             /* 缓存函数 */
@@ -95,7 +94,6 @@ public final class JSEngineManager implements TerraJSEngineManager, AutoCloseabl
         return function.execute(args).asBoolean();
     }
 
-    // 提取关键词变量
     private Map<String, String> extractVariables(Value exports) {
         Set<String> exportNames = exports.getMemberKeys();
         Map<String, String> result = new HashMap<>();

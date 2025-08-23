@@ -6,12 +6,13 @@ import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.core.buffs.AbstractBuff;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class RunnableBuff extends AbstractBuff implements TerraRunnableBuff {
 
     protected String jsFileName;
 
-    public RunnableBuff(String jsName, String name, String displayName, boolean enable, int priority, double chance, int duration, Collection<String> mutex, Collection<String> override, BuffActiveCondition bac, AttributeActiveSection aas) {
+    public RunnableBuff(String jsName, String name, String displayName, boolean enable, int priority, double chance, int duration, Set<String> mutex, Collection<String> override, BuffActiveCondition bac, AttributeActiveSection aas) {
         super(name, displayName, enable, priority, chance, duration, mutex, override, bac, aas);
         this.jsFileName = jsName;
     }

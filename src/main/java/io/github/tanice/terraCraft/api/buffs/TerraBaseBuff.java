@@ -1,5 +1,7 @@
 package io.github.tanice.terraCraft.api.buffs;
 
+import java.util.Set;
+
 public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
 
     /**
@@ -56,12 +58,17 @@ public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
      */
     boolean isActiveUnder(BuffActiveCondition condition);
 
-
     /**
      * 是否冲突
      * @param buffName 目标buff名称
      */
     boolean mutexWith(String buffName);
+
+    /**
+     * 是否冲突
+     * @param buffNames 判断目标buff集合
+     */
+    boolean mutexWith(Set<String> buffNames);
 
     /**
      * 是否可以覆盖对方

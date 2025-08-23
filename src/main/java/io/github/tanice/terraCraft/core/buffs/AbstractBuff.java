@@ -37,27 +37,27 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     @Nullable
     protected Set<String> override;
 
-    public AbstractBuff(String name, String displayName, boolean enable, int priority, double chance, int duration, Collection<String> mutex, Collection<String> override, BuffActiveCondition bac, AttributeActiveSection aas) {
+    public AbstractBuff(String name, String displayName, boolean enable, int priority, double chance, int duration, @Nullable Set<String> mutex, Collection<String> override, BuffActiveCondition bac, AttributeActiveSection aas) {
         this.name = name;
         this.displayName = displayName;
         this.enable = enable;
         this.priority = priority;
         this.chance = chance;
         this.duration = duration;
-        this.mutex = new HashSet<>(mutex);
+        this.mutex = mutex;
         this.override = new HashSet<>(override);
         this.buffActiveCondition = bac;
         this.attributeActiveSection = aas;
     }
 
-    public AbstractBuff(String name, ConfigurationSection cfg, BuffActiveCondition bac, AttributeActiveSection aas) {
+    public AbstractBuff(String name, ConfigurationSection cfg, @Nullable Set<String> mutex, BuffActiveCondition bac, AttributeActiveSection aas) {
         this.name = name;
         this.displayName = cfg.getString("display_name", name);
         this.enable = cfg.getBoolean("enable", true);
         this.priority = cfg.getInt("priority", Integer.MAX_VALUE);
         this.chance = cfg.getDouble("chance", 1D);
         this.duration = cfg.getInt("duration", 0);
-        this.mutex = new HashSet<>(StringUtil.splitByComma(cfg.getString("mutex")));
+        this.mutex = mutex;
         this.override = new HashSet<>(StringUtil.splitByComma(cfg.getString("override")));
         this.attributeActiveSection = aas;
         this.buffActiveCondition = bac;
@@ -113,6 +113,15 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     public boolean mutexWith(String buffName) {
         if (this.mutex == null || this.mutex.isEmpty()) return false;
         return this.mutex.contains(buffName);
+    }
+
+    @Override
+    public boolean mutexWith(Set<String> buffNames) {
+        if (mutex == null) return false;
+        for (String s : buffNames) {
+            if (this.mutex.contains(s)) return true;
+        }
+        return false;
     }
 
     @Override

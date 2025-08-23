@@ -11,6 +11,7 @@ public final class ItemProvider {
     private int valid;
 
     public ItemProvider() {
+        valid = 0;
     }
 
     Optional<TerraBaseItem> createItem(String name, ConfigurationSection cfg) {
@@ -21,5 +22,9 @@ public final class ItemProvider {
 
     public int getTotal() {
         return this.valid;
+    }
+
+    public void reload() {
+        valid = 0;
     }
 }

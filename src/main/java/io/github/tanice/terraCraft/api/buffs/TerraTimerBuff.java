@@ -7,4 +7,6 @@ public interface TerraTimerBuff extends TerraRunnableBuff{
      * @return 间隔ticks
      */
     int getCd();
+
+    void setCd(int cd);
 }

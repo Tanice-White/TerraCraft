@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.api.items.components.ComponentState;
 import io.github.tanice.terraCraft.api.items.components.TerraBuffComponent;
 import io.github.tanice.terraCraft.api.items.components.AbstractItemComponent;
+import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTBuff;
 import io.github.tanice.terraCraft.bukkit.utils.versions.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.utils.versions.ServerVersion;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,41 +20,47 @@ import java.util.Objects;
 
 public class BuffComponent extends AbstractItemComponent implements TerraBuffComponent {
     @Nullable
-    private List<String> hold;
+    private List<NBTBuff> hold;
     @Nullable
-    private List<String> attackSelf;
+    private List<NBTBuff> attackSelf;
     @Nullable
-    private List<String> attack;
+    private List<NBTBuff> attack;
     @Nullable
-    private List<String> defenseSelf;
+    private List<NBTBuff> defenseSelf;
     @Nullable
-    private List<String> defense;
+    private List<NBTBuff> defense;
 
     public BuffComponent(@Nullable List<String> hold, @Nullable List<String> attackSelf, @Nullable List<String> attack, @Nullable List<String> defenseSelf, @Nullable List<String> defense, boolean updatable) {
         super(updatable);
-        this.hold = hold;
-        this.attackSelf = attackSelf;
-        this.attack = attack;
-        this.defenseSelf = defenseSelf;
-        this.defense = defense;
+        if (hold != null) this.hold = hold.stream().map(NBTBuff::new).toList();
+        if (attackSelf != null) this.attackSelf = attackSelf.stream().map(NBTBuff::new).toList();
+        if (attack != null) this.attack = attack.stream().map(NBTBuff::new).toList();
+        if (defenseSelf != null) this.defenseSelf = defenseSelf.stream().map(NBTBuff::new).toList();
+        if (defense != null) this.defense = defense.stream().map(NBTBuff::new).toList();
     }
 
     public BuffComponent(@Nullable List<String> hold, @Nullable List<String> attackSelf, @Nullable List<String> attack, @Nullable List<String> defenseSelf, @Nullable List<String> defense, ComponentState state) {
         super(state);
-        this.hold = hold;
-        this.attackSelf = attackSelf;
-        this.attack = attack;
-        this.defenseSelf = defenseSelf;
-        this.defense = defense;
+        if (hold != null) this.hold = hold.stream().map(NBTBuff::new).toList();
+        if (attackSelf != null) this.attackSelf = attackSelf.stream().map(NBTBuff::new).toList();
+        if (attack != null) this.attack = attack.stream().map(NBTBuff::new).toList();
+        if (defenseSelf != null) this.defenseSelf = defenseSelf.stream().map(NBTBuff::new).toList();
+        if (defense != null) this.defense = defense.stream().map(NBTBuff::new).toList();
     }
 
     public BuffComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.hold = cfg.getStringList("hold");
-        this.attackSelf = cfg.getStringList("attack_self");
-        this.attack = cfg.getStringList("attack");
-        this.defenseSelf = cfg.getStringList("defense_self");
-        this.defense = cfg.getStringList("defense");
+        List<String> vs;
+        vs = cfg.getStringList("hold");
+        if (!vs.isEmpty()) this.hold = vs.stream().map(NBTBuff::new).toList();
+        vs = cfg.getStringList("attack_self");
+        if (!vs.isEmpty()) this.attackSelf = vs.stream().map(NBTBuff::new).toList();
+        vs = cfg.getStringList("attack");
+        if (!vs.isEmpty()) this.attack = vs.stream().map(NBTBuff::new).toList();
+        vs = cfg.getStringList("defense_self");
+        if (!vs.isEmpty()) this.defenseSelf = vs.stream().map(NBTBuff::new).toList();
+        vs = cfg.getStringList("defense");
+        if (!vs.isEmpty()) this.defense = vs.stream().map(NBTBuff::new).toList();
     }
 
     @Nullable
@@ -115,53 +122,58 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public List<String> getHold() {
+    public List<NBTBuff> getHold() {
         return this.hold == null ? List.of() : this.hold;
     }
 
     @Override
     public void setHold(@Nullable List<String> buffs) {
-        this.hold = buffs;
+        if (buffs == null || buffs.isEmpty()) return;
+        this.hold = buffs.stream().map(NBTBuff::new).toList();
     }
 
     @Override
-    public List<String> getAttackSelf() {
+    public List<NBTBuff> getAttackSelf() {
         return this.attackSelf == null ? List.of() : this.attackSelf;
     }
 
     @Override
     public void setAttackSelf(@Nullable List<String> buffs) {
-        this.attackSelf = buffs;
+        if (buffs == null || buffs.isEmpty()) return;
+        this.attackSelf = buffs.stream().map(NBTBuff::new).toList();
     }
 
     @Override
-    public List<String> getAttack() {
+    public List<NBTBuff> getAttack() {
         return this.attack == null ? List.of() : this.attack;
     }
 
     @Override
     public void setAttack(@Nullable List<String> buffs) {
-        this.attack = buffs;
+        if (buffs == null || buffs.isEmpty()) return;
+        this.attack = buffs.stream().map(NBTBuff::new).toList();
     }
 
     @Override
-    public List<String> getDefenseSelf() {
+    public List<NBTBuff> getDefenseSelf() {
         return this.defenseSelf == null ? List.of() : this.defenseSelf;
     }
 
     @Override
     public void setDefenseSelf(@Nullable List<String> buffs) {
-        this.defenseSelf = buffs;
+        if (buffs == null || buffs.isEmpty()) return;
+        this.defenseSelf = buffs.stream().map(NBTBuff::new).toList();
     }
 
     @Override
-    public List<String> getDefense() {
+    public List<NBTBuff> getDefense() {
         return this.defense == null ? List.of() : this.defense;
     }
 
     @Override
     public void setDefense(@Nullable List<String> buffs) {
-        this.defense = buffs;
+        if (buffs == null || buffs.isEmpty()) return;
+        this.defense = buffs.stream().map(NBTBuff::new).toList();
     }
 
     @Override
@@ -174,27 +186,27 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
         if (hold != null && !hold.isEmpty()) {
             list = component.getStringList("hold");
             list.clear();
-            list.addAll(hold);
+            list.addAll(hold.stream().map(NBTBuff::toString).toList());
         }
         if (attackSelf != null && !attackSelf.isEmpty()) {
             list = component.getStringList("attack_self");
             list.clear();
-            list.addAll(attackSelf);
+            list.addAll(attackSelf.stream().map(NBTBuff::toString).toList());
         }
         if (attack != null && !attack.isEmpty()) {
             list = component.getStringList("attack");
             list.clear();
-            list.addAll(attack);
+            list.addAll(attack.stream().map(NBTBuff::toString).toList());
         }
         if (defenseSelf != null && !defenseSelf.isEmpty()) {
             list = component.getStringList("defense_self");
             list.clear();
-            list.addAll(defenseSelf);
+            list.addAll(defenseSelf.stream().map(NBTBuff::toString).toList());
         }
         if (defense != null && !defense.isEmpty()) {
             list = component.getStringList("defense");
             list.clear();
-            list.addAll(defense);
+            list.addAll(defense.stream().map(NBTBuff::toString).toList());
         }
         component.setByte("state", state.toNbtByte());
     }

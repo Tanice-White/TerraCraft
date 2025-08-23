@@ -13,16 +13,17 @@ import io.github.tanice.terraCraft.core.utils.EnumUtil;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public final class BuffProvider {
-
     private int valid;
     private int other;
+    private final Map<String, Set<String>> mutexMap;/* 全局buff冲突 */
 
     public BuffProvider() {
+        valid = 0;
+        other = 0;
+        mutexMap = new HashMap<>();
     }
 
     public Optional<TerraBaseBuff> createBuff(String name, ConfigurationSection cfg) {
@@ -30,7 +31,10 @@ public final class BuffProvider {
 
         AttributeActiveSection aas = EnumUtil.safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR);
         BuffActiveCondition bac = EnumUtil.safeValueOf(BuffActiveCondition.class, cfg.getString("condition"), BuffActiveCondition.ALL);
-        if (checkAttributeActiveSection(name, aas)) return Optional.of(new AttributeBuff(name, cfg, aas, bac));
+        if (checkAttributeActiveSection(name, aas)) {
+            for (String m : StringUtil.splitByComma(cfg.getString("mutex"))) this.addMutex(name, m);
+            return Optional.of(new AttributeBuff(name, cfg, mutexMap.computeIfAbsent(name, k -> new HashSet<>()), aas, bac));
+        }
         else return Optional.empty();
     }
 
@@ -46,12 +50,13 @@ public final class BuffProvider {
         AttributeActiveSection aas = EnumUtil.safeValueOf(AttributeActiveSection.class, vars.get("section"), AttributeActiveSection.ERROR);
         BuffActiveCondition bac = EnumUtil.safeValueOf(BuffActiveCondition.class, vars.get("condition"), BuffActiveCondition.ALL);
         Collection<String> mutex = StringUtil.splitByComma(vars.getOrDefault("mutex", null));
+        for (String m : mutex) this.addMutex(name, m);
         Collection<String> override = StringUtil.splitByComma(vars.getOrDefault("override", null));
         int cd = (int) Double.parseDouble(vars.getOrDefault("cd", "20"));
 
         if (checkAttributeActiveSection(name, aas)) {
-            if (aas == AttributeActiveSection.TIMER) return Optional.of(new TimerBuff(jsFileName, name, displayName, enable, priority, chance, duration, mutex, override, bac, aas, cd));
-            else return Optional.of(new RunnableBuff(jsFileName, name, displayName, enable, priority, chance, duration, mutex, override, bac, aas));
+            if (aas == AttributeActiveSection.TIMER) return Optional.of(new TimerBuff(jsFileName, name, displayName, enable, priority, chance, duration, mutexMap.computeIfAbsent(name, k -> new HashSet<>()), override, bac, aas, cd));
+            else return Optional.of(new RunnableBuff(jsFileName, name, displayName, enable, priority, chance, duration, mutexMap.computeIfAbsent(name, k -> new HashSet<>()), override, bac, aas));
         } else return Optional.empty();
     }
 
@@ -67,6 +72,16 @@ public final class BuffProvider {
         return this.other;
     }
 
+    public Map<String, Set<String>> getMutexMap() {
+        return this.mutexMap;
+    }
+
+    public void reload() {
+        valid = 0;
+        other = 0;
+        mutexMap.clear();
+    }
+
     private boolean checkAttributeActiveSection(String name, AttributeActiveSection aas) {
         if (aas == AttributeActiveSection.ERROR) {
             TerraCraftLogger.warning("buff: " + name + " AttributeActiveSection read failure (ERROR as default). This section will be unavailable for calculation");
@@ -75,5 +90,10 @@ public final class BuffProvider {
         }
         valid ++;
         return true;
+    }
+
+    private void addMutex(String a, String b) {
+        mutexMap.computeIfAbsent(a, k -> new HashSet<>()).add(b);
+        mutexMap.computeIfAbsent(b, k -> new HashSet<>()).add(a);
     }
 }

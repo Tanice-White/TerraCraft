@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.*;
+
 public class TerraCraftCommand implements CommandExecutor, TabCompleter {
     private final JavaPlugin plugin;
     private final Map<String, SubCommand> subCommands = new HashMap<>();
@@ -54,7 +56,7 @@ public class TerraCraftCommand implements CommandExecutor, TabCompleter {
 
         SubCommand subCommand = subCommands.get(args[0].toLowerCase());
         if (subCommand == null) {
-            sender.sendMessage("§c未知的子命令！可用命令：");
+            sender.sendMessage(RED + "Unknown subcommand! Available commands:");
 
             List<String> availableCommands = subCommands.values().stream()
                     .filter(c -> c.hasPermission(sender))
@@ -62,16 +64,15 @@ public class TerraCraftCommand implements CommandExecutor, TabCompleter {
                     .sorted()
                     .collect(Collectors.toList());
             if (availableCommands.isEmpty()) {
-                sender.sendMessage("§c你没有可用的子命令权限");
-            } else {
-                sender.sendMessage("§a" + String.join("§7, §a", availableCommands));
-            }
+                sender.sendMessage(RED + "You don't have permission for any subcommands!");
+
+            } else sender.sendMessage(GREEN + String.join(GRAY + "," + GREEN, availableCommands));
             return true;
         }
 
         if (!subCommand.hasPermission(sender)) {
-            sender.sendMessage("§c你没有执行该指令的权限！");
-            sender.sendMessage("§c所需权限：§e" + subCommand.getPermission());
+            sender.sendMessage(RED + "You don't have permission to execute this command!");
+            sender.sendMessage(RED + "Required permission: " + YELLOW + subCommand.getPermission());
             return true;
         }
 
@@ -99,9 +100,9 @@ public class TerraCraftCommand implements CommandExecutor, TabCompleter {
     }
 
     private void sendHelp(@Nonnull CommandSender sender) {
-        sender.sendMessage("§6=== TerraCraft Help ===");
+        sender.sendMessage(GOLD + "=== TerraCraft Help ===");
         subCommands.values().forEach(cmd ->
-                sender.sendMessage(String.format("§7/%s §b%s §f- %s", cmd.getName(), cmd.getUsage(), cmd.getDescription()))
+                sender.sendMessage(String.format(GRAY + "/%s " + AQUA + "%s " + WHITE + "- %s", cmd.getName(), cmd.getUsage(), cmd.getDescription()))
         );
     }
 }

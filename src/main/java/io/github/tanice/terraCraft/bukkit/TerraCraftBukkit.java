@@ -8,9 +8,10 @@ import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
-import io.github.tanice.terraCraft.bukkit.commands.ReloadCommand;
+import io.github.tanice.terraCraft.bukkit.commands.buffs.GiveCommand;
+import io.github.tanice.terraCraft.bukkit.commands.plugin.ReloadCommand;
 import io.github.tanice.terraCraft.bukkit.commands.TerraCraftCommand;
-import io.github.tanice.terraCraft.bukkit.commands.item.GetCommand;
+import io.github.tanice.terraCraft.bukkit.commands.items.GetCommand;
 import io.github.tanice.terraCraft.bukkit.listeners.DamageListener;
 import io.github.tanice.terraCraft.bukkit.listeners.ItemListener;
 import io.github.tanice.terraCraft.bukkit.listeners.HelperListener;
@@ -71,6 +72,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
         terraCraftCommand = new TerraCraftCommand(this);
         terraCraftCommand.register(new GetCommand());
+        terraCraftCommand.register(new GiveCommand());
         terraCraftCommand.register(new ReloadCommand());
         terraCraftCommand.onload();
     }
@@ -97,6 +99,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     public void reload() {
         TerraSchedulers.clear();
         databaseManager.reload();
+        ConfigManager.load();
 
         helperListener.reload();
         itemListener.reload();

@@ -2,18 +2,15 @@ package io.github.tanice.terraCraft.core.attribute;
 
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
-import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.EntityAttributeCalculator;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,11 +22,11 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
     private static final int CLEAN_UP_CD = 9;
 
     /** 标记实体是否正在计算中 */
-    private final ConcurrentMap<UUID, AtomicBoolean> computingFlags;
+    private final ConcurrentMap<WeakReference<LivingEntity>, AtomicBoolean> computingFlags;
     /** 脏标记 */
-    private final ConcurrentMap<UUID, AtomicBoolean> dirtyFlags;
+    private final ConcurrentMap<WeakReference<LivingEntity>, AtomicBoolean> dirtyFlags;
     /** 计算结果-实体属性 */
-    private final ConcurrentMap<UUID, TerraAttributeCalculator> calculatorMap;
+    private final ConcurrentMap<WeakReference<LivingEntity>, TerraAttributeCalculator> calculatorMap;
 
     public EntityAttributeManager() {
         computingFlags = new ConcurrentHashMap<>();
@@ -53,12 +50,12 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
 
     @Override
     public TerraAttributeCalculator getAttributeCalculator(LivingEntity entity) {
-        UUID uuid = entity.getUniqueId();
-        TerraAttributeCalculator calculator = calculatorMap.get(uuid);
+        WeakReference<LivingEntity> reference = new WeakReference<>(entity);
+        TerraAttributeCalculator calculator = calculatorMap.get(reference);
         /* 没有则现场计算 */
         if (calculator == null) {
             EntityAttributeCalculator nc = new EntityAttributeCalculator(entity);
-            calculatorMap.put(uuid, nc);
+            calculatorMap.put(reference, nc);
             return nc;
         }
         return calculator;
@@ -71,63 +68,61 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
 
     @Override
     public void updateAttribute(LivingEntity entity) {
-        UUID uuid = entity.getUniqueId();
-        dirtyFlags.computeIfAbsent(uuid, k -> new AtomicBoolean(false));
+        WeakReference<LivingEntity> reference = new WeakReference<>(entity);
+        dirtyFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
 
-        AtomicBoolean computing = computingFlags.computeIfAbsent(uuid, k -> new AtomicBoolean(false));
+        AtomicBoolean computing = computingFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
         if (computing.compareAndSet(false, true)) {
-            TerraSchedulers.async().run(() -> processAttributeUpdate(uuid));
+            TerraSchedulers.async().run(() -> processAttributeUpdate(reference));
 
             if (ConfigManager.isDebug()) {
                 TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updating");
             }
             /* 计算中，标记为脏 */
-        } else dirtyFlags.get(uuid).set(true);
+        } else dirtyFlags.get(reference).set(true);
     }
 
     @Override
     public void unregister(LivingEntity entity) {
-        UUID uuid = entity.getUniqueId();
-        computingFlags.remove(uuid);
-        dirtyFlags.remove(uuid);
-        calculatorMap.remove(uuid);
+        WeakReference<LivingEntity> reference = new WeakReference<>(entity);
+        computingFlags.remove(reference);
+        dirtyFlags.remove(reference);
+        calculatorMap.remove(reference);
     }
 
     /**
      * 处理实体更新
      */
-    private void processAttributeUpdate(UUID uuid) {
+    private void processAttributeUpdate(WeakReference<LivingEntity> reference) {
         try {
-            Entity e = Bukkit.getEntity(uuid);
+            LivingEntity e = reference.get();
             if (e != null && e.isValid()) {
                 /* 计算前清除脏标记 */
-                dirtyFlags.get(uuid).set(false);
-                calculatorMap.put(uuid, new EntityAttributeCalculator((LivingEntity) e));
+                dirtyFlags.get(reference).set(false);
+                calculatorMap.put(reference, new EntityAttributeCalculator(e));
             }
         } finally {
-            computingFlags.get(uuid).set(false);
+            computingFlags.get(reference).set(false);
             /* 如果期间有新请求，继续处理 */
-            if (dirtyFlags.get(uuid).getAndSet(false)) {
-                if (computingFlags.get(uuid).compareAndSet(false, true)) {
-                    TerraSchedulers.async().run(() -> processAttributeUpdate(uuid));
+            if (dirtyFlags.get(reference).getAndSet(false)) {
+                if (computingFlags.get(reference).compareAndSet(false, true)) {
+                    TerraSchedulers.async().run(() -> processAttributeUpdate(reference));
                 }
             }
         }
     }
 
     private void cleanup() {
-        Iterator<Map.Entry<UUID, TerraAttributeCalculator>> it = calculatorMap.entrySet().iterator();
-        Map.Entry<UUID, TerraAttributeCalculator> entry;
-        UUID uuid;
-        Entity e;
+        Iterator<Map.Entry<WeakReference<LivingEntity>, TerraAttributeCalculator>> it = calculatorMap.entrySet().iterator();
+        Map.Entry<WeakReference<LivingEntity>, TerraAttributeCalculator> entry;
+        LivingEntity e;
         while (it.hasNext()) {
             entry = it.next();
-            uuid = entry.getKey();
-            e = Bukkit.getEntity(uuid);
+            e = entry.getKey().get();
             if (e != null && e.isValid()) continue;
-            computingFlags.remove(uuid);
-            dirtyFlags.remove(uuid);
-            calculatorMap.remove(uuid);
+            computingFlags.remove(entry.getKey());
+            dirtyFlags.remove(entry.getKey());
+            calculatorMap.remove(entry.getKey());
         }
     }
 }

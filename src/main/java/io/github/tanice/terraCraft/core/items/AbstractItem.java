@@ -15,10 +15,10 @@ import java.util.*;
 import static io.github.tanice.terraCraft.core.utils.EnumUtil.safeValueOf;
 
 public abstract class AbstractItem implements TerraBaseItem {
-    private final Material material;
-    private final int amount;
-    private final List<TerraBaseComponent> vanillaComponents;
-    private final ItemStack bukkitItem;
+    protected final Material material;
+    protected final int amount;
+    protected final List<TerraBaseComponent> vanillaComponents;
+    protected final ItemStack bukkitItem;
 
     public AbstractItem(ConfigurationSection cfg) {
         Objects.requireNonNull(cfg, "Item configurationSection cannot be null");

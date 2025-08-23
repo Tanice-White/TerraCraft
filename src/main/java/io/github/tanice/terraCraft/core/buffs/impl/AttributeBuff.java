@@ -8,12 +8,14 @@ import io.github.tanice.terraCraft.bukkit.items.components.MetaComponent;
 import io.github.tanice.terraCraft.core.buffs.AbstractBuff;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Set;
+
 public class AttributeBuff extends AbstractBuff implements TerraBuff {
 
     private TerraCalculableMeta meta;
 
-    public AttributeBuff(String name, ConfigurationSection cfg, AttributeActiveSection aas, BuffActiveCondition bac) {
-        super(name, cfg, bac, aas);
+    public AttributeBuff(String name, ConfigurationSection cfg, Set<String> mutex, AttributeActiveSection aas, BuffActiveCondition bac) {
+        super(name, cfg, mutex, bac, aas);
         meta = new MetaComponent(cfg).getMeta();
     }
 

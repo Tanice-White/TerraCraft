@@ -1,11 +1,11 @@
-export const name = "测试闪避";
+export const terra_name = "测试闪避";
 export const enable = true;
 export const condition = "defender"
 export const priority= 0;  // 必写
 export const section = "before_damage"; // 必写
 export const chance = 0.5;
 
-function run(TwDamageEvent) {
+export function run(TwDamageEvent) {
     // 可以自己在内部扩展生效条件
     var attacker = TwDamageEvent.getAttacker();
     var defender = TwDamageEvent.getDefender();

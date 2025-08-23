@@ -45,12 +45,13 @@ public final class ItemManager implements TerraItemManager {
     }
 
     public void reload() {
-        this.items.clear();
-        this.levelTemplates.clear();
-        this.qualityGroups.clear();
-        this.loadLevelTemplates();
-        this.loadQualityGroups();
-        this.loadResource();
+        provider.reload();
+        items.clear();
+        levelTemplates.clear();
+        qualityGroups.clear();
+        loadLevelTemplates();
+        loadQualityGroups();
+        loadResource();
     }
 
     public void unload() {

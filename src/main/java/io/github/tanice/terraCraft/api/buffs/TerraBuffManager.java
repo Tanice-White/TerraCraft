@@ -1,12 +1,15 @@
 package io.github.tanice.terraCraft.api.buffs;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
+import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTBuff;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TerraBuffManager {
 
@@ -55,17 +58,18 @@ public interface TerraBuffManager {
      */
     void saveAllPlayerRecords();
 
-    void activateBuff(LivingEntity entity, String buffName);
+    void activateBuff(LivingEntity entity, NBTBuff buff);
 
-    void activateBuff(LivingEntity entity, String buffName, boolean isPermanent);
+    void activateBuff(LivingEntity entity, NBTBuff buff, boolean isPermanent);
 
     void activateBuff(LivingEntity entity, TerraBaseBuff buff);
 
     void activateBuff(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent);
 
-    void activateBuffs(LivingEntity entity, List<String> buffNames);
 
-    void activateBuffs(LivingEntity entity, List<String> buffNames, boolean isPermanent);
+    void activateBuffs(LivingEntity entity, List<NBTBuff> buffs);
+
+    void activateBuffs(LivingEntity entity, List<NBTBuff> buffs, boolean isPermanent);
 
     void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs);
 

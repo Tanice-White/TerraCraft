@@ -95,7 +95,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
                     + "duration_counter = VALUES(duration_counter)";
             try (PreparedStatement pst = connection.prepareStatement(sql)) {
                 for (TerraBuffRecord record : records) {
-                    pst.setString(1, record.getId().toString());
+                    pst.setString(1, record.getEntityReference().toString());
                     pst.setString(2, record.getBuff().getName());
                     pst.setInt(3, record.getCooldownCounter());
                     pst.setInt(4, record.getDurationCounter());

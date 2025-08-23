@@ -1,16 +1,17 @@
 # 所有额外组件都有 updatable 关键词
 
+# "自定义buff名称 #持续tick :触发间隔 %给予概率"
 buff:
   updatable: false # 默认为true
-  hold:
-    - 自定义buff0
-  attack_self:
+  hold:  # hold的buff持续时间是永久的 概率100%给予自己 # 非Timer类buff的cd(触发间隔)配置无效
+    - "全面增益测试"
+  attack_self:  # 攻击后给自己的buff
     - 自定义buff1
-  attack:
+  attack:  # 攻击后给对方的buff
     - 自定义buff2
-  defence_self:
+  defence_self:  # 被攻击后给自己的buff
     - 自定义buff3
-  defence:
+  defence:  # 被攻击后给对方的buff
     - 自定义buff4
 
 commands:  # @self会被替换成使用者

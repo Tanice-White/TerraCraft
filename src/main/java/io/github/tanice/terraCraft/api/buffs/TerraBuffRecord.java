@@ -1,14 +1,17 @@
 package io.github.tanice.terraCraft.api.buffs;
 
-import java.util.UUID;
+import org.bukkit.entity.LivingEntity;
+
+import java.lang.ref.WeakReference;
 
 public interface TerraBuffRecord {
 
     /**
      * 获取此记录对应的实体ID
+     *
      * @return 实体ID
      */
-    UUID getId();
+    WeakReference<LivingEntity> getEntityReference();
 
     /**
      * 获取此记录对应的buff实体引用

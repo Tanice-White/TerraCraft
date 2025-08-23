@@ -9,7 +9,7 @@ import io.github.tanice.terraCraft.api.players.TerraPlayerData;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
-import io.github.tanice.terraCraft.core.buffs.impl.BuffRecord;
+import io.github.tanice.terraCraft.core.buffs.BuffRecord;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.players.PlayerData;

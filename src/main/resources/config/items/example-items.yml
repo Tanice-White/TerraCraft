@@ -4,7 +4,7 @@
   custom_model_data: 10086
   dyed_color: 0xFF5500
   lore:
-    - "<gray>所有支持的组件都来一便"
+    - "<red>所有支持的组件都来一套"
     - "<yellow>全是bug :("
   max_stack_size: 1
   attributes:
@@ -60,9 +60,7 @@
     damage: 50
     max_damage: 51
     unbreakable: false
-
   resistant: is_fire
-
   death_protection:
     apply_effects:  # apply_effects,play_sound,remove_effects,clear_all_effects,teleport_randomly
       chance: 0.5
@@ -175,3 +173,12 @@
     range: 16
   resistant: is_fire
   rarity: epic  # COMMON,UNCOMMON,RARE,EPIC,
+
+buff测试武器:
+  id: golden_axe
+  display_name: "<yellow>"
+  max_stack_size: 1
+  lore:
+    - "<green>所有支持的组件都来一套"
+    - "<yellow>[神迹] <red>会覆盖 <yellow>[流血]"
+    - "<yellow>[流血] <red>和 <yellow>[吸血] 冲突"

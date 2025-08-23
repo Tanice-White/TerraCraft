@@ -3,11 +3,13 @@ package io.github.tanice.terraCraft.core.buffs;
 import io.github.tanice.terraCraft.api.buffs.BuffActiveCondition;
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
+import io.github.tanice.terraCraft.bukkit.utils.StringUtil;
 import org.bukkit.configuration.ConfigurationSection;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-
-import static io.github.tanice.terraCraft.core.constants.ConfigKeys.*;
 
 /**
  * BUFF 属性抽象
@@ -29,31 +31,34 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     protected BuffActiveCondition buffActiveCondition;
     /** buff 属性计算区 */
     protected AttributeActiveSection attributeActiveSection;
+    /** buff 冲突和覆盖 */
+    @Nullable
+    protected Set<String> mutex;
+    @Nullable
+    protected Set<String> override;
 
-//    /** buff 冲突和免疫 */
-//    protected final int buffId;
-//    protected final Set<Integer> conflicts;      // 冲突的Buff集合
-//    protected final Set<Integer> immuneTo;       // 可免疫的Buff集合
-//    protected final Set<Integer> immunizedBy;    // 可免疫当前Buff的集合
-
-    public AbstractBuff(String name, String displayName, boolean enable, int priority, double chance, int duration, BuffActiveCondition bac, AttributeActiveSection aas) {
+    public AbstractBuff(String name, String displayName, boolean enable, int priority, double chance, int duration, Collection<String> mutex, Collection<String> override, BuffActiveCondition bac, AttributeActiveSection aas) {
         this.name = name;
         this.displayName = displayName;
         this.enable = enable;
         this.priority = priority;
         this.chance = chance;
         this.duration = duration;
+        this.mutex = new HashSet<>(mutex);
+        this.override = new HashSet<>(override);
         this.buffActiveCondition = bac;
         this.attributeActiveSection = aas;
     }
 
     public AbstractBuff(String name, ConfigurationSection cfg, BuffActiveCondition bac, AttributeActiveSection aas) {
         this.name = name;
-        this.displayName = cfg.getString(DISPLAY_NAME, name);
-        this.enable = cfg.getBoolean(ENABLE, true);
-        this.priority = cfg.getInt(PRIORITY, Integer.MAX_VALUE);
-        this.chance = cfg.getDouble(CHANCE, 1D);
-        this.duration = cfg.getInt(DURATION, 0);
+        this.displayName = cfg.getString("display_name", name);
+        this.enable = cfg.getBoolean("enable", true);
+        this.priority = cfg.getInt("priority", Integer.MAX_VALUE);
+        this.chance = cfg.getDouble("chance", 1D);
+        this.duration = cfg.getInt("duration", 0);
+        this.mutex = new HashSet<>(StringUtil.splitByComma(cfg.getString("mutex")));
+        this.override = new HashSet<>(StringUtil.splitByComma(cfg.getString("override")));
         this.attributeActiveSection = aas;
         this.buffActiveCondition = bac;
     }
@@ -102,6 +107,18 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     public boolean isActiveUnder(BuffActiveCondition condition) {
         if (this.buffActiveCondition == BuffActiveCondition.ALL) return true;
         return condition.name().toLowerCase().startsWith(this.buffActiveCondition.name().toLowerCase());
+    }
+
+    @Override
+    public boolean mutexWith(String buffName) {
+        if (this.mutex == null || this.mutex.isEmpty()) return false;
+        return this.mutex.contains(buffName);
+    }
+
+    @Override
+    public boolean canOverride(String buffName) {
+        if (this.override == null || this.override.isEmpty()) return false;
+        return this.override.contains(buffName);
     }
 
     @Override

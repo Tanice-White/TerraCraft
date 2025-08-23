@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'io.github.tanice'
-version = '1.0-SNAPSHOT'
+version = 'v0.0.1-PRETEST'
 
 repositories {
     mavenCentral()
@@ -52,7 +52,7 @@ shadowJar {
 //    relocate 'org.ow2.asm', 'io.github.tanice.terracraft.libs.asm'
 //
 //    // 输出的 JAR 文件名
-//    archiveFileName.set("TerraCraft-${version}-shadow.jar")
+    archiveFileName.set("TerraCraft-${version}.jar")
 }
 
 tasks {

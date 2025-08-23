@@ -43,8 +43,6 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
 
     public MetaComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-
-
         this.meta = new CalculableMeta(
                 cfg.getConfigurationSection("meta"),
                 safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR)

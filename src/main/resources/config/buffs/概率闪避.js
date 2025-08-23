@@ -1,8 +1,8 @@
 export const name = "测试闪避";
 export const enable = true;
-export const role_condition = "defender"
+export const condition = "defender"
 export const priority= 0;  // 必写
-export const calculate_type = "before_damage"; // 必写
+export const section = "before_damage"; // 必写
 export const chance = 0.5;
 
 function run(TwDamageEvent) {

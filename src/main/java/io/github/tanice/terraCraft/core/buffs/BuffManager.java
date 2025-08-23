@@ -13,7 +13,6 @@ import io.github.tanice.terraCraft.bukkit.events.entity.TerraAttributeUpdateEven
 import io.github.tanice.terraCraft.bukkit.utils.events.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.buffs.impl.AttributeBuff;
-import io.github.tanice.terraCraft.core.buffs.impl.BuffRecord;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;

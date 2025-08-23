@@ -74,9 +74,7 @@ public final class JSEngineManager implements TerraJSEngineManager, AutoCloseabl
             );
             /* 缓存函数 */
             Value runFunction = exports.getMember(FUNCTION_NAME);
-            if (runFunction != null && runFunction.canExecute()) {
-                functionCache.put(jsFileName, runFunction);
-            }
+            if (runFunction != null && runFunction.canExecute()) functionCache.put(jsFileName, runFunction);
             return extractVariables(exports);
 
         } catch (Exception e) {

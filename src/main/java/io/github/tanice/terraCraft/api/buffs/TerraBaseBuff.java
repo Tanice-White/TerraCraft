@@ -56,6 +56,19 @@ public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
      */
     boolean isActiveUnder(BuffActiveCondition condition);
 
+
+    /**
+     * 是否冲突
+     * @param buffName 目标buff名称
+     */
+    boolean mutexWith(String buffName);
+
+    /**
+     * 是否可以覆盖对方
+     * @param buffName (是否可悲覆盖的)buff名称
+     */
+    boolean canOverride(String buffName);
+
     /**
      * 克隆
      * @return 自身的可变副本

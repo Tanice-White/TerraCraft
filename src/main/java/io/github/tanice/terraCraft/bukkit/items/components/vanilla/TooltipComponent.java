@@ -52,16 +52,17 @@ public class TooltipComponent implements TerraTooltipComponent {
                     if (hiddenComponents != null) component.getStringList("hidden_components").addAll(hiddenComponents);
                 });
             } else {
-                if (hideTooltip != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+                /* 1.20.5 - 1.21.4 */
+                if (hideTooltip != null && hideTooltip && ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
                     NBT.modifyComponents(item, nbt -> {
-                        nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "hide_tooltip");
+                        nbt.getOrCreateCompound(MINECRAFT_PREFIX + "hide_tooltip");
                     });
-                }
-                // TODO 恢复使用NBT(但是NBT更新断层)
+                } else TerraCraftLogger.warning("Hide tooltip component is only supported in Minecraft 1.20.5 or newer versions");
+                /* 1.20.5 - 1.21.4 之间不明, 使用meta */
                 if (hiddenComponents != null) {
                     NBT.modify(item, nbt -> {
                         nbt.modifyMeta((readableNBT, meta) -> {
-                            for (String s : hiddenComponents) meta.addItemFlags(safeValueOf(ItemFlag.class, "HIDE_" + s, ItemFlag.HIDE_ARMOR_TRIM));
+                            for (String s : hiddenComponents) meta.addItemFlags(safeValueOf(ItemFlag.class, "HIDE_" + s, ItemFlag.HIDE_DYE));
                         });
                     });
                 }

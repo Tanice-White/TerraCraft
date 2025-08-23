@@ -27,19 +27,10 @@ public class LoreComponent implements TerraLoreComponent {
     @Override
     public void apply(ItemStack item) {
         if (lore == null) return;
-        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item, nbt ->{
-                ReadWriteNBTCompoundList compoundList = nbt.getCompoundList(MINECRAFT_PREFIX + "lore");
-                for (Component c : lore) {
-                    compoundList.addCompound().mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(c)));
-                }
-            });
-        } else {
-            NBT.modify(item, nbt ->{
-                ReadWriteNBTList<String> loreList = nbt.getOrCreateCompound("display").getStringList("lore");
-                for (Component c : lore) loreList.add(MiniMessageUtil.toNBTJson(c));
-            });
-        }
+        /*  lore经常出莫名其妙的bug, 用meta */
+        NBT.modify(item, nbt -> {
+            nbt.modifyMeta((rNbt, meta) -> meta.lore(lore));
+        });
     }
 
     @Override

@@ -26,18 +26,12 @@ public class CustomNameComponent implements TerraCustomNameComponent {
 
     @Override
     public void apply(ItemStack item) {
-        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item, nbt -> {
-                if (name != null) {
-                    nbt.getOrCreateCompound(MINECRAFT_PREFIX + "custom_name").mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(name)));
-                    nbt.getOrCreateCompound(MINECRAFT_PREFIX + "custom_name").mergeCompound(NBT.parseNBT(MiniMessageUtil.toNBTJson(name)));
-                }
-            });
-        } else {
-            NBT.modify(item, nbt -> {
-                if (name != null) nbt.getOrCreateCompound("display").setString("Name", MiniMessageUtil.toNBTJson(name));
-            });
-        }
+        /* 名称的component变化未列出, 经常出莫名其妙的bug, 用meta */
+        if (name == null) return;
+        NBT.modify(item, nbt -> {
+            nbt.modifyMeta((rNbt, meta) -> {meta.displayName(name);});
+        });
+
     }
 
     @Override

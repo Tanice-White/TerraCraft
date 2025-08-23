@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.core.buffs.impl;
+package io.github.tanice.terraCraft.core.buffs;
 
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffRecord;

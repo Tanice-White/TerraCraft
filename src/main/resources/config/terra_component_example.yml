@@ -39,13 +39,27 @@ level:
   lvl: 0  # 设置等级
   template: 等级模板内部名
 
-# TODO 待确定
 terra_meta:
   section: base  # 可选 TIMER, BEFORE_DAMAGE, BASE, ADD, MULTIPLY, FIX, BETWEEN_DAMAGE_AND_DEFENCE, AFTER_DAMAGE, ERROR, INNER
   # 其中 BASE, ADD, MULTIPLY, FIX 表示计算meta 其余的会运行js脚本
   meta:
-    attribute:
-    damage_type:
+    damage: 0
+    armor: 100
+    critical_strike_chance: 0.8
+    critical_strike_damage: 1.5
+    armor_toughness: 0
+    pre_armor_reduction: 0
+    after_armor_reduction: 0
+    mana_cost: -0.1
+    skill_cooldown: -0.1
+    # 玩家伤害属性增加
+    melee: 0.1  # 战士伤害
+    magic: 0.1  # 法师伤害
+    ranged: 0.1 # 射手伤害
+    rouge: 0.1  # 盗贼伤害
+    summon: 0.1 # 召唤伤害
+    environment: 0.1  # 环境
+    other: 0.01 # 其他
 
 quality:
   group: 可用品质组名

@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.bukkit.commands.items;
 
 import io.github.tanice.terraCraft.api.items.TerraBaseItem;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.commands.SubCommand;
+import io.github.tanice.terraCraft.bukkit.commands.CommandRunner;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import static io.github.tanice.terraCraft.api.commands.TerraCommand.*;
 
-public class GetCommand extends SubCommand {
+public class GetCommand extends CommandRunner {
     @Override
     public String getName() {
         return "get";

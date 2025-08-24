@@ -1,9 +1,9 @@
 package io.github.tanice.terraCraft.bukkit.commands.buffs;
 
-import io.github.tanice.terraCraft.bukkit.commands.SubCommand;
+import io.github.tanice.terraCraft.bukkit.commands.CommandRunner;
 import org.bukkit.command.CommandSender;
 
-public class PlayerBuffsCommand extends SubCommand {
+public class PlayerBuffsCommand extends CommandRunner {
     @Override
     public String getName() {
         return "buffs";

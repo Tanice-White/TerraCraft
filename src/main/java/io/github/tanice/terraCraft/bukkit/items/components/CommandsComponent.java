@@ -73,11 +73,6 @@ public class CommandsComponent extends AbstractItemComponent implements TerraCom
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

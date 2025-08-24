@@ -96,11 +96,6 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

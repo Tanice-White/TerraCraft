@@ -73,11 +73,6 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

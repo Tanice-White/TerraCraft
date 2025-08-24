@@ -99,11 +99,6 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.bukkit.commands.buffs;
 
 import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.commands.SubCommand;
+import io.github.tanice.terraCraft.bukkit.commands.CommandRunner;
 import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTBuff;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import static io.github.tanice.terraCraft.api.commands.TerraCommand.*;
 
-public class GiveCommand extends SubCommand {
+public class GiveCommand extends CommandRunner {
     @Override
     public String getName() {
         return "give";

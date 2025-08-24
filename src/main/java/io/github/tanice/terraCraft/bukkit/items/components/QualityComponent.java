@@ -73,11 +73,6 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

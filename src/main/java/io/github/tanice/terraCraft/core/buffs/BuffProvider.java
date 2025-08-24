@@ -72,10 +72,6 @@ public final class BuffProvider {
         return this.other;
     }
 
-    public Map<String, Set<String>> getMutexMap() {
-        return this.mutexMap;
-    }
-
     public void reload() {
         valid = 0;
         other = 0;

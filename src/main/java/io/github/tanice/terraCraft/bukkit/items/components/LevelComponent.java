@@ -77,11 +77,6 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

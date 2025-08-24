@@ -82,11 +82,6 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

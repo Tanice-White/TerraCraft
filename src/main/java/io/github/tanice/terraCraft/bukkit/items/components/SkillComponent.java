@@ -68,11 +68,6 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

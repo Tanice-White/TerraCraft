@@ -34,12 +34,10 @@ public abstract class AbstractItemComponent implements TerraBaseComponent {
     public void apply(ItemStack item) {
         doApply(item);
         updateLore();
-        callEvent();
     }
 
     public abstract void doApply(ItemStack item);
 
-    public abstract void callEvent();
 
     public abstract void updateLore();
 }

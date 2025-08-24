@@ -86,11 +86,6 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

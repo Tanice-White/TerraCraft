@@ -82,11 +82,6 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
     }
 
     @Override
-    public void callEvent() {
-
-    }
-
-    @Override
     public void updateLore() {
 
     }

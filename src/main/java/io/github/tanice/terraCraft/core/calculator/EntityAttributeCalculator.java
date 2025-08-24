@@ -79,7 +79,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         List<TerraCalculableMeta> metas = EquipmentUtil.getActiveEquipmentMeta(entity);
         metas.addAll(EquipmentUtil.getEffectiveAccessoryMeta(entity));
         /* buff计算 */
-        metas.addAll(TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffs(entity));
+        metas.addAll(TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffMetas(entity));
 
         if (ConfigManager.isDebug()) {
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, metas.size() + " metas in " + entity.getName());

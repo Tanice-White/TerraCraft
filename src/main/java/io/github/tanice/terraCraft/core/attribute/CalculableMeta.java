@@ -10,6 +10,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.*;
+
 public class CalculableMeta implements TerraCalculableMeta, Cloneable {
 
     private static final int ATTRIBUTE_TYPE_COUNT = AttributeType.values().length;
@@ -165,5 +167,30 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     @Override
     public int hashCode() {
         return Objects.hash(Arrays.hashCode(attributeModifiers), Arrays.hashCode(damageTypeModifiers), activeSection);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(BOLD).append(YELLOW).append("meta:").append("\n");
+        sb.append(AQUA).append("Attributes:").append("\n");
+        AttributeType[] attributeTypes = AttributeType.values();
+        for (int i = 0; i < attributeTypes.length; i++) {
+            if (i < attributeModifiers.length) {
+                sb.append("    ").append(AQUA).append(attributeTypes[i]).append(":")
+                        .append(WHITE).append(attributeModifiers[i]).append("\n");
+            }
+        }
+
+        sb.append(AQUA).append("DamageTypes:").append(RESET).append("\n");
+        DamageFromType[] damageTypes = DamageFromType.values();
+        for (int i = 0; i < damageTypes.length; i++) {
+            if (i < damageTypeModifiers.length) {
+                sb.append("    ").append(AQUA).append(damageTypes[i]).append(":")
+                        .append(WHITE).append(damageTypeModifiers[i]).append("\n");
+            }
+        }
+        sb.append(AQUA).append("ActiveSection:").append(WHITE).append(activeSection).append(RESET);
+        return sb.toString();
     }
 }

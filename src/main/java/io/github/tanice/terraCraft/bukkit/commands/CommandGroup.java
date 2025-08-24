@@ -93,10 +93,10 @@ public abstract class CommandGroup extends CommandNode {
         return Collections.emptyList();
     }
 
+    // TODO 优化显示
     protected void sendHelp(CommandSender sender) {
-        sender.sendMessage(GOLD + "=== TerraCraft Help ===");
         subCommands.values().forEach(cmd ->
-                sender.sendMessage(String.format(GRAY + ".../%s " + AQUA + "%s " + WHITE + "- %s", cmd.getName(), cmd.getUsage(), cmd.getDescription()))
+                sender.sendMessage(String.format(GRAY + ".../%s\n" + AQUA + "%s " + WHITE + "- %s", cmd.getName(), cmd.getUsage(), cmd.getDescription()))
         );
     }
 }

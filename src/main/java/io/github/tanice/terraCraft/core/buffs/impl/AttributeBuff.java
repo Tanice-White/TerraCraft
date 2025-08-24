@@ -29,4 +29,9 @@ public class AttributeBuff extends AbstractBuff implements TerraBuff {
         clone.meta = meta.clone();
         return clone;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n" + meta.toString();
+    }
 }

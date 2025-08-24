@@ -1,8 +1,6 @@
 package io.github.tanice.terraCraft.api.buffs;
 
-import org.bukkit.entity.LivingEntity;
-
-import java.lang.ref.WeakReference;
+import io.github.tanice.terraCraft.bukkit.utils.TerraWeakReference;
 
 public interface TerraBuffRecord {
 
@@ -11,7 +9,7 @@ public interface TerraBuffRecord {
      *
      * @return 实体ID
      */
-    WeakReference<LivingEntity> getEntityReference();
+    TerraWeakReference getEntityReference();
 
     /**
      * 获取此记录对应的buff实体引用

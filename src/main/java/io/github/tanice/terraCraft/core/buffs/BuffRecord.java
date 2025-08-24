@@ -4,14 +4,16 @@ import io.github.tanice.terraCraft.api.buffs.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraBuffRecord;
 import io.github.tanice.terraCraft.api.buffs.TerraRunnableBuff;
 import io.github.tanice.terraCraft.api.buffs.TerraTimerBuff;
+import io.github.tanice.terraCraft.bukkit.utils.TerraWeakReference;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 
-import java.lang.ref.WeakReference;
 import java.util.UUID;
 
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.*;
+
 public class BuffRecord implements TerraBuffRecord {
-    private final WeakReference<LivingEntity> entityReference;
+    private final TerraWeakReference entityReference;
     private TerraBaseBuff buff;
     
     private boolean permanent;
@@ -26,7 +28,7 @@ public class BuffRecord implements TerraBuffRecord {
     }
 
     public BuffRecord(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent) {
-        this.entityReference = new WeakReference<>(entity);
+        this.entityReference = new TerraWeakReference(entity);
         this.buff = buff;
 
         this.permanent = isPermanent;
@@ -38,7 +40,7 @@ public class BuffRecord implements TerraBuffRecord {
     }
 
     public BuffRecord(String uuid, TerraBaseBuff buff, int cooldownCounter, int durationCounter) {
-        this.entityReference = new WeakReference<>(Bukkit.getPlayer(UUID.fromString(uuid)));
+        this.entityReference = new TerraWeakReference(Bukkit.getPlayer(UUID.fromString(uuid)));
         this.buff = buff;
 
         this.permanent = false;
@@ -67,7 +69,7 @@ public class BuffRecord implements TerraBuffRecord {
     }
 
     @Override
-    public WeakReference<LivingEntity> getEntityReference() {
+    public TerraWeakReference getEntityReference() {
         return this.entityReference;
     }
 
@@ -110,5 +112,16 @@ public class BuffRecord implements TerraBuffRecord {
     @Override
     public boolean isRunnable() {
         return this.runnable;
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "Buff Details in " + WHITE + (entityReference != null ? entityReference.get() : "None") + " :" + RESET + "\n" +
+                AQUA + "Base Buff:" + WHITE + buff + "\n" +
+                AQUA + "Permanent:" + WHITE + permanent + "\n" +
+                AQUA + "Timer:" + WHITE + timer + "\n" +
+                AQUA + "Runnable:" + WHITE + runnable + "\n" +
+                AQUA + "Cooldown Counter:" + WHITE + cooldownCounter + "\n" +
+                AQUA + "Duration Counter:" + WHITE + durationCounter + RESET;
     }
 }

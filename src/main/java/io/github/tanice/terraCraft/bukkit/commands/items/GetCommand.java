@@ -42,8 +42,7 @@ public class GetCommand extends CommandRunner {
         }
         if (args.length == 0) {
             List<String> items = TerraCraftBukkit.inst().getItemManager().filterItems("").stream().sorted().toList();
-            String title = "所有物品 (" + items.size() + " 个)";
-            sender.sendMessage(GOLD + BOLD + "=== " + title + " ===");
+            sender.sendMessage(GOLD + BOLD + "=== Total " + items.size() + " items ===");
             items.forEach(item -> sender.sendMessage(GRAY + "- " + YELLOW + item));
             return true;
         }
@@ -51,12 +50,11 @@ public class GetCommand extends CommandRunner {
         String itemName = args[0];
         List<String> matches = TerraCraftBukkit.inst().getItemManager().filterItems(itemName).stream().sorted().toList();
         if (matches.isEmpty()) {
-            player.sendMessage(RED + "没有找到匹配 '" + itemName + "' 的物品");
+            player.sendMessage(RED + "No items found matching '" + itemName + "'");
             return true;
         }
         if (matches.size() > 1) {
-            String title = "匹配 '" + itemName + "' 的物品 (" + matches.size() + " 个)";
-            sender.sendMessage(GOLD + BOLD + "=== " + title + " ===");
+            sender.sendMessage(GOLD + BOLD + "=== " + matches.size() + " items matching '" + itemName + "' ===");
             matches.forEach(item -> sender.sendMessage(GRAY + "- " + YELLOW + item));
             return true;
         }
@@ -70,7 +68,7 @@ public class GetCommand extends CommandRunner {
                 // 第二个参数为玩家
                 targetPlayer = Bukkit.getPlayer(args[1]);
                 if (targetPlayer == null) {
-                    sender.sendMessage(RED + "玩家: " + args[1] + " 不存在");
+                    sender.sendMessage(RED + "Player: " + args[1] + " does not exist");
                     return true;
                 }
                 if (args.length >= 3) {
@@ -81,14 +79,13 @@ public class GetCommand extends CommandRunner {
                 }
             }
         }
-        // 执行给予物品操作
         Optional<TerraBaseItem> item = TerraCraftBukkit.inst().getItemManager().getItem(itemName);
-        if (item.isEmpty()) sender.sendMessage(RED + "无法生成物品: " + itemName);
+        if (item.isEmpty()) sender.sendMessage(RED + "Unable to create item: " + itemName);
         else {
             ItemStack giveItem = item.get().getBukkitItem().clone();
             giveItem.setAmount(amount);
             targetPlayer.getInventory().addItem(giveItem);
-            sender.sendMessage(String.format("%s成功给予 %s %s%d个%s物品: %s%s", GREEN, targetPlayer.getName(), YELLOW, amount, GREEN, BLUE, itemName));
+            sender.sendMessage(String.format("%sSuccessfully gave %s %s%d%s item(s): %s%s", GREEN, targetPlayer.getName(), YELLOW, amount, GREEN, BLUE, itemName));
         }
         return true;
     }
@@ -96,13 +93,7 @@ public class GetCommand extends CommandRunner {
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) return TerraCraftBukkit.inst().getItemManager().filterItems(args[0]).stream().sorted().toList();;
-
-        if (args.length == 2) {
-            return Bukkit.getOnlinePlayers().stream()
-                    .map(Player::getName)
-                    .filter(name -> name.startsWith(args[1]))
-                    .collect(Collectors.toList());
-        }
+        if (args.length == 2) return playerList(args[1]);
         return Collections.emptyList();
     }
 }

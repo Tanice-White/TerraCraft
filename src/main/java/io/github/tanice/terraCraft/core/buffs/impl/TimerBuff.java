@@ -7,6 +7,9 @@ import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import java.util.Collection;
 import java.util.Set;
 
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.AQUA;
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.WHITE;
+
 public class TimerBuff extends RunnableBuff implements TerraTimerBuff {
     /** 激活间隔(tick) */
     private int cd;
@@ -31,5 +34,10 @@ public class TimerBuff extends RunnableBuff implements TerraTimerBuff {
         TimerBuff clone = (TimerBuff) super.clone();
         clone.cd = this.cd;
         return clone;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n" + AQUA + "cd:" + WHITE + cd;
     }
 }

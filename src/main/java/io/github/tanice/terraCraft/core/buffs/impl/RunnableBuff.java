@@ -8,6 +8,9 @@ import io.github.tanice.terraCraft.core.buffs.AbstractBuff;
 import java.util.Collection;
 import java.util.Set;
 
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.AQUA;
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.WHITE;
+
 public class RunnableBuff extends AbstractBuff implements TerraRunnableBuff {
 
     protected String jsFileName;
@@ -27,5 +30,10 @@ public class RunnableBuff extends AbstractBuff implements TerraRunnableBuff {
         RunnableBuff clone = (RunnableBuff) super.clone();
         clone.jsFileName = this.jsFileName;
         return clone;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n" + AQUA + "Js file name:" + WHITE + jsFileName;
     }
 }

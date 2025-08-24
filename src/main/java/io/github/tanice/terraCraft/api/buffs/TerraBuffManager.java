@@ -5,11 +5,9 @@ import io.github.tanice.terraCraft.bukkit.utils.nbtapi.NBTBuff;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface TerraBuffManager {
 
@@ -28,11 +26,11 @@ public interface TerraBuffManager {
 
     /**
      * buff名过滤器
-     * @param buffNames 待过滤的buff名称集合
+     *
      * @param name 目标字符串
      * @return 以目标字符串开头的buff名称集合
      */
-    Collection<String> filterBuffs(Collection<String> buffNames, String name);
+    Collection<String> filterBuffs(String name);
 
     /**
      * 删除目标实体的所有buff
@@ -93,5 +91,12 @@ public interface TerraBuffManager {
      * @param entity 目标实体
      * @return buff列表
      */
-    List<TerraCalculableMeta> getEntityActiveBuffs(LivingEntity entity);
+    List<TerraCalculableMeta> getEntityActiveBuffMetas(LivingEntity entity);
+
+    /**
+     * 获取实体的buff记录
+     * @param entity 目标实体
+     * @return buffRecord列表
+     */
+    Collection<TerraBuffRecord> getEntityActiveBuffRecords(LivingEntity entity);
 }

@@ -58,4 +58,9 @@ public interface TerraCalculableMeta {
      * @return 自身的可变副本
      */
     TerraCalculableMeta clone();
+
+    /**
+     * 兼容命令行的String格式输出
+     */
+    String toString();
 }

@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static io.github.tanice.terraCraft.api.commands.TerraCommand.*;
+
 /**
  * BUFF 属性抽象
  */
@@ -146,5 +148,28 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(BOLD).append(YELLOW).append("Buff Details in ").append(name).append(":").append("\n");
+        sb.append(AQUA).append("Name:").append(WHITE).append(name).append("\n");
+        sb.append(AQUA).append("Display Name:").append(WHITE).append(displayName).append("\n");
+        sb.append(AQUA).append("Enabled:").append(WHITE).append(enable).append("\n");
+        sb.append(AQUA).append("Priority:").append(WHITE).append(priority).append("\n");
+        sb.append(AQUA).append("Chance:").append(WHITE).append(chance).append("\n");
+        sb.append(AQUA).append("Duration:").append(WHITE).append(duration).append("\n");
+        sb.append(AQUA).append("Condition:").append(WHITE).append(buffActiveCondition).append("\n");
+        sb.append(AQUA).append("Section:").append(WHITE).append(attributeActiveSection).append("\n");
+        sb.append(AQUA).append("Mutex:").append(WHITE);
+        if (mutex != null && !mutex.isEmpty()) sb.append(String.join(", ", mutex));
+        else sb.append("None");
+        sb.append("\n");
+        sb.append(AQUA).append("Override Buffs:").append(WHITE);
+        if (override != null && !override.isEmpty()) sb.append(String.join(", ", override));
+        else sb.append("None");
+        sb.append(RESET);
+        return sb.toString();
     }
 }

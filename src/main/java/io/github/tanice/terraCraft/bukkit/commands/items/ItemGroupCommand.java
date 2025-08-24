@@ -11,6 +11,11 @@ public class ItemGroupCommand extends CommandGroup {
     }
 
     @Override
+    public String getDescription() {
+        return "Command related to terracraft items";
+    }
+
+    @Override
     public String getName() {
         return "item";
     }

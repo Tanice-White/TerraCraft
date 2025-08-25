@@ -86,7 +86,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
      */
     @Override
     public void saveBuffRecords(Collection<TerraBuffRecord> records){
-        if (records.isEmpty()) return;
+        if (!ConfigManager.useMysql() || records.isEmpty()) return;
         TerraSchedulers.databaseAsync().run(() -> {
             String sql = "INSERT INTO buff_records (uuid, buff_inner_name, cooldown_counter, duration_counter) "
                     + "VALUES (?, ?, ?, ?) "

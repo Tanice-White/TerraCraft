@@ -107,8 +107,7 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
 
     @Override
     public boolean isActiveUnder(BuffActiveCondition condition) {
-        if (this.buffActiveCondition == BuffActiveCondition.ALL) return true;
-        return condition.name().toLowerCase().startsWith(this.buffActiveCondition.name().toLowerCase());
+        return buffActiveCondition.activeUnder(condition);
     }
 
     @Override
@@ -121,6 +120,16 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     public boolean canOverride(String buffName) {
         if (this.override == null || this.override.isEmpty()) return false;
         return this.override.contains(buffName);
+    }
+
+    @Override
+    public BuffActiveCondition getBuffActiveCondition() {
+        return buffActiveCondition;
+    }
+
+    @Override
+    public AttributeActiveSection getAttributeActiveSection() {
+        return attributeActiveSection;
     }
 
     @Override
@@ -144,7 +153,7 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(BOLD).append(YELLOW).append("Buff Details in ").append(name).append(":").append("\n");
+        sb.append(BOLD).append(YELLOW).append(name).append(":").append("\n");
         sb.append(AQUA).append("Name:").append(WHITE).append(name).append("\n");
         sb.append(AQUA).append("Display Name:").append(WHITE).append(displayName).append("\n");
         sb.append(AQUA).append("Enabled:").append(WHITE).append(enable).append("\n");

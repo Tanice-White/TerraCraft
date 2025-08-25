@@ -6,15 +6,18 @@ import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
 import io.github.tanice.terraCraft.api.buff.BuffActiveCondition;
+import io.github.tanice.terraCraft.api.buff.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buff.TerraRunnableBuff;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
+import io.github.tanice.terraCraft.core.buff.impl.AttributeBuff;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,7 +82,14 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         List<TerraCalculableMeta> metas = EquipmentUtil.getActiveEquipmentMeta(entity);
         metas.addAll(EquipmentUtil.getEffectiveAccessoryMeta(entity));
         /* buff计算 */
-        metas.addAll(TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffMetas(entity));
+        for (TerraBaseBuff baseBuff : TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffs(entity)) {
+            if (baseBuff instanceof AttributeBuff attributeBuff) metas.add(attributeBuff.getMeta());
+            else {
+                if (baseBuff.getAttributeActiveSection() == AttributeActiveSection.BEFORE_DAMAGE) beforeList.add((TerraRunnableBuff) baseBuff);
+                else if (baseBuff.getAttributeActiveSection() == AttributeActiveSection.BETWEEN_DAMAGE_AND_DEFENCE) betweenList.add((TerraRunnableBuff) baseBuff);
+                else if (baseBuff.getAttributeActiveSection() == AttributeActiveSection.AFTER_DAMAGE) afterList.add((TerraRunnableBuff) baseBuff);
+            }
+        }
 
         if (ConfigManager.isDebug()) {
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, metas.size() + " metas in " + entity.getName());
@@ -88,13 +98,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         AttributeActiveSection acs;
         for (TerraCalculableMeta meta : metas) {
             acs = meta.getActiveSection();
-            if (acs == AttributeActiveSection.ERROR) continue;
-            /* 具体 */
-            if (acs == AttributeActiveSection.BEFORE_DAMAGE) beforeList.add((TerraRunnableBuff) meta);
-            else if (acs == AttributeActiveSection.BETWEEN_DAMAGE_AND_DEFENCE) betweenList.add((TerraRunnableBuff) meta);
-            else if (acs == AttributeActiveSection.AFTER_DAMAGE) afterList.add((TerraRunnableBuff) meta);
-            /* BASE ADD MULTIPLY FIX */
-            else {
+            if (acs != AttributeActiveSection.ERROR) {
                 meta = transformTmp.getOrDefault(acs, new CalculableMeta());
                 meta.add(meta, 1);
                 transformTmp.put(acs, meta);

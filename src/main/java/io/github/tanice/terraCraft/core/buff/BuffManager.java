@@ -238,15 +238,15 @@ public final class BuffManager implements TerraBuffManager {
      * 获取实体的有效 buff Meta
      */
     @Override
-    public List<TerraCalculableMeta> getEntityActiveBuffMetas(LivingEntity entity) {
+    public List<TerraBaseBuff> getEntityActiveBuffs(LivingEntity entity) {
         if (entity == null || !entity.isValid()) return List.of();
 
         ConcurrentMap<String, TerraBuffRecord> records = entityBuffs.get(new TerraWeakReference(entity));
         if (records == null || records.isEmpty()) return List.of();
 
-        List<TerraCalculableMeta> res = new ArrayList<>(records.size());
+        List<TerraBaseBuff> res = new ArrayList<>(records.size());
         for (TerraBuffRecord r : records.values()) {
-            if (!r.isRunnable()) res.add(((AttributeBuff) r.getBuff()).getMeta());
+            if (!r.isTimer())res.add(r.getBuff());
         }
         return res;
     }

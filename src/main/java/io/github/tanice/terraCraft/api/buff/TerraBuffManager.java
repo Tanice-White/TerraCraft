@@ -1,6 +1,5 @@
 package io.github.tanice.terraCraft.api.buff;
 
-import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -93,10 +92,11 @@ public interface TerraBuffManager {
 
     /**
      * 获取实体的有效buff列表
+     *
      * @param entity 目标实体
      * @return buff列表
      */
-    List<TerraCalculableMeta> getEntityActiveBuffMetas(LivingEntity entity);
+    List<TerraBaseBuff> getEntityActiveBuffs(LivingEntity entity);
 
     /**
      * 获取实体的buff记录

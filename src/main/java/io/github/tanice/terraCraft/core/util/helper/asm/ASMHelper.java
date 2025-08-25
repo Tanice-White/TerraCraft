@@ -25,7 +25,7 @@ public class ASMHelper {
             byte[] modifiedBytes = modifyClass(originalBytes);
             redefineClass(className, modifiedBytes, bukkitClassLoader);
 
-            Bukkit.getLogger().info("\u001b[32mSuccessfully modified EntityDamageEvent\u001b[0m");
+            Bukkit.getLogger().info("\u001b[32m[TerraCraft] Successfully modified EntityDamageEvent\u001b[0m");
         } catch (Exception e) {
             Bukkit.getLogger().warning("Modification EntityDamageEvent failed: If caused by server reload, please ignore");
         }

@@ -31,7 +31,7 @@ public final class BuffProvider {
 
         AttributeActiveSection aas = EnumUtil.safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR);
         BuffActiveCondition bac = EnumUtil.safeValueOf(BuffActiveCondition.class, cfg.getString("condition"), BuffActiveCondition.ALL);
-        if (checkAttributeActiveSection(name, aas)) {
+        if (ymlCheck(name, aas)) {
             for (String m : StringUtil.splitByComma(cfg.getString("mutex"))) this.addMutex(name, m);
             return Optional.of(new AttributeBuff(name, cfg, mutexMap.computeIfAbsent(name, k -> new HashSet<>()), aas, bac));
         }
@@ -54,7 +54,7 @@ public final class BuffProvider {
         Collection<String> override = StringUtil.splitByComma(vars.getOrDefault("override", null));
         int cd = (int) Double.parseDouble(vars.getOrDefault("cd", "20"));
 
-        if (checkAttributeActiveSection(name, aas)) {
+        if (jsCheck(name, aas)) {
             if (aas == AttributeActiveSection.TIMER) return Optional.of(new TimerBuff(jsFileName, name, displayName, enable, priority, chance, duration, mutexMap.computeIfAbsent(name, k -> new HashSet<>()), override, bac, aas, cd));
             else return Optional.of(new RunnableBuff(jsFileName, name, displayName, enable, priority, chance, duration, mutexMap.computeIfAbsent(name, k -> new HashSet<>()), override, bac, aas));
         } else return Optional.empty();
@@ -78,9 +78,19 @@ public final class BuffProvider {
         mutexMap.clear();
     }
 
-    private boolean checkAttributeActiveSection(String name, AttributeActiveSection aas) {
-        if (aas == AttributeActiveSection.ERROR) {
-            TerraCraftLogger.warning("buff: " + name + " AttributeActiveSection read failure (ERROR as default). This section will be unavailable for calculation");
+    private boolean jsCheck(String name, AttributeActiveSection aas) {
+        if (aas.canCalculateInMeta()) {
+            TerraCraftLogger.warning("buff: " + name + " has invalid attributeActiveSection (Available: timer, before_damage, between_damage_and_defence, after_damage in js files).");
+            other ++;
+            return false;
+        }
+        valid ++;
+        return true;
+    }
+
+    private boolean ymlCheck(String name, AttributeActiveSection aas) {
+        if (!aas.canCalculateInMeta()) {
+            TerraCraftLogger.warning("buff: " + name + " has invalid attributeActiveSection (Available: base, add, multiply, fix in yml files).");
             other ++;
             return false;
         }

@@ -1,5 +1,7 @@
 package io.github.tanice.terraCraft.api.buff;
 
+import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
+
 import java.util.Set;
 
 public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
@@ -69,6 +71,16 @@ public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
      * @param buffName (是否可悲覆盖的)buff名称
      */
     boolean canOverride(String buffName);
+
+    /**
+     * 获取buff生效条件
+     */
+    BuffActiveCondition getBuffActiveCondition();
+
+    /**
+     * 获取buff计算区
+     */
+    AttributeActiveSection getAttributeActiveSection();
 
     /**
      * 克隆

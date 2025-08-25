@@ -5,11 +5,11 @@ export const priority= 1;  // 必写
 export const section = "after_damage"; // 必写
 export const duration = 118;
 
-export function run(damageAttr) {
-    var attacker = damageAttr.getAttacker();
-    var damage = damageAttr.getDamage();
+export function run(protocol) {
+    var attacker = protocol.getAttacker();
+    var damage = protocol.getFinalDamage();
     var x = damage * 0.4;
-    attacker.setHealth(Math.min(attacker.getMaxHealth(), attacker.getHealth() + x))
+    attacker.heal(x);
     attacker.sendMessage("吸血: " + x);
     return true;
 }

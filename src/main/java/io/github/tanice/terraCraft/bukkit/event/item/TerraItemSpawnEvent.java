@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.event;
+package io.github.tanice.terraCraft.bukkit.event.item;
 
 import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.bukkit.util.annotation.NonnullByDefault;

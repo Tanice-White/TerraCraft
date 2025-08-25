@@ -118,15 +118,6 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
     }
 
     @Override
-    public boolean mutexWith(Set<String> buffNames) {
-        if (mutex == null) return false;
-        for (String s : buffNames) {
-            if (this.mutex.contains(s)) return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean canOverride(String buffName) {
         if (this.override == null || this.override.isEmpty()) return false;
         return this.override.contains(buffName);

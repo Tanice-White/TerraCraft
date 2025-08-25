@@ -13,7 +13,6 @@ import io.github.tanice.terraCraft.bukkit.command.item.ItemGroupCommand;
 import io.github.tanice.terraCraft.bukkit.command.plugin.ReloadCommand;
 import io.github.tanice.terraCraft.bukkit.command.TerraCraftCommand;
 import io.github.tanice.terraCraft.bukkit.listener.DamageListener;
-import io.github.tanice.terraCraft.bukkit.listener.item.ItemOperationListener;
 import io.github.tanice.terraCraft.bukkit.listener.HelperListener;
 import io.github.tanice.terraCraft.bukkit.listener.TerraEventListener;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
@@ -40,7 +39,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private PlayerDataManager playerDataManager;
 
     private DamageListener damageListener;
-    private ItemOperationListener itemListener;
     private HelperListener helperListener;
     private TerraEventListener terraEventListener;
 
@@ -57,7 +55,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         ConfigManager.load();
 
         helperListener = new HelperListener();
-        itemListener = new ItemOperationListener();
         damageListener = new DamageListener();
         terraEventListener = new TerraEventListener();
 
@@ -81,7 +78,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     public void onDisable() {
         if (terraCraftCommand != null) terraCraftCommand.unload();
         if (helperListener != null) helperListener.unload();
-        if (itemListener != null) itemListener.unload();
         if (damageListener != null) damageListener.unload();
         if (terraEventListener != null) terraEventListener.unload();
 
@@ -102,7 +98,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         ConfigManager.load();
 
         helperListener.reload();
-        itemListener.reload();
         damageListener.reload();
         terraEventListener.reload();
 

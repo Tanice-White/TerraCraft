@@ -15,8 +15,7 @@ import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 public class BuffRecord implements TerraBuffRecord {
     private final TerraWeakReference entityReference;
     private TerraBaseBuff buff;
-    
-    private boolean permanent;
+
     private final boolean timer;
     private final boolean runnable;
 
@@ -24,14 +23,9 @@ public class BuffRecord implements TerraBuffRecord {
     private int durationCounter;
 
     public BuffRecord(LivingEntity entity, TerraBaseBuff buff) {
-        this(entity, buff, false);
-    }
-
-    public BuffRecord(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent) {
         this.entityReference = new TerraWeakReference(entity);
         this.buff = buff;
 
-        this.permanent = isPermanent;
         this.timer = buff instanceof TerraTimerBuff;
         this.runnable = buff instanceof TerraRunnableBuff;
 
@@ -43,7 +37,6 @@ public class BuffRecord implements TerraBuffRecord {
         this.entityReference = new TerraWeakReference(Bukkit.getPlayer(UUID.fromString(uuid)));
         this.buff = buff;
 
-        this.permanent = false;
         this.timer = buff instanceof TerraTimerBuff;
         this.runnable = buff instanceof TerraRunnableBuff;
 
@@ -56,15 +49,12 @@ public class BuffRecord implements TerraBuffRecord {
      * 认为传入的 other 是新的
      */
     @Override
-    public void merge(TerraBaseBuff other, boolean isPermanent) {
-        this.permanent |= isPermanent;
-        if (!this.permanent) {
-            int p = this.buff.getDuration();
-            int n = other.getDuration();
-            other.setDuration(Math.max(p, n));
-            int d = p - this.durationCounter;
-            this.durationCounter = other.getDuration() - d;
-        }
+    public void merge(TerraBaseBuff other) {
+        int p = this.buff.getDuration();
+        int n = other.getDuration();
+        other.setDuration(Math.max(p, n));
+        int d = p - this.durationCounter;
+        this.durationCounter = other.getDuration() - d;
         this.buff = other;
     }
 
@@ -85,8 +75,8 @@ public class BuffRecord implements TerraBuffRecord {
 
     @Override
     public void cooldown(int delta) {
-        this.cooldownCounter -= delta;
-        if (!this.permanent) this.durationCounter -= delta;
+        cooldownCounter -= delta;
+        durationCounter -= delta;
     }
 
     @Override
@@ -97,11 +87,6 @@ public class BuffRecord implements TerraBuffRecord {
     @Override
     public int getDurationCounter() {
         return this.durationCounter;
-    }
-
-    @Override
-    public boolean isPermanent() {
-        return this.permanent;
     }
 
     @Override
@@ -118,7 +103,6 @@ public class BuffRecord implements TerraBuffRecord {
     public String toString() {
         return BOLD + YELLOW + "Buff Details in " + WHITE + (entityReference != null ? entityReference.get() : "None") + " :" + RESET + "\n" +
                 AQUA + "Base Buff:" + WHITE + buff + "\n" +
-                AQUA + "Permanent:" + WHITE + permanent + "\n" +
                 AQUA + "Timer:" + WHITE + timer + "\n" +
                 AQUA + "Runnable:" + WHITE + runnable + "\n" +
                 AQUA + "Cooldown Counter:" + WHITE + cooldownCounter + "\n" +

@@ -2,9 +2,12 @@ package io.github.tanice.terraCraft.bukkit.listener.item;
 
 import io.github.tanice.terraCraft.api.item.component.TerraInnerNameComponent;
 import io.github.tanice.terraCraft.api.item.component.TerraUpdateCodeComponent;
+import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.event.item.TerraItemUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.TerraNameComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.UpdateCodeComponent;
+import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
@@ -20,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemUpdateListener implements Listener {
+public class ItemUpdateListener implements Listener, TerraListener {
     private final List<Player> checkPlayers = new ArrayList<>();
 
     public ItemUpdateListener() {
@@ -35,10 +38,12 @@ public class ItemUpdateListener implements Listener {
         TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
     }
 
+    @Override
     public void reload() {
 
     }
 
+    @Override
     public void unload() {
 
     }
@@ -72,8 +77,10 @@ public class ItemUpdateListener implements Listener {
             nameComponent = TerraNameComponent.from(item);
             if (codeComponent == null || nameComponent == null) continue;
             TerraCraftBukkit.inst().getItemManager().getItem(nameComponent.getName()).ifPresent(baseItem -> {
+                ItemStack preItem = item.clone();
                 baseItem.updateOld(item);;
                 player.updateInventory();
+                TerraEvents.call(new TerraItemUpdateEvent(player, preItem, item));
                 if (ConfigManager.isDebug())
                     TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.ITEM, "Item: " + baseItem.getName() + " in player " + player.getName() + "updated");
             });

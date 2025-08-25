@@ -43,15 +43,8 @@ public interface TerraBuffRecord {
     /**
      * 同种buff合并
      * @param other 新buff
-     * @param isPermanent 新buff是否为永久buff
      */
-    void merge(TerraBaseBuff other, boolean isPermanent);
-
-    /**
-     * 此记录的buff是否是永久型buff
-     * @return 是否是永久型buff
-     */
-    boolean isPermanent();
+    void merge(TerraBaseBuff other);
 
     /**
      * 此记录的buff是否是周期生效buff

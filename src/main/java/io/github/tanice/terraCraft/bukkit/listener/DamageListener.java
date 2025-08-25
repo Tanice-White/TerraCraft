@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.listener;
 
+import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -11,7 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-public class DamageListener implements Listener {
+public class DamageListener implements Listener, TerraListener {
 
     public DamageListener() {
         TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
@@ -25,6 +26,16 @@ public class DamageListener implements Listener {
         TerraCraftLogger.info("defender: " + event.getEntity().getName() + event.getFinalDamage());
     }
 
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
+    public void unload() {
+
+    }
+
     /* 原版有源伤害 */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -32,7 +43,6 @@ public class DamageListener implements Listener {
         Entity entityDefender = event.getEntity();
         /* 防御方必须是生物 */
         if (!(entityDefender instanceof LivingEntity defender)) return;
-
         /* 来源是生物 */
         // TODO damage(damageNumber, attacker) 会无限循环
         if (entityAttacker instanceof LivingEntity attacker) {
@@ -52,13 +62,5 @@ public class DamageListener implements Listener {
             defender.damage(DamageCalculator.calculate(defender, event.getDamage()).getFinalDamage());
             event.setCancelled(true);
         }
-    }
-
-    public void reload() {
-
-    }
-
-    public void unload() {
-
     }
 }

@@ -4,8 +4,11 @@ import io.github.tanice.terraCraft.api.item.component.TerraGemComponent;
 import io.github.tanice.terraCraft.api.item.component.TerraGemHolderComponent;
 import io.github.tanice.terraCraft.api.item.component.TerraInnerNameComponent;
 import io.github.tanice.terraCraft.api.item.component.TerraLevelComponent;
+import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.event.item.TerraItemUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
+import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Random;
 
-public class ItemOperationListener implements Listener {
+public class ItemOperationListener implements Listener, TerraListener {
 
     private final Random random = new Random();
 
@@ -30,10 +33,12 @@ public class ItemOperationListener implements Listener {
         TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
     }
 
+    @Override
     public void reload() {
 
     }
 
+    @Override
     public void unload() {
 
     }
@@ -53,6 +58,7 @@ public class ItemOperationListener implements Listener {
         if (cursorItem.isEmpty() || clickedItem == null) return;
 
         /* 宝石镶嵌 */
+        ItemStack preClicked = clickedItem.clone();
         TerraGemComponent gemComponent = GemComponent.from(cursorItem);
         TerraGemHolderComponent holderComponent = GemHolderComponent.from(clickedItem);
         if (gemComponent != null && holderComponent != null ) {
@@ -62,13 +68,12 @@ public class ItemOperationListener implements Listener {
             if (limit > gems.size()) {
                 /* 镶嵌成功 */
                 if (random.nextDouble() < gemComponent.getInlaySuccessChance()) {
-                    // TODO 物品更新事件, 如果事件未取消则向下执行
                     cursorItem.setAmount(cursorItem.getAmount() - 1);
                     gems.add(cursorItem);
                     res = "§a镶嵌成功";
                     /* nbt回写 */
                     holderComponent.apply(clickedItem);
-                    // TODO 物品 lore更新
+                    TerraEvents.call(new TerraItemUpdateEvent(player, preClicked, clickedItem));
                 } else {
                     /* 失败消耗 */
                     res = "§c镶嵌失败";
@@ -96,19 +101,17 @@ public class ItemOperationListener implements Listener {
                 String res;
                 if (lvl < template.getMax() - template.getBegin()) {
                     if (random.nextDouble() < template.getChance()) {
-                        // TODO 物品更新事件, 如果事件未取消则向下执行
                         res = "§a强化成功";
                         levelComponent.setLevel(lvl + 1);
                         levelComponent.apply(clickedItem);
-                        // TODO 物品 lore更新
+                        TerraEvents.call(new TerraItemUpdateEvent(player, preClicked, clickedItem));
                     } else {
                         res = "§c强化失败";
                         if (template.isFailedLevelDown() && lvl > 0) {
-                            // TODO 物品更新事件, 如果事件未取消则向下执行
                             res += ", 物品降级";
                             levelComponent.setLevel(lvl - 1);
                             levelComponent.apply(clickedItem);
-                            // TODO 物品 lore更新
+                            TerraEvents.call(new TerraItemUpdateEvent(player, preClicked, clickedItem));
                         }
                     }
                     player.sendMessage(res);
@@ -120,8 +123,6 @@ public class ItemOperationListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemConsume(PlayerItemConsumeEvent event) {
-        // TODO 非CustomData数据无法保存，需要单独储存在minecraft:customData中备份
-        // TODO 设置UseCooldown, Consumable
         /* 原版食物效果自动生效, 额外效果由指令替代 */
         CommandsComponent component = CommandsComponent.from(event.getItem());
         if (component == null) return;

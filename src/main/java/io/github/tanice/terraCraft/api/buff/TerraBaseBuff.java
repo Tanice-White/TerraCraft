@@ -65,12 +65,6 @@ public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
     boolean mutexWith(String buffName);
 
     /**
-     * 是否冲突
-     * @param buffNames 判断目标buff集合
-     */
-    boolean mutexWith(Set<String> buffNames);
-
-    /**
      * 是否可以覆盖对方
      * @param buffName (是否可悲覆盖的)buff名称
      */

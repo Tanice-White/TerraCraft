@@ -56,6 +56,11 @@ public interface TerraBuffManager {
      */
     void saveAllPlayerRecords();
 
+    /**
+     * 为实体添加装备物品上的hold buffs
+     */
+    void activateHoldBuffs(LivingEntity entity);
+
     void activateBuff(LivingEntity entity, NBTBuff buff);
 
     void activateBuff(LivingEntity entity, NBTBuff buff, boolean isPermanent);

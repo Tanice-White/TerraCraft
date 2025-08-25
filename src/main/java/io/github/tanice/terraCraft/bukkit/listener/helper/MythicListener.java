@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.listener.helper;
 
+import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.TerraDamageMechanic;
@@ -13,10 +14,20 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-public class MythicListener implements Listener {
+public class MythicListener implements Listener, TerraListener {
     // TODO 根据 mmWiki拓展监听器
     public MythicListener() {
         TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
+    }
+
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
+    public void unload() {
+
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -62,13 +73,5 @@ public class MythicListener implements Listener {
         if (event.getEntity() instanceof Player player) {
             TerraCraftBukkit.inst().getSkillManager().castSkill(player, TerraSkillManager.Trigger.SHOOT);
         }
-    }
-
-    public void reload() {
-
-    }
-
-    public void unload() {
-
     }
 }

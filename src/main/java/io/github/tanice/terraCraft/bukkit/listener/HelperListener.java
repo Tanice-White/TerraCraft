@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.listener;
 
+import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.listener.helper.MythicListener;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -8,7 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
 
-public class HelperListener implements Listener {
+public class HelperListener implements Listener, TerraListener {
 
     private static final String MM = "MythicMobs";
     private MythicListener mythicListener;
@@ -17,19 +18,21 @@ public class HelperListener implements Listener {
         TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
     }
 
+    @Override
+    public void reload() {
+        if (mythicListener != null) mythicListener.reload();
+    }
+
+    @Override
+    public void unload() {
+        if (mythicListener != null) mythicListener.unload();
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPluginEnable(PluginEnableEvent event) {
         if (event.getPlugin().getName().equals(MM) && mythicListener == null) {
             mythicListener = new MythicListener();
             TerraCraftLogger.success("MythicMobs Detected, skills available");
         }
-    }
-
-    public void reload() {
-
-    }
-
-    public void unload() {
-
     }
 }

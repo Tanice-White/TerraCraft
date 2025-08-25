@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.event;
+package io.github.tanice.terraCraft.bukkit.event.item;
 
 import io.github.tanice.terraCraft.bukkit.util.annotation.NonnullByDefault;
 import org.bukkit.entity.Player;
@@ -12,10 +12,12 @@ public class TerraItemUpdateEvent extends Event {
 
     private final Player player;
     private final ItemStack pre;
+    private final ItemStack newer;
 
-    public TerraItemUpdateEvent(Player player, ItemStack pre) {
+    public TerraItemUpdateEvent(Player player, ItemStack pre, ItemStack newer) {
         this.player = player;
         this.pre = pre;
+        this.newer = newer;
     }
 
     public static HandlerList getHandlerList() {return handlers;}
@@ -29,7 +31,11 @@ public class TerraItemUpdateEvent extends Event {
         return this.player;
     }
 
-    public ItemStack getItemStack() {
+    public ItemStack getPreBukkitItem() {
         return this.pre;
+    }
+
+    public ItemStack getNewerBukkitItem() {
+        return this.newer;
     }
 }

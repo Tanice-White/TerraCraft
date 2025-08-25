@@ -4,13 +4,13 @@ import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.core.utils.TerraUtil;
+import io.github.tanice.terraCraft.core.util.TerraUtil;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-import static io.github.tanice.terraCraft.api.commands.TerraCommand.*;
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
 public class CalculableMeta implements TerraCalculableMeta, Cloneable {
 

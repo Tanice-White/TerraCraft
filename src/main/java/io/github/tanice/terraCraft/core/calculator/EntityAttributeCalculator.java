@@ -5,13 +5,13 @@ import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
-import io.github.tanice.terraCraft.api.buffs.BuffActiveCondition;
-import io.github.tanice.terraCraft.api.buffs.TerraRunnableBuff;
+import io.github.tanice.terraCraft.api.buff.BuffActiveCondition;
+import io.github.tanice.terraCraft.api.buff.TerraRunnableBuff;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
-import io.github.tanice.terraCraft.bukkit.utils.EquipmentUtil;
+import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.ArrayList;

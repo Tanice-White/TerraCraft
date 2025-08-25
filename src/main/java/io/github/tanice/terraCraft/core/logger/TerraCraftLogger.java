@@ -1,7 +1,7 @@
 package io.github.tanice.terraCraft.core.logger;
 
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.utils.logger.ConsoleColor;
+import io.github.tanice.terraCraft.bukkit.util.logger.ConsoleColor;
 
 import java.util.logging.Level;
 
@@ -42,8 +42,6 @@ public final class TerraCraftLogger {
 
     public enum DebugLevel {
         BUFF,
-        BUFF_CONDITION,
-        BUFF_TARGET,
         ITEM,
         PLAYER,
         SKILL,

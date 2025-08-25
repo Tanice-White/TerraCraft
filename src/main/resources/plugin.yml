@@ -1,7 +1,7 @@
 name: TerraCraft
 version: '1.0-SNAPSHOT'
 main: io.github.tanice.terraCraft.bukkit.TerraCraftBukkit
-api-version: '1.20'
+api-version: '1.21'
 description: 'RPG item manager and buff manager with mm skills'
 author: TaniceWhite
 website: 'https://github.com/Tanice-White/TerraCraft'

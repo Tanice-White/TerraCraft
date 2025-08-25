@@ -1,30 +1,30 @@
 package io.github.tanice.terraCraft.bukkit;
 
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
-import io.github.tanice.terraCraft.api.buffs.TerraBuffManager;
-import io.github.tanice.terraCraft.api.items.TerraItemManager;
-import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
+import io.github.tanice.terraCraft.api.buff.TerraBuffManager;
+import io.github.tanice.terraCraft.api.item.TerraItemManager;
+import io.github.tanice.terraCraft.api.player.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
-import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
-import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
-import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
-import io.github.tanice.terraCraft.bukkit.commands.buffs.BuffGroupCommand;
-import io.github.tanice.terraCraft.bukkit.commands.items.ItemGroupCommand;
-import io.github.tanice.terraCraft.bukkit.commands.plugin.ReloadCommand;
-import io.github.tanice.terraCraft.bukkit.commands.TerraCraftCommand;
-import io.github.tanice.terraCraft.bukkit.listeners.DamageListener;
-import io.github.tanice.terraCraft.bukkit.listeners.ItemListener;
-import io.github.tanice.terraCraft.bukkit.listeners.HelperListener;
-import io.github.tanice.terraCraft.bukkit.listeners.TerraEventListener;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
+import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
+import io.github.tanice.terraCraft.api.database.TerraDatabaseManager;
+import io.github.tanice.terraCraft.api.js.TerraJSEngineManager;
+import io.github.tanice.terraCraft.bukkit.command.buff.BuffGroupCommand;
+import io.github.tanice.terraCraft.bukkit.command.item.ItemGroupCommand;
+import io.github.tanice.terraCraft.bukkit.command.plugin.ReloadCommand;
+import io.github.tanice.terraCraft.bukkit.command.TerraCraftCommand;
+import io.github.tanice.terraCraft.bukkit.listener.DamageListener;
+import io.github.tanice.terraCraft.bukkit.listener.item.ItemOperationListener;
+import io.github.tanice.terraCraft.bukkit.listener.HelperListener;
+import io.github.tanice.terraCraft.bukkit.listener.TerraEventListener;
+import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
-import io.github.tanice.terraCraft.core.buffs.BuffManager;
+import io.github.tanice.terraCraft.core.buff.BuffManager;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.items.ItemManager;
-import io.github.tanice.terraCraft.core.players.PlayerDataManager;
-import io.github.tanice.terraCraft.core.skills.SkillManager;
-import io.github.tanice.terraCraft.core.utils.database.DatabaseManager;
-import io.github.tanice.terraCraft.core.utils.js.JSEngineManager;
+import io.github.tanice.terraCraft.core.item.ItemManager;
+import io.github.tanice.terraCraft.core.player.PlayerDataManager;
+import io.github.tanice.terraCraft.core.skill.SkillManager;
+import io.github.tanice.terraCraft.core.util.database.DatabaseManager;
+import io.github.tanice.terraCraft.core.util.js.JSEngineManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
@@ -40,7 +40,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private PlayerDataManager playerDataManager;
 
     private DamageListener damageListener;
-    private ItemListener itemListener;
+    private ItemOperationListener itemListener;
     private HelperListener helperListener;
     private TerraEventListener terraEventListener;
 
@@ -57,7 +57,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         ConfigManager.load();
 
         helperListener = new HelperListener();
-        itemListener = new ItemListener();
+        itemListener = new ItemOperationListener();
         damageListener = new DamageListener();
         terraEventListener = new TerraEventListener();
 

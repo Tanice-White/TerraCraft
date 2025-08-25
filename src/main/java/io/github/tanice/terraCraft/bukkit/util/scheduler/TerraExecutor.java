@@ -1,0 +1,18 @@
+package io.github.tanice.terraCraft.bukkit.util.scheduler;
+
+import io.github.tanice.terraCraft.bukkit.util.scheduler.task.TerraTask;
+
+public interface TerraExecutor {
+
+    void run(Runnable task);
+
+    void runLater(Runnable task, long delayTicks);
+
+    TerraTask repeat(Runnable task, long delayTicks, long periodTicks);
+
+    void cancel(long taskId);
+
+    void shutdown();
+
+    void clear();
+}

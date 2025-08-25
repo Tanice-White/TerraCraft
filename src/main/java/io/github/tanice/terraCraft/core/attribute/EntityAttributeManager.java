@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.core.attribute;
 
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
-import io.github.tanice.terraCraft.bukkit.utils.scheduler.TerraSchedulers;
+import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.EntityAttributeCalculator;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;

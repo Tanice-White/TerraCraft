@@ -1,8 +1,8 @@
 package io.github.tanice.terraCraft.api.attribute.calculator;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.buffs.BuffActiveCondition;
-import io.github.tanice.terraCraft.api.buffs.TerraRunnableBuff;
+import io.github.tanice.terraCraft.api.buff.BuffActiveCondition;
+import io.github.tanice.terraCraft.api.buff.TerraRunnableBuff;
 
 import java.util.List;
 

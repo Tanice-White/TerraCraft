@@ -1,12 +1,12 @@
 package io.github.tanice.terraCraft.api.plugin;
 
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
-import io.github.tanice.terraCraft.api.buffs.TerraBuffManager;
-import io.github.tanice.terraCraft.api.items.TerraItemManager;
-import io.github.tanice.terraCraft.api.players.TerraPlayerDataManager;
-import io.github.tanice.terraCraft.api.skills.TerraSkillManager;
-import io.github.tanice.terraCraft.api.utils.database.TerraDatabaseManager;
-import io.github.tanice.terraCraft.api.utils.js.TerraJSEngineManager;
+import io.github.tanice.terraCraft.api.buff.TerraBuffManager;
+import io.github.tanice.terraCraft.api.item.TerraItemManager;
+import io.github.tanice.terraCraft.api.player.TerraPlayerDataManager;
+import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
+import io.github.tanice.terraCraft.api.database.TerraDatabaseManager;
+import io.github.tanice.terraCraft.api.js.TerraJSEngineManager;
 
 import java.io.File;
 

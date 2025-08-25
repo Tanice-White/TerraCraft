@@ -8,13 +8,12 @@ import io.github.tanice.terraCraft.bukkit.event.custom.TerraEnchantMetaLoadEvent
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
-import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -26,7 +25,7 @@ public final class EquipmentUtil {
     public static List<ItemStack> getActiveEquipmentItemStack(LivingEntity entity) {
         EntityEquipment equip = entity.getEquipment();
         if (equip == null) return List.of();
-        List<ItemStack> res = new ArrayList<>(12);
+        List<ItemStack> res = new ArrayList<>(6);
         ItemStack item;
         TerraMetaSlotComponent slotComponent;
         item = equip.getItemInMainHand();
@@ -73,7 +72,6 @@ public final class EquipmentUtil {
                     // TODO 原版附魔meta
                 }
             }
-
         }
         return res;
     }
@@ -91,7 +89,7 @@ public final class EquipmentUtil {
 
     /**
      * 获取item中 自身meta + levelMeta + gemMeta
-     * 不论自身是否是gem
+     * 不判断 gem 组件
      * @param item 目标item
      * @return 融合完成的meta
      */

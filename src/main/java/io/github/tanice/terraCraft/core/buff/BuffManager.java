@@ -165,7 +165,7 @@ public final class BuffManager implements TerraBuffManager {
     public void activateHoldBuffs(LivingEntity entity) {
         for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(entity)) {
             BuffComponent buffComponent = BuffComponent.from(item);
-            if (buffComponent == null) return;
+            if (buffComponent == null) continue;
             activateBuffs(entity, buffComponent.getHold(), true);
         }
     }
@@ -343,6 +343,8 @@ public final class BuffManager implements TerraBuffManager {
 
             } else return new BuffRecord(entity, buff);
         });
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.BUFF, "Entity: " + entity.getName() + " buffs updated");
         TerraEvents.callSync(new TerraAttributeUpdateEvent(entity));
     }
 

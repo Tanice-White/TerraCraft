@@ -21,7 +21,7 @@ public final class TerraCraftLogger {
     }
 
     public static void debug(DebugLevel level, String message) {
-        TerraCraftLogger.info(Level.INFO, ConsoleColor.BLUE + "[" +  level.name() + "] " + message + ConsoleColor.RESET);
+        TerraCraftLogger.info(Level.INFO, ConsoleColor.CYAN + "[" + ConsoleColor.YELLOW + level.name() + ConsoleColor.CYAN + "] " + message + ConsoleColor.RESET);
     }
 
     public static void info(String message) {

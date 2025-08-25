@@ -61,8 +61,8 @@ public class EntityAttributeListener implements Listener, TerraListener {
 
     @EventHandler
     public void onEntityEquipmentChange(EntityEquipmentChangedEvent event) {
+        LivingEntity entity = event.getEntity();
         TerraSchedulers.sync().runLater(() -> {
-            LivingEntity entity = event.getEntity();
             /* activateHoldBuffs() 会自动触发属性变动 */
             TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(entity);
             if (entity instanceof Player p) TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);

@@ -308,9 +308,9 @@ public final class BuffManager implements TerraBuffManager {
                 /* 检查持续时间 */
                 if (record.getDurationCounter() < 0) {
                     /* 遍历一次玩家的永久buff并逐个增加 */
-                    TerraSchedulers.sync().run(() -> activateHoldBuffs(entity));
                     changed = true;
                     innerIt.remove();
+                    TerraSchedulers.sync().run(() -> activateHoldBuffs(entity));
                 }
                 /* 检查触发cd */
                 if (record.isTimer() && record.getCooldownCounter() <= 0) {

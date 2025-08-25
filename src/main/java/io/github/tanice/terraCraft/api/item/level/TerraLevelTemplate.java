@@ -16,5 +16,8 @@ public interface TerraLevelTemplate {
 
     boolean isFailedLevelDown();
 
+    /**
+     * 获取模板属性的可变副本
+     */
     TerraCalculableMeta getMeta();
 }

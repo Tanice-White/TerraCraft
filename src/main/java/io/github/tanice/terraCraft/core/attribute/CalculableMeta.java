@@ -61,6 +61,7 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
 
     @Override
     public void add(TerraCalculableMeta another, int k) {
+        if (k < 1) return;
         double[] otherAttrMods = another.getAttributeModifierArray();
         double[] otherDamageMods = another.getDamageTypeModifierArray();
 

@@ -39,4 +39,7 @@ public interface TerraItem extends TerraBaseItem {
     TerraSkillComponent getSkillComponent();
 
     TerraUpdateCodeComponent getUpdateCodeComponent();
+
+    @Nullable
+    TerraMetaSlotComponent getMetaSlotComponent();
 }

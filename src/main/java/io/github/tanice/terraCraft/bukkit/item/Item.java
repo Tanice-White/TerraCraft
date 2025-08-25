@@ -15,7 +15,7 @@ public class Item extends AbstractItem implements TerraItem {
     @Nullable
     private BuffComponent buffComponent;
     @Nullable
-    private CommandsComponent commandsComponent;
+    private CommandComponent commandComponent;
     @Nullable
     private DamageTypeComponent damageTypeComponent;
     @Nullable
@@ -36,6 +36,8 @@ public class Item extends AbstractItem implements TerraItem {
     private SkillComponent skillComponent;
 
     private final UpdateCodeComponent updateCodeComponent;
+    @Nullable
+    private SlotComponent slotComponent;
     /**
      * 依据内部名称和对应的config文件创建mc基础物品
      */
@@ -54,8 +56,8 @@ public class Item extends AbstractItem implements TerraItem {
         if (cfg.isSet("command")) {
             sub = cfg.getConfigurationSection("command");
             if (sub != null) {
-                commandsComponent = new CommandsComponent(sub);
-                commandsComponent.apply(bukkitItem);
+                commandComponent = new CommandComponent(sub);
+                commandComponent.apply(bukkitItem);
             }
         }
         if (cfg.isSet("damage_type")) {
@@ -66,7 +68,7 @@ public class Item extends AbstractItem implements TerraItem {
             }
         }
         if (cfg.isSet("terra_durability")) {
-            sub = cfg.getConfigurationSection("durability");
+            sub = cfg.getConfigurationSection("terra_durability");
             if (sub != null) {
                 durabilityComponent = new DurabilityComponent(sub);
                 durabilityComponent.apply(bukkitItem);
@@ -93,8 +95,8 @@ public class Item extends AbstractItem implements TerraItem {
                 levelComponent.apply(bukkitItem);
             }
         }
-        if (cfg.isSet("terra_meta")) {
-            sub = cfg.getConfigurationSection("terra_meta");
+        if (cfg.isSet("meta")) {
+            sub = cfg.getConfigurationSection("meta");
             if (sub != null) {
                 metaComponent = new MetaComponent(sub);
                 metaComponent.apply(bukkitItem);
@@ -112,6 +114,13 @@ public class Item extends AbstractItem implements TerraItem {
             if (sub != null) {
                 skillComponent = new SkillComponent(sub);
                 skillComponent.apply(bukkitItem);
+            }
+        }
+        if (cfg.isSet("slot")) {
+            sub = cfg.getConfigurationSection("slot");
+            if (sub != null) {
+                slotComponent = new SlotComponent(sub);
+                slotComponent.apply(bukkitItem);
             }
         }
 
@@ -134,7 +143,7 @@ public class Item extends AbstractItem implements TerraItem {
         /* updateCode 必须被更改 */
         updateCodeComponent.apply(old);
         if (buffComponent != null && buffComponent.canUpdate()) buffComponent.updatePartial().apply(old);
-        if (commandsComponent != null && commandsComponent.canUpdate()) commandsComponent.updatePartial().apply(old);
+        if (commandComponent != null && commandComponent.canUpdate()) commandComponent.updatePartial().apply(old);
         if (damageTypeComponent != null && damageTypeComponent.canUpdate()) damageTypeComponent.updatePartial().apply(old);
         if (durabilityComponent != null && durabilityComponent.canUpdate()) durabilityComponent.updatePartial().apply(old);
         if (gemComponent != null && gemComponent.canUpdate()) gemComponent.updatePartial().apply(old);
@@ -143,6 +152,7 @@ public class Item extends AbstractItem implements TerraItem {
         if (metaComponent != null && metaComponent.canUpdate()) metaComponent.updatePartial().apply(old);
         if (qualityComponent != null && qualityComponent.canUpdate()) qualityComponent.updatePartial().apply(old);
         if (skillComponent != null && skillComponent.canUpdate()) skillComponent.updatePartial().apply(old);
+        if (slotComponent != null && slotComponent.canUpdate()) slotComponent.updatePartial().apply(old);
         return true;
     }
 
@@ -155,7 +165,7 @@ public class Item extends AbstractItem implements TerraItem {
     @Override
     @Nullable
     public TerraCommandsComponent getCommandComponent() {
-        return commandsComponent;
+        return commandComponent;
     }
 
     @Override
@@ -217,11 +227,17 @@ public class Item extends AbstractItem implements TerraItem {
     }
 
     @Override
+    @Nullable
+    public TerraMetaSlotComponent getMetaSlotComponent() {
+        return slotComponent;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(
-                super.hashCode(), name, terraNameComponent,
-                buffComponent, commandsComponent, damageTypeComponent, durabilityComponent, gemComponent,
-                gemHolderComponent, levelComponent, metaComponent, qualityComponent, skillComponent
+                super.hashCode(), name, terraNameComponent, buffComponent,
+                commandComponent, damageTypeComponent, durabilityComponent, gemComponent, gemHolderComponent,
+                levelComponent, metaComponent, qualityComponent, skillComponent, slotComponent
         );
     }
 }

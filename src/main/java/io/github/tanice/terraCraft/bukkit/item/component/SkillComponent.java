@@ -33,19 +33,20 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
 
     public SkillComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.skills = cfg.getStringList("skills");
+        this.skills = cfg.getStringList("content");
     }
 
     public static SkillComponent from(ItemStack item) {
+        if (item == null || item.isEmpty()) return null;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skills");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skill");
                 if (data == null) return null;
                 return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".skills");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".skill");
                 if (data == null) return null;
                 return fromNBT(data);
             });
@@ -56,12 +57,12 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skills");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skill");
                 addToCompound(data);
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".skills");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".skill");
                 addToCompound(data);
             });
         }
@@ -75,11 +76,11 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("skills");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("skill");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("skills");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("skill");
             });
         }
     }
@@ -104,13 +105,13 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     private void addToCompound(ReadWriteNBT compound) {
-        if (skills != null && !skills.isEmpty()) compound.getStringList("value").addAll(skills);
+        if (skills != null && !skills.isEmpty()) compound.getStringList("content").addAll(skills);
         compound.setByte("state", state.toNbtByte());
     }
 
     private static SkillComponent fromNBT(ReadableNBT nbt) {
         return new SkillComponent(
-                nbt.getStringList("value").toListCopy(),
+                nbt.getStringList("content").toListCopy(),
                 new ComponentState(nbt.getByte("state"))
         );
     }

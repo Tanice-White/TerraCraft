@@ -29,6 +29,10 @@ public class PlayerBuffsGetCommand extends CommandRunner {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
+        if (args.length < 1) {
+            sender.sendMessage(RED + "Missing player name");
+            return true;
+        }
         List<String> matches = playerList(args[0]);
         if (matches.isEmpty()) {
             sender.sendMessage(RED + "Player: " + args[1] + " does not exist");

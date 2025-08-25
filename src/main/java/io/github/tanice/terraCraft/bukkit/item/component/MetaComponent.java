@@ -44,13 +44,14 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
     public MetaComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
         this.meta = new CalculableMeta(
-                cfg.getConfigurationSection("meta"),
+                cfg.getConfigurationSection("attribute"),
                 safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR)
         );
     }
 
     @Nullable
     public static MetaComponent from(ItemStack item) {
+        if (item == null || item.isEmpty()) return null;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".meta");

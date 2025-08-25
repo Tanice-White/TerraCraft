@@ -1,7 +1,10 @@
 package io.github.tanice.terraCraft.core.util.slot;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public enum TerraEquipmentSlot {
 
@@ -22,35 +25,24 @@ public enum TerraEquipmentSlot {
 
     // 槽位属性
     private final String standardName;
-    private final int[] slotNumber;
+    private final Set<Integer> slotNumber;
 
     TerraEquipmentSlot(String standardName, int... slotNumber) {
         this.standardName = standardName;
-        this.slotNumber = slotNumber;
-    }
-
-    /**
-     * 根据槽位编号查找对应的枚举值
-     * @param number 槽位编号
-     * @return 对应的TerraEquipmentSlot，如果未找到则返回null
-     */
-    public static TerraEquipmentSlot of(int... number) {
-        for (TerraEquipmentSlot slot : values()) {
-            if (Arrays.equals(slot.slotNumber, number)) return slot;
-        }
-        return null;
+        this.slotNumber = Arrays.stream(slotNumber).boxed().collect(Collectors.toSet());
     }
 
     /**
      * 根据槽位名称查找对应的枚举值
      * @param slotName 槽位名称
-     * @return 对应的TerraEquipmentSlot，如果未找到则返回null
+     * @return 对应的TerraEquipmentSlot，如果未找到则返回ANY
      */
     public static TerraEquipmentSlot of(String slotName) {
+        if (slotName == null) return TerraEquipmentSlot.ANY;
         for (TerraEquipmentSlot slot : values()) {
             if (slot.standardName.equalsIgnoreCase(slotName)) return slot;
         }
-        return null;
+        return TerraEquipmentSlot.ANY;
     }
 
     public String[] getStandardEquippableName() {
@@ -69,7 +61,11 @@ public enum TerraEquipmentSlot {
         return this.standardName;
     }
 
-    public int[] getSlotNumber() {
+    public Set<Integer> getSlotNumber() {
         return this.slotNumber;
+    }
+
+    public boolean activeUnder(TerraEquipmentSlot targetCondition) {
+        return this.slotNumber.containsAll(targetCondition.getSlotNumber());
     }
 }

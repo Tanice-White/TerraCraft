@@ -65,15 +65,16 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
 
     @Nullable
     public static BuffComponent from(ItemStack item) {
+        if (item == null || item.isEmpty()) return null;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".buffs");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".buff");
                 if (data == null) return null;
                 return formNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".buffs");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".buff");
                 if (data == null) return null;
                 return formNBT(data);
             });
@@ -84,12 +85,12 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + "." + "buffs");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + "." + "buff");
                 addToCompound(data);
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".buffs");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".buff");
                 addToCompound(data);
             });
         }
@@ -103,11 +104,11 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("buffs");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("buff");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("buffs");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("buff");
             });
         }
     }

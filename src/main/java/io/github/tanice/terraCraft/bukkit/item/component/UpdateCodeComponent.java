@@ -18,6 +18,7 @@ public class UpdateCodeComponent implements TerraUpdateCodeComponent {
     }
 
     public static UpdateCodeComponent from(ItemStack item) {
+        if (item == null || item.isEmpty()) return null;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
                 ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY);

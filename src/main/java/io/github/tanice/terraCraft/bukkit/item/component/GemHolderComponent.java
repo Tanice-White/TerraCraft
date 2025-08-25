@@ -67,15 +67,16 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
 
     @Nullable
     public static GemHolderComponent from(ItemStack item) {
+        if (item == null || item.isEmpty()) return null;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             return NBT.getComponents(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".holds");
+                ReadableNBT data = nbt.resolveCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".gem_hold");
                 if (data == null) return null;
                 return fromNBT(data);
             });
         } else {
             return NBT.get(item, nbt -> {
-                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".holds");
+                ReadableNBT data = nbt.resolveCompound(TERRA_COMPONENT_KEY + ".gem_hold");
                 if (data == null) return null;
                 return fromNBT(data);
             });
@@ -86,12 +87,12 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     public void doApply(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".holds");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".gem_hold");
                 addToCompound(data);
             });
         } else {
             NBT.modify(item, nbt -> {
-                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".holds");
+                ReadWriteNBT data = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".gem_hold");
                 addToCompound(data);
             });
         }
@@ -105,11 +106,11 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     public static void clear(TerraBaseItem item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("holds");
+                nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("gem_hold");
             });
         } else {
             NBT.modify(item.getBukkitItem(), nbt -> {
-                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("holds");
+                nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("gem_hold");
             });
         }
     }

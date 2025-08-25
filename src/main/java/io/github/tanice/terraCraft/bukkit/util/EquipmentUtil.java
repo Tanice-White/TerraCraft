@@ -3,9 +3,13 @@ package io.github.tanice.terraCraft.bukkit.util;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.item.TerraItem;
 import io.github.tanice.terraCraft.api.item.component.TerraDurabilityComponent;
+import io.github.tanice.terraCraft.api.item.component.TerraMetaSlotComponent;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.DurabilityComponent;
+import io.github.tanice.terraCraft.bukkit.item.component.GemComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.MetaComponent;
+import io.github.tanice.terraCraft.bukkit.item.component.SlotComponent;
+import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -23,18 +27,25 @@ public final class EquipmentUtil {
         if (equip == null) return List.of();
         List<ItemStack> res = new ArrayList<>(12);
         ItemStack item;
+        TerraMetaSlotComponent slotComponent;
         item = equip.getItemInMainHand();
-        if (validDurability(item)) res.add(item);
+        slotComponent = SlotComponent.from(item);
+        if (validate(item) && (slotComponent == null || slotComponent.activeUnder(TerraEquipmentSlot.MAINHAND))) res.add(item);
         item = equip.getItemInOffHand();
-        if (validDurability(item)) res.add(item);
+        slotComponent = SlotComponent.from(item);
+        if (validate(item) && (slotComponent == null || slotComponent.activeUnder(TerraEquipmentSlot.OFFHAND))) res.add(item);
         item = equip.getHelmet();
-        if (validDurability(item)) res.add(item);
+        slotComponent = SlotComponent.from(item);
+        if (validate(item) && (slotComponent == null || slotComponent.activeUnder(TerraEquipmentSlot.HEAD))) res.add(item);
         item = equip.getChestplate();
-        if (validDurability(item)) res.add(item);
+        slotComponent = SlotComponent.from(item);
+        if (validate(item) && (slotComponent == null || slotComponent.activeUnder(TerraEquipmentSlot.CHEST))) res.add(item);
         item = equip.getLeggings();
-        if (validDurability(item)) res.add(item);
+        slotComponent = SlotComponent.from(item);
+        if (validate(item) && (slotComponent == null || slotComponent.activeUnder(TerraEquipmentSlot.LEGS))) res.add(item);
         item = equip.getBoots();
-        if (validDurability(item)) res.add(item);
+        slotComponent = SlotComponent.from(item);
+        if (validate(item) && (slotComponent == null || slotComponent.activeUnder(TerraEquipmentSlot.FEET))) res.add(item);
         return res;
     }
 
@@ -68,11 +79,12 @@ public final class EquipmentUtil {
     }
 
     /**
-     * 通过耐久判断物品是否需要计入属性
+     * 非宝石
+     * 通过 耐久 判断物品是否需要计入属性
      */
-    public static boolean validDurability(ItemStack item) {
+    public static boolean validate(ItemStack item) {
         if (item == null || item.isEmpty()) return false;
         TerraDurabilityComponent durabilityComponent = DurabilityComponent.from(item);
-        return durabilityComponent == null || !durabilityComponent.broken();
+        return (durabilityComponent == null || !durabilityComponent.broken()) && GemComponent.from(item) == null;
     }
 }

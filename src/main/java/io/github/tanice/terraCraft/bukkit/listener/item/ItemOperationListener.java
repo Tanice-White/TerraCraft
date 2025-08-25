@@ -124,7 +124,7 @@ public class ItemOperationListener implements Listener, TerraListener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemConsume(PlayerItemConsumeEvent event) {
         /* 原版食物效果自动生效, 额外效果由指令替代 */
-        CommandsComponent component = CommandsComponent.from(event.getItem());
+        CommandComponent component = CommandComponent.from(event.getItem());
         if (component == null) return;
         List<String> commands = component.getCommands();
         String playerName = event.getPlayer().getName();

@@ -203,3 +203,15 @@ buff测试武器2:
       - "流血"
     # defense_self:
     # defense:
+
+智能干架助手:
+  id: clock
+  display_name: "<yellow>解放你的双手"
+  max_stack_size: 1
+  lore:
+    - "<green>everybody follow me"
+  buff:
+    hold:
+      - "闪避 %90"  # 这里修改的是buff给予的概率，不是闪避成功的概率，这个概率在js内部改
+  slot:
+    content: offhand

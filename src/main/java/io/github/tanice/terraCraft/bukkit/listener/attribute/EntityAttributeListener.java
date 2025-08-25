@@ -31,12 +31,12 @@ public class EntityAttributeListener implements Listener, TerraListener {
 
     @EventHandler
     void onPlayerJoin(PlayerJoinEvent event) {
-
+        // TODO operate database
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-
+        // TODO operate database
     }
 
     @EventHandler
@@ -44,6 +44,6 @@ public class EntityAttributeListener implements Listener, TerraListener {
         LivingEntity entity = event.getEntity();
         /* activateHoldBuffs() 会自动触发属性变动 */
         TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(entity);
-        if (event instanceof Player p) TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);
+        if (entity instanceof Player p) TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);
     }
 }

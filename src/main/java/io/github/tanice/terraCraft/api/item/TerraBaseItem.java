@@ -13,7 +13,7 @@ public interface TerraBaseItem {
 
     String getName();
 
-    void updateOld(ItemStack old);
+    boolean updateOld(ItemStack old);
 
     int getHashCode();
 }

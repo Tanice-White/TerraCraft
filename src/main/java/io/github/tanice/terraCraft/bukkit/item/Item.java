@@ -127,8 +127,8 @@ public class Item extends AbstractItem implements TerraItem {
     }
 
     @Override
-    public void updateOld(ItemStack old) {
-        if (UpdateCodeComponent.from(old).getCode() == this.updateCodeComponent.getCode()) return;
+    public boolean updateOld(ItemStack old) {
+        if (UpdateCodeComponent.from(old).getCode() == this.updateCodeComponent.getCode()) return false;
         super.updateOld(old);
         /* innerName 不能被更改 */
         /* updateCode 必须被更改 */
@@ -143,6 +143,7 @@ public class Item extends AbstractItem implements TerraItem {
         if (metaComponent != null && metaComponent.canUpdate()) metaComponent.updatePartial().apply(old);
         if (qualityComponent != null && qualityComponent.canUpdate()) qualityComponent.updatePartial().apply(old);
         if (skillComponent != null && skillComponent.canUpdate()) skillComponent.updatePartial().apply(old);
+        return true;
     }
 
     @Override

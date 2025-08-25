@@ -45,11 +45,12 @@ public abstract class AbstractItem implements TerraBaseItem {
     }
 
     @Override
-    public void updateOld(ItemStack old) {
+    public boolean updateOld(ItemStack old) {
         for (TerraBaseComponent component : vanillaComponents) {
             if (!component.canUpdate()) continue;
             component.updatePartial().apply(old);
         }
+        return true;
     }
 
     private void processComponents(ConfigurationSection cfg) {

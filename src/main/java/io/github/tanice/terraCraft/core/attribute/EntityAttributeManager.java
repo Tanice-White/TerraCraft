@@ -76,7 +76,7 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
             TerraSchedulers.async().run(() -> processAttributeUpdate(reference));
 
             if (ConfigManager.isDebug()) {
-                TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updating");
+                TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updated");
             }
             /* 计算中，标记为脏 */
         } else dirtyFlags.get(reference).set(true);

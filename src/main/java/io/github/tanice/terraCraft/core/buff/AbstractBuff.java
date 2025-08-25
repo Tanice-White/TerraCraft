@@ -58,7 +58,7 @@ public abstract class AbstractBuff implements TerraBaseBuff, Cloneable {
         this.enable = cfg.getBoolean("enable", true);
         this.priority = cfg.getInt("priority", Integer.MAX_VALUE);
         this.chance = cfg.getDouble("chance", 1D);
-        this.duration = cfg.getInt("duration", 0);
+        this.duration = cfg.getInt("duration", 200);
         this.mutex = mutex;
         this.override = new HashSet<>(StringUtil.splitByComma(cfg.getString("override")));
         this.attributeActiveSection = aas;

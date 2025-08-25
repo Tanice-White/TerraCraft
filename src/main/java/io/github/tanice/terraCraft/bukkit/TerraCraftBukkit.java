@@ -23,6 +23,7 @@ import io.github.tanice.terraCraft.core.item.ItemManager;
 import io.github.tanice.terraCraft.core.player.PlayerDataManager;
 import io.github.tanice.terraCraft.core.skill.SkillManager;
 import io.github.tanice.terraCraft.core.util.database.DatabaseManager;
+import io.github.tanice.terraCraft.core.util.helper.asm.ASMHelper;
 import io.github.tanice.terraCraft.core.util.js.JSEngineManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,9 +46,9 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     private TerraCraftCommand terraCraftCommand;
 
     /* 更改finalDamage方法 */
-//    static {
-//        ASMHelper.applyModification();
-//    }
+    static {
+        ASMHelper.applyModification();
+    }
 
     @Override
     public void onEnable() {

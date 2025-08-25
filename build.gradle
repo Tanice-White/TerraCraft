@@ -41,7 +41,7 @@ dependencies {
     // MiniMessage
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
     // asm
-//    implementation("org.ow2.asm:asm:9.8")
+    implementation("org.ow2.asm:asm:9.8")
 }
 
 shadowJar {

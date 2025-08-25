@@ -16,6 +16,7 @@ import io.github.tanice.terraCraft.bukkit.item.component.DamageTypeComponent;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.util.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.skill.SkillDamageMeta;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -53,10 +54,8 @@ public final class DamageCalculator {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
             return protocol;
         }
-
         /* 计算基础伤害（含武器特性、攻击冷却等） */
         calculateBaseDamage(protocol, type);
-        /* 处理暴击和伤害浮动 */
         applyCriticalDamage(protocol);
         applyFloatDamage(protocol);
 
@@ -65,10 +64,8 @@ public final class DamageCalculator {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
             return protocol;
         }
-
         /* 防御方减免计算 */
         applyDefenseReductions(protocol);
-
         /* 防后Buff处理 */
         if (!processAfterBuffs(protocol, false)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);

@@ -78,11 +78,10 @@ public class ItemUpdateListener implements Listener, TerraListener {
             if (codeComponent == null || nameComponent == null) continue;
             TerraCraftBukkit.inst().getItemManager().getItem(nameComponent.getName()).ifPresent(baseItem -> {
                 ItemStack preItem = item.clone();
-                baseItem.updateOld(item);;
-                player.updateInventory();
-                TerraEvents.call(new TerraItemUpdateEvent(player, preItem, item));
-                if (ConfigManager.isDebug())
-                    TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.ITEM, "Item: " + baseItem.getName() + " in player " + player.getName() + "updated");
+                if (baseItem.updateOld(item)) {
+                    player.updateInventory();
+                    TerraEvents.call(new TerraItemUpdateEvent(player, preItem, item));
+                }
             });
             return;
         }

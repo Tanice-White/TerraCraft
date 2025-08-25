@@ -9,6 +9,9 @@ import io.github.tanice.terraCraft.bukkit.event.item.TerraItemUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.listener.attribute.EntityAttributeListener;
 import io.github.tanice.terraCraft.bukkit.listener.item.ItemOperationListener;
 import io.github.tanice.terraCraft.bukkit.listener.item.ItemUpdateListener;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -57,8 +60,11 @@ public class TerraEventListener implements Listener, TerraListener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onItemUpdate(TerraItemUpdateEvent event) {
+        Player player = event.getPlayer();
         // TODO 操作buff attribute skills
         // TODO 更新lore
-        TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(event.getPlayer());
+        TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(player);
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.ITEM, "Item: " + event.getNewerBukkitItem().displayName() + " in player " + player.getName() + " updated");
     }
 }

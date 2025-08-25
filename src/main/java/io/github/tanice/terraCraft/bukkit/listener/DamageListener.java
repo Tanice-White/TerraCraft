@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.listener;
 
 import io.github.tanice.terraCraft.api.listener.TerraListener;
+import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -18,14 +19,6 @@ public class DamageListener implements Listener, TerraListener {
         TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
     }
 
-    /* 原版无源伤害 */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (event instanceof EntityDamageByEntityEvent) return;
-        // TODO 使用自定义计算器
-        TerraCraftLogger.info("defender: " + event.getEntity().getName() + event.getFinalDamage());
-    }
-
     @Override
     public void reload() {
 
@@ -36,31 +29,40 @@ public class DamageListener implements Listener, TerraListener {
 
     }
 
+    /* 原版无源伤害 */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event instanceof EntityDamageByEntityEvent) return;
+        // TODO 使用自定义计算器
+        TerraCraftLogger.info("defender: " + event.getEntity().getName() + " " + event.getFinalDamage());
+    }
+
     /* 原版有源伤害 */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity entityAttacker = event.getDamager();
         Entity entityDefender = event.getEntity();
-        /* 防御方必须是生物 */
+        TerraDamageProtocol protocol;
         if (!(entityDefender instanceof LivingEntity defender)) return;
         /* 来源是生物 */
-        // TODO damage(damageNumber, attacker) 会无限循环
         if (entityAttacker instanceof LivingEntity attacker) {
-            double d = DamageCalculator.calculate(attacker, defender, event.getDamage()).getFinalDamage();
-            defender.damage(d);
-        }
-        /* 抛射物情况 */
-        else if (entityAttacker instanceof Projectile projectile) {
+            protocol = DamageCalculator.calculate(attacker, defender, event.getDamage());
+            if (protocol.isHit()) event.setDamage(protocol.getFinalDamage());
+            else event.setCancelled(true);
+        /* 抛射物 */
+        } else if (entityAttacker instanceof Projectile projectile) {
             ProjectileSource source = projectile.getShooter();
             /* 实体发射的 箭 或者 三叉戟 或者 烟花火箭 */
             if ((projectile instanceof Arrow || projectile instanceof Trident || projectile instanceof Firework) && source instanceof LivingEntity attacker) {
-                double d = DamageCalculator.calculate(attacker, defender, event.getDamage()).getFinalDamage();
-                defender.damage(d);
+                protocol = DamageCalculator.calculate(attacker, defender, event.getDamage());
+                if (protocol.isHit()) event.setDamage(protocol.getFinalDamage());
+                else event.setCancelled(true);
             }
+        /* 仅仅是伤害 */
         } else {
-            /* 仅仅是伤害 */
-            defender.damage(DamageCalculator.calculate(defender, event.getDamage()).getFinalDamage());
-            event.setCancelled(true);
+            protocol = DamageCalculator.calculate(defender, event.getDamage());
+            if (protocol.isHit()) event.setDamage(protocol.getFinalDamage());
+            else event.setCancelled(true);
         }
     }
 }

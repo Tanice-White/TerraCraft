@@ -162,7 +162,7 @@ public final class BuffManager implements TerraBuffManager {
     }
 
     @Override
-    public synchronized void activateHoldBuffs(LivingEntity entity) {
+    public void activateHoldBuffs(LivingEntity entity) {
         for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(entity)) {
             BuffComponent buffComponent = BuffComponent.from(item);
             if (buffComponent == null) return;

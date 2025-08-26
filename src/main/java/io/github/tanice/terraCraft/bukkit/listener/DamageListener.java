@@ -53,9 +53,10 @@ public class DamageListener implements Listener, TerraListener {
         /* 抛射物 */
         } else if (entityAttacker instanceof Projectile projectile) {
             ProjectileSource source = projectile.getShooter();
-            /* 实体发射的 箭 三叉戟 烟花火箭 烈焰弹 */
-            if ((projectile instanceof Arrow || projectile instanceof Trident || projectile instanceof Firework || projectile instanceof Fireball) && source instanceof LivingEntity attacker) {
-                protocol = DamageCalculator.calculate(attacker, defender, event.getDamage(), false, false);
+            /* 实体发射的 xx箭 三叉戟 烟花火箭 烈焰弹 */
+            if ((projectile instanceof AbstractArrow || projectile instanceof Firework || projectile instanceof Fireball) && source instanceof LivingEntity attacker) {
+                /* 三叉戟有meta需要单独计算 */
+                protocol = DamageCalculator.calculate(attacker, defender, projectile instanceof Trident ? 0 : event.getDamage(), false, false);
                 if (protocol.isHit()) event.setDamage(Math.max(1, protocol.getFinalDamage()));
                 else event.setCancelled(true);
             }

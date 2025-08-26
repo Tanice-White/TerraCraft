@@ -1,6 +1,6 @@
 package io.github.tanice.terraCraft.api.attribute;
 
-public interface TerraCalculableMeta {
+public interface TerraCalculableMeta extends Cloneable {
     /**
      * 按照k倍合并目标同类属性值（相加）和同类伤害类型值到自身
      * @param meta 目标属性
@@ -11,9 +11,16 @@ public interface TerraCalculableMeta {
     /**
      * 按照k倍合并目标同类属性值（相乘）和同类伤害类型值到自身
      * @param meta 目标属性
-     * @param k 倍率
+     * @param k 目标属性的倍率
      */
     void multiply(TerraCalculableMeta meta, int k);
+
+    /**
+     * 自生属性扩大到k倍
+     *
+     * @param k 需要扩大的倍数
+     */
+    TerraCalculableMeta selfMultiply(int k);
 
     /**
      * 获取生效的计算区

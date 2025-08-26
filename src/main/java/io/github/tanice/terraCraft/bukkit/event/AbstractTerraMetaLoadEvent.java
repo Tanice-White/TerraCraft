@@ -16,7 +16,7 @@ public abstract class AbstractTerraMetaLoadEvent extends Event {
     protected TerraCalculableMeta meta;
 
     public AbstractTerraMetaLoadEvent() {
-        this.meta = new CalculableMeta();
+
     }
 
     public static HandlerList getHandlerList() {return handlers;}

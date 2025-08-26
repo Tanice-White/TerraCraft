@@ -12,6 +12,7 @@ public enum AttributeType implements Serializable {
 
     PRE_ARMOR_REDUCTION,
     AFTER_ARMOR_REDUCTION,
+
     SKILL_MANA_COST,
     SKILL_COOLDOWN,
 

@@ -20,8 +20,7 @@ public enum AttributeActiveSection implements Serializable {
     AFTER_DAMAGE(false, -1),  // 例：吸血
 
     /* 其他 */
-    ERROR(false, -1),
-    INNER(false, -1);
+    ERROR(false, -1);
 
     private final boolean calculable;
     private final int priority;

@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.api.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.js.TerraJSEngineManager;
+import io.github.tanice.terraCraft.bukkit.command.attribute.AttributeGroupCommand;
 import io.github.tanice.terraCraft.bukkit.command.buff.BuffGroupCommand;
 import io.github.tanice.terraCraft.bukkit.command.item.ItemGroupCommand;
 import io.github.tanice.terraCraft.bukkit.command.plugin.ReloadCommand;
@@ -71,6 +72,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         terraCraftCommand = new TerraCraftCommand(this);
         terraCraftCommand.register(new ItemGroupCommand(this));
         terraCraftCommand.register(new BuffGroupCommand(this));
+        terraCraftCommand.register(new AttributeGroupCommand(this));
         terraCraftCommand.register(new ReloadCommand());
         terraCraftCommand.enable();
     }

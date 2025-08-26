@@ -1,7 +1,11 @@
 package io.github.tanice.terraCraft.core.config;
 
+import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.registry.Registry;
+import io.github.tanice.terraCraft.core.util.EnumUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -47,7 +51,8 @@ public final class ConfigManager {
     private static double rarityIntensity;
     private static Map<String, Boolean> oriUpdateConfigMap;
 
-    public static synchronized void load() {
+    public static void load() {
+        loadRegistry();
         File configFile = new File(TerraCraftBukkit.inst().getDataFolder(), "config.yml");
         if (!configFile.exists())generateExampleConfig();
         else if (generateExamples) generateExampleConfig();
@@ -58,16 +63,20 @@ public final class ConfigManager {
         version = cfg.getDouble("VERSION", -1);
         debug = cfg.getBoolean("DEBUG", false);
         generateExamples = cfg.getBoolean("generate_examples", true);
-        generateDamageIndicator = cfg.getBoolean("generate_damage_indicator", false);
-        defaultPrefix = cfg.getString("default_prefix", "§6");
-        criticalPrefix = cfg.getString("critical_prefix", "§4");
-        criticalLargeScale = cfg.getDouble("critical_large_scale", 1D);
         viewRange = cfg.getDouble("view_range", 20D);
         worldK = cfg.getDouble("world_k", 1D);
         damageFloat = cfg.getBoolean("damage_float", false);
         damageFloatRange = cfg.getDouble("damage_float_range", 0D);
         useDamageReductionBalanceForPlayer = cfg.getBoolean("use_damage_reduction_balance_for_player", false);
+
+        // TODO REMOVE
         originalCriticalStrikeAddition = cfg.getDouble("original_critical_strike_addition", 0.2D);
+        generateDamageIndicator = cfg.getBoolean("generate_damage_indicator", false);
+        defaultPrefix = cfg.getString("default_prefix", "§6");
+        criticalPrefix = cfg.getString("critical_prefix", "§4");
+        criticalLargeScale = cfg.getDouble("critical_large_scale", 1D);
+        // TODO END
+
         sub = cfg.getConfigurationSection("database");
         if (sub == null) {
             TerraCraftLogger.error("Global configuration file error, unable to connect to database");
@@ -227,5 +236,35 @@ public final class ConfigManager {
         } catch (IOException | URISyntaxException e) {
             TerraCraftLogger.error("Failed to load default example config file: " + e.getMessage());
         }
+    }
+
+    private static void loadRegistry() {
+        File configFile = new File(TerraCraftBukkit.inst().getDataFolder(), "ori.yml");
+        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(configFile);
+        ConfigurationSection tmp;
+        ConfigurationSection sub = cfg.getConfigurationSection("item");
+        if (sub != null) {
+            for (String key : sub.getKeys(false)) {
+                tmp = sub.getConfigurationSection(key);
+                if (tmp == null) continue;
+                Registry.ORI_ITEM.register(key.toUpperCase(), new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+            }
+        }
+        sub = cfg.getConfigurationSection("potion");
+        if (sub != null) {
+            for (String key : sub.getKeys(false)) {
+                tmp = sub.getConfigurationSection(key);
+                if (tmp == null) continue;
+                Registry.ORI_POTION.register(key, new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+            }
+        }
+//        sub = cfg.getConfigurationSection("enchant");
+//        if (sub != null) {
+//            for (String key : sub.getKeys(false)) {
+//                tmp = sub.getConfigurationSection(key);
+//                if (tmp == null) continue;
+//                Registry.ORI_ENCHANT.register(key, new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+//            }
+//        }
     }
 }

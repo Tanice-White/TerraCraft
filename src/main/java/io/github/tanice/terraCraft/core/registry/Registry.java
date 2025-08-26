@@ -1,5 +1,7 @@
 package io.github.tanice.terraCraft.core.registry;
 
+import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
+
 import javax.annotation.Nullable;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,4 +17,7 @@ public final class Registry<T> {
         return registryMap.get(key);
     }
 
+    public static Registry<TerraCalculableMeta> ORI_ITEM = new Registry<>();
+    public static Registry<TerraCalculableMeta> ORI_POTION = new Registry<>();
+    // public static Registry<TerraCalculableMeta> ORI_ENCHANT = new Registry<>();
 }

@@ -14,12 +14,11 @@ import io.github.tanice.terraCraft.core.buff.impl.AttributeBuff;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
+import io.github.tanice.terraCraft.core.registry.Registry;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -42,7 +41,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         this.beforeList = new ArrayList<>();
         this.betweenList = new ArrayList<>();
         this.afterList = new ArrayList<>();
-        this.meta = new CalculableMeta();
+        this.meta = new CalculableMeta(AttributeActiveSection.BASE);
 
         this.initBuffListsAndTransformTmp(livingEntity);
         this.initDamageTypeModifiers();
@@ -81,6 +80,17 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
     private void initBuffListsAndTransformTmp(LivingEntity entity) {
         List<TerraCalculableMeta> metas = EquipmentUtil.getActiveEquipmentMeta(entity);
         metas.addAll(EquipmentUtil.getEffectiveAccessoryMeta(entity));
+        /* 原版药水效果计算 */
+        TerraCalculableMeta potionMeta;
+        TerraCalculableMeta tmp;
+        for (PotionEffect effect : entity.getActivePotionEffects()) {
+            // TODO 药水效果会无限叠加，指数爆炸
+            potionMeta = Registry.ORI_POTION.get(effect.getType().getKey().getKey());
+            if (potionMeta != null) {
+                tmp = potionMeta.clone();
+                metas.add(tmp.selfMultiply(effect.getAmplifier() + 1));
+            }
+        }
         /* buff计算 */
         for (TerraBaseBuff baseBuff : TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffs(entity)) {
             if (baseBuff instanceof AttributeBuff attributeBuff) metas.add(attributeBuff.getMeta());
@@ -95,13 +105,13 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, metas.size() + " metas in " + entity.getName());
         }
 
-        AttributeActiveSection acs;
-        for (TerraCalculableMeta meta : metas) {
-            acs = meta.getActiveSection();
-            if (acs != AttributeActiveSection.ERROR) {
-                meta = transformTmp.getOrDefault(acs, new CalculableMeta());
-                meta.add(meta, 1);
-                transformTmp.put(acs, meta);
+        AttributeActiveSection aas;
+        for (TerraCalculableMeta m : metas) {
+            aas = m.getActiveSection();
+            if (aas != AttributeActiveSection.ERROR) {
+                tmp = transformTmp.getOrDefault(aas, new CalculableMeta(aas));
+                tmp.add(m, 1);
+                transformTmp.put(aas, tmp);
             }
         }
     }

@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.bukkit.listener;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.entity.*;
@@ -32,9 +33,9 @@ public class DamageListener implements Listener, TerraListener {
     /* 原版无源伤害 */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event instanceof EntityDamageByEntityEvent) return;
-        // TODO 使用自定义计算器
-        TerraCraftLogger.info("defender: " + event.getEntity().getName() + " " + event.getFinalDamage());
+        TerraSchedulers.sync().runLater(() -> {
+            TerraCraftLogger.info("defender: " + event.getEntity().getName() + " " + event.getFinalDamage());
+        }, 1);
     }
 
     /* 原版有源伤害 */
@@ -46,22 +47,22 @@ public class DamageListener implements Listener, TerraListener {
         if (!(entityDefender instanceof LivingEntity defender)) return;
         /* 来源是生物 */
         if (entityAttacker instanceof LivingEntity attacker) {
-            protocol = DamageCalculator.calculate(attacker, defender, event.getDamage());
-            if (protocol.isHit()) event.setDamage(protocol.getFinalDamage());
+            protocol = DamageCalculator.calculate(attacker, defender, 0, event.isCritical(), true);
+            if (protocol.isHit()) event.setDamage(Math.max(1, protocol.getFinalDamage()));
             else event.setCancelled(true);
         /* 抛射物 */
         } else if (entityAttacker instanceof Projectile projectile) {
             ProjectileSource source = projectile.getShooter();
-            /* 实体发射的 箭 或者 三叉戟 或者 烟花火箭 */
-            if ((projectile instanceof Arrow || projectile instanceof Trident || projectile instanceof Firework) && source instanceof LivingEntity attacker) {
-                protocol = DamageCalculator.calculate(attacker, defender, event.getDamage());
-                if (protocol.isHit()) event.setDamage(protocol.getFinalDamage());
+            /* 实体发射的 箭 三叉戟 烟花火箭 烈焰弹 */
+            if ((projectile instanceof Arrow || projectile instanceof Trident || projectile instanceof Firework || projectile instanceof Fireball) && source instanceof LivingEntity attacker) {
+                protocol = DamageCalculator.calculate(attacker, defender, event.getDamage(), false, false);
+                if (protocol.isHit()) event.setDamage(Math.max(1, protocol.getFinalDamage()));
                 else event.setCancelled(true);
             }
-        /* 仅仅是伤害 */
         } else {
-            protocol = DamageCalculator.calculate(defender, event.getDamage());
-            if (protocol.isHit()) event.setDamage(protocol.getFinalDamage());
+            // 铁砧下落等伤害
+            protocol = DamageCalculator.calculate(defender, event.getDamage(), false, false);
+            if (protocol.isHit()) event.setDamage(Math.max(1, protocol.getFinalDamage()));
             else event.setCancelled(true);
         }
     }

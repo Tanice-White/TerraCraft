@@ -24,7 +24,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -37,28 +36,37 @@ public final class DamageCalculator {
     private static final Random rand = new Random();
 
     /** 非生物来源的物理伤害 */
-    public static TerraDamageProtocol calculate(LivingEntity defender, double oriDamage) {
-        return calculate(null, defender, oriDamage);
+    public static TerraDamageProtocol calculate(LivingEntity defender, double oriDamage, boolean isOriCritical, boolean isMelee) {
+        return calculate(null, defender, oriDamage, isOriCritical, isMelee);
     }
 
     /** 物理攻击伤害 */
-    public static TerraDamageProtocol calculate(@Nullable LivingEntity attacker, LivingEntity defender, double oriDamage) {
-
+    public static TerraDamageProtocol calculate(@Nullable LivingEntity attacker, LivingEntity defender, double oriDamage, boolean isOriCritical, boolean isMelee) {
         TerraAttributeCalculator attackerCalculator = attacker == null ? null : attributeManager.getAttributeCalculator(attacker);
         TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
 
         DamageFromType type = getDamageType(attacker);
-        TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, oriDamage);
-
+        TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, oriDamage, isOriCritical, isMelee);
         /* 前置Buff处理 */
         if (!processBeforeBuffs(protocol, false)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
             return protocol;
         }
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "1-AfterCreate: " + protocol.getFinalDamage());
+
         /* 计算基础伤害（含武器特性、攻击冷却等） */
-        calculateBaseDamage(protocol, type);
+        calculateBaseDamage(protocol, isOriCritical);
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "2-AfterBaseCalculation: " + protocol.getFinalDamage());
+
         applyCriticalDamage(protocol);
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "3-AfterCriticalJudge: " + protocol.getFinalDamage());
+
         applyFloatDamage(protocol);
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "4-AfterDamageFloat: " + protocol.getFinalDamage());
 
         /* 中间（防御前）Buff处理 */
         if (!processBetweenBuffs(protocol, false)) {
@@ -67,6 +75,9 @@ public final class DamageCalculator {
         }
         /* 防御方减免计算 */
         applyDefenseReductions(protocol);
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "5-AfterDefenseReduction: " + protocol.getFinalDamage());
+
         /* 防后Buff处理 */
         if (!processAfterBuffs(protocol, false)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
@@ -82,7 +93,7 @@ public final class DamageCalculator {
         TerraAttributeCalculator defenderCalculator = attributeManager.getAttributeCalculator(defender);
 
         DamageFromType type = getDamageType(attacker);
-        TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, 0);
+        TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, 0, false, false);
         /* 前置Buff处理 */
         if (!processBeforeBuffs(protocol, true)) {
             if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
@@ -119,15 +130,17 @@ public final class DamageCalculator {
         return damageTypeComponent == null ? DamageFromType.OTHER : damageTypeComponent.getType();
     }
 
-    private static void calculateBaseDamage(TerraDamageProtocol protocol, DamageFromType type) {
+    private static void calculateBaseDamage(TerraDamageProtocol protocol, boolean isOriCritical) {
         TerraAttributeCalculator ac = protocol.getAttackerCalculator();
-        double oriDamage = protocol.getFinalDamage();
-        if (type != DamageFromType.OTHER && ac != null) {
-            oriDamage =  ac.getMeta().get(AttributeType.ATTACK_DAMAGE);
-            if (protocol.getAttacker() instanceof Player player) oriDamage *= 0.15 + player.getAttackCooldown() * 0.85;
-            oriDamage *= (1 + ac.getMeta().get(protocol.getWeaponDamageType()));
+        double damage = protocol.getFinalDamage();
+        if (ac != null) {
+            damage +=  ac.getMeta().get(AttributeType.ATTACK_DAMAGE);
+            /* 玩家近战 */
+            if (protocol.isMelee() && protocol.getAttacker() instanceof Player player) damage *= 0.15 + player.getAttackCooldown() * 0.85;
+            damage *= (1 + ac.getMeta().get(protocol.getWeaponDamageType()));
         }
-        protocol.setFinalDamage(oriDamage);
+        if (isOriCritical) damage *= ConfigManager.getOriginalCriticalStrikeAddition() + 1;
+        protocol.setFinalDamage(damage);
     }
 
     private static void applyCriticalDamage(TerraDamageProtocol protocol) {
@@ -135,8 +148,7 @@ public final class DamageCalculator {
         double damage = protocol.getFinalDamage();
         // 暴击计算
         if (ac != null && rand.nextDouble() < ac.getMeta().get(AttributeType.CRITICAL_STRIKE_CHANCE)) {
-            double critDamage = ac.getMeta().get(AttributeType.CRITICAL_STRIKE_DAMAGE);
-            damage *= Math.max(1, critDamage);
+            damage *= Math.max(1, ac.getMeta().get(AttributeType.CRITICAL_STRIKE_DAMAGE));
         }
         protocol.setFinalDamage(damage);
     }
@@ -219,10 +231,10 @@ public final class DamageCalculator {
         double damage = protocol.getFinalDamage();
         TerraCalculableMeta dMeta = protocol.getDefenderCalculator().getMeta();
 
-        damage *= (1 - dMeta.get(AttributeType.PRE_ARMOR_REDUCTION));
+        damage *= 1 - Math.min(1, dMeta.get(AttributeType.PRE_ARMOR_REDUCTION));
         damage -= dMeta.get(AttributeType.ARMOR) * ConfigManager.getWorldK();
         damage = Math.max(0, damage);
-        damage *= (1 - dMeta.get(AttributeType.AFTER_ARMOR_REDUCTION));
+        damage *= 1 - Math.min(1, dMeta.get(AttributeType.AFTER_ARMOR_REDUCTION));
         protocol.setFinalDamage(damage);
     }
 

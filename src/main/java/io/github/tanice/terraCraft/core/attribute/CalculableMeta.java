@@ -33,10 +33,10 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         this.activeSection = activeSection;
     }
 
-    public CalculableMeta() {
+    public CalculableMeta(AttributeActiveSection aac) {
         this.attributeModifiers = new double[ATTRIBUTE_TYPE_COUNT];
         this.damageTypeModifiers = new double[DAMAGE_TYPE_COUNT];
-        this.activeSection = AttributeActiveSection.INNER;
+        this.activeSection = aac;
     }
 
     /**
@@ -61,7 +61,7 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
 
     @Override
     public void add(TerraCalculableMeta another, int k) {
-        if (k < 1) return;
+        if (k == 0) return;
         double[] otherAttrMods = another.getAttributeModifierArray();
         double[] otherDamageMods = another.getDamageTypeModifierArray();
 
@@ -77,14 +77,14 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         for (AttributeType type : AttributeType.values()) {
             index = type.ordinal();
             if (index < this.attributeModifiers.length && index < extendedOtherAttr.length) {
-                this.attributeModifiers[index] += extendedOtherAttr[k] * k;
+                this.attributeModifiers[index] += extendedOtherAttr[index] * k;
             }
         }
 
         for (DamageFromType type : DamageFromType.values()) {
             index = type.ordinal();
             if (index < this.damageTypeModifiers.length && index < extendedOtherDamage.length) {
-                this.damageTypeModifiers[index] += extendedOtherDamage[k] * k;
+                this.damageTypeModifiers[index] += extendedOtherDamage[index] * k;
             }
         }
     }
@@ -107,16 +107,27 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
         for (AttributeType type : AttributeType.values()) {
             index = type.ordinal();
             if (index < this.attributeModifiers.length && index < extendedOtherAttr.length) {
-                this.attributeModifiers[index] *= 1 + extendedOtherAttr[k] * k;
+                this.attributeModifiers[index] *= 1 + extendedOtherAttr[index] * k;
             }
         }
 
         for (DamageFromType type : DamageFromType.values()) {
             index = type.ordinal();
             if (index < this.damageTypeModifiers.length && index < extendedOtherDamage.length) {
-                this.damageTypeModifiers[index] *= 1 + extendedOtherDamage[k] * k;
+                this.damageTypeModifiers[index] *= 1 + extendedOtherDamage[index] * k;
             }
         }
+    }
+
+    @Override
+    public TerraCalculableMeta selfMultiply(int k) {
+        for (AttributeType type : AttributeType.values()) {
+            this.attributeModifiers[type.ordinal()] *= k;
+        }
+        for (DamageFromType type : DamageFromType.values()) {
+            this.damageTypeModifiers[type.ordinal()] *= k;
+        }
+        return this;
     }
 
     @Override
@@ -157,8 +168,8 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     public CalculableMeta clone() {
         try {
             CalculableMeta clone = (CalculableMeta) super.clone();
-            System.arraycopy(this.attributeModifiers, 0, clone.attributeModifiers, 0, ATTRIBUTE_TYPE_COUNT);
-            System.arraycopy(this.damageTypeModifiers, 0, clone.damageTypeModifiers, 0, DAMAGE_TYPE_COUNT);
+            clone.attributeModifiers = Arrays.copyOf(this.attributeModifiers, this.attributeModifiers.length);
+            clone.damageTypeModifiers = Arrays.copyOf(this.damageTypeModifiers, this.damageTypeModifiers.length);
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

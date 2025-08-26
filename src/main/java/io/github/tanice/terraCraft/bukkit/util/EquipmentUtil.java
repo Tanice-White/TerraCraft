@@ -4,13 +4,11 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.item.TerraItem;
 import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.event.custom.TerraEnchantMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.registry.Registry;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -54,6 +52,7 @@ public final class EquipmentUtil {
      */
     public static List<TerraCalculableMeta> getActiveEquipmentMeta(LivingEntity entity) {
         List<TerraCalculableMeta> res = new ArrayList<>(12);
+        TerraCalculableMeta customMeta;
         for (ItemStack item : getActiveEquipmentItemStack(entity)) {
             /* 插件meta */
             res.addAll(getItemMergedTerraMeta(item));
@@ -62,16 +61,18 @@ public final class EquipmentUtil {
             TerraItemMetaLoadEvent itemMetaLoadEvent = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
             if (itemMetaLoadEvent.getMeta() != null) res.add(itemMetaLoadEvent.getMeta());
             else {
-                // TODO 原版物品meta
+                customMeta = Registry.ORI_ITEM.get(item.getType().toString());
+                if (customMeta != null) res.add(customMeta.clone());
             }
             /* 原版附魔 */
-            for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-                TerraEnchantMetaLoadEvent enchantMetaLoadEvent = TerraEvents.callAndReturn(new TerraEnchantMetaLoadEvent(entry.getKey().toString()));
-                if (enchantMetaLoadEvent.getMeta() != null) res.add(enchantMetaLoadEvent.getMeta());
-                else {
-                    // TODO 原版附魔meta
-                }
-            }
+//            for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
+//                TerraEnchantMetaLoadEvent enchantMetaLoadEvent = TerraEvents.callAndReturn(new TerraEnchantMetaLoadEvent(entry.getKey().toString()));
+//                if (enchantMetaLoadEvent.getMeta() != null) res.add(enchantMetaLoadEvent.getMeta());
+//                else {
+//                    customMeta = Registry.ORI_ENCHANT.get(item.getType().toString());
+//                    if (customMeta != null) res.add(customMeta);
+//                }
+//            }
         }
         return res;
     }
@@ -107,11 +108,8 @@ public final class EquipmentUtil {
             }
         }
         if (levelComponent != null) {
-            TerraCraftBukkit.inst().getItemManager().getLevelTemplate(levelComponent.getTemplate()).ifPresent(tmp -> {
-                TerraCalculableMeta meta = tmp.getMeta();
-                meta.add(tmp.getMeta(), levelComponent.getLevel());
-                res.add(meta);
-            });
+            TerraCraftBukkit.inst().getItemManager().getLevelTemplate(levelComponent.getTemplate())
+                    .ifPresent(tmp -> res.add(tmp.getMeta().selfMultiply(levelComponent.getLevel())));
         }
         return res;
     }

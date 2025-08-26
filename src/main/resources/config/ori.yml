@@ -1,93 +1,195 @@
-# 武器类  不需要写入, 插件会获取原本的伤害
+# KEY 必须是 原版物品的Type 默认计算区域 Base
+# 武器类
+item:
+  wooden_sword:
+    attack_damage: 4
+  stone_sword:
+    attack_damage: 5
+  iron_sword:
+    attack_damage: 6
+  golden_sword:
+    attack_damage: 4
+  diamond_sword:
+    attack_damage: 7
+  netherite_sword:
+    attack_damage: 8
 
-# 护甲类 默认计算区域 Base 手动设置无效
-# KEY 必须是 原版物品的Type
-turtle_helmet:
-  armor: 2
+  wooden_axe:
+    attack_damage: 7
+  stone_axe:
+    attack_damage: 9
+  iron_axe:
+    attack_damage: 9
+  golden_axe:
+    attack_damage: 7
+  diamond_axe:
+    attack_damage: 9
+  netherite_axe:
+    attack_damage: 10
 
-leather_helmet:
-  armor: 1
-leather_chestplate:
-  armor: 3
-leather_leggings:
-  armor: 2
-leather_boots:
-  armor: 1
+  # 三叉戟
+  trident:
+    attack_damage: 9
+  # 重锤
+  mace:
+    attack_damage: 6
 
-chainmail_helmet:
-  armor: 2
-chainmail_chestplate:
-  armor: 5
-chainmail_leggings:
-  armor: 4
-chainmail_boots:
-  armor: 1
+  # 稿
+  wooden_pickaxe:
+    attack_damage: 2
+  stone_pickaxe:
+    attack_damage: 3
+  iron_pickaxe:
+    attack_damage: 4
+  golden_pickaxe:
+    attack_damage: 2
+  diamond_pickaxe:
+    attack_damage: 5
+  netherite_pickaxe:
+    attack_damage: 6
 
-iron_helmet:
-  armor: 2
-iron_chestplate:
-  armor: 6
-iron_leggings:
-  armor: 5
-iron_boots:
-  armor: 2
+  # 铲子
+  wooden_shovel:
+    attack_damage: 2.5
+  stone_shovel:
+    attack_damage: 3.5
+  iron_shovel:
+    attack_damage: 4.5
+  golden_shovel:
+    attack_damage: 2.5
+  diamond_shovel:
+    attack_damage: 5.5
+  netherite_shovel:
+    attack_damage: 6.5
 
-golden_helmet:
-  armor: 2
-golden_chestplate:
-  armor: 5
-golden_leggings:
-  armor: 3
-golden_boots:
-  armor: 1
+  # 锄头
+  wooden_hoe:
+    attack_damage: 1
+  stone_hoe:
+    attack_damage: 1
+  golden_hoe:
+    attack_damage: 1
+  iron_hoe:
+    attack_damage: 1
+  diamond_hoe:
+    attack_damage: 1
+  netherite_hoe:
+    attack_damage: 1
 
-diamond_helmet:
-  armor: 3
-  armor_toughness: 2
-diamond_chestplate:
-  armor: 8
-  armor_toughness: 2
-diamond_leggings:
-  armor: 6
-  armor_toughness: 2
-diamond_boots:
-  armor: 3
-  armor_toughness: 2
+  # 护甲类
+  turtle_helmet:
+    armor: 2
 
-netherite_helmet:
-  armor: 3
-  armor_toughness: 3
-netherite_chestplate:
-  armor: 8
-  armor_toughness: 3
-netherite_leggings:
-  armor: 6
-  armor_toughness: 3
-netherite_boots:
-  armor: 3
-  armor_toughness: 3
+  leather_helmet:
+    armor: 1
+  leather_chestplate:
+    armor: 3
+  leather_leggings:
+    armor: 2
+  leather_boots:
+    armor: 1
 
-leather_horse_armor:
-  armor: 3
-iron_horse_armor:
-  armor: 5
-  armor_toughness: 3
-golden_horse_armor:
-  armor: 7
-  armor_toughness: 3
-diamond_horse_armor:
-  armor: 11
-  armor_toughness: 2
-wolf_armor:
-  armor: 11
+  chainmail_helmet:
+    armor: 2
+  chainmail_chestplate:
+    armor: 5
+  chainmail_leggings:
+    armor: 4
+  chainmail_boots:
+    armor: 1
 
-# 原版药水效果（伤害类药水效果） 其余的没必要
-strength:
-  attack_damage: 3  # 等级会自动计算（*K）
+  iron_helmet:
+    armor: 2
+  iron_chestplate:
+    armor: 6
+  iron_leggings:
+    armor: 5
+  iron_boots:
+    armor: 2
 
-weakness:
-  attack_damage: -4
+  golden_helmet:
+    armor: 2
+  golden_chestplate:
+    armor: 5
+  golden_leggings:
+    armor: 3
+  golden_boots:
+    armor: 1
 
-# 瞬间伤害 仍旧保持真伤
+  diamond_helmet:
+    armor: 3
+    armor_toughness: 2
+  diamond_chestplate:
+    armor: 8
+    armor_toughness: 2
+  diamond_leggings:
+    armor: 6
+    armor_toughness: 2
+  diamond_boots:
+    armor: 3
+    armor_toughness: 2
+
+  netherite_helmet:
+    armor: 3
+    armor_toughness: 3
+    # knockback_resistance: 不计入
+  netherite_chestplate:
+    armor: 8
+    armor_toughness: 3
+  netherite_leggings:
+    armor: 6
+    armor_toughness: 3
+  netherite_boots:
+    armor: 3
+    armor_toughness: 3
+
+  leather_horse_armor:
+    armor: 3
+  iron_horse_armor:
+    armor: 5
+  golden_horse_armor:
+    armor: 7
+  diamond_horse_armor:
+    armor: 11
+    armor_toughness: 2
+  wolf_armor:
+    armor: 11
+
+potion:
+  # 原版药水效果（伤害类药水效果） 其余的没必要
+  strength:
+    attack_damage: 3  # 等级会自动计算（*K）
+  weakness:
+    attack_damage: -4 #
+  resistance:
+    after_armor_reduction: 0.2  # 每级20%防御后伤害减免 (防御前的伤害减免太强大了)
+  # 瞬间伤害 仍旧保持真伤
 
 # 原版附魔
+# 由于本插件对于玩家攻击事件无感，无法实现 根据伤害来源与类型判定meta是否生效，故无法兼容原版附魔
+#enchant:
+#  bane_of_arthropods:
+#    attack_damage: 2.5  # 截肢杀手每级增加2.5伤害（对节肢动物）
+#  blast_protection:
+#    after_armor_reduction: 0.08  # 每级减少8%的爆炸伤害
+#  breach:
+#    after_armor_reduction: -0.15  # 每级减少15%的伤害减免
+#  density:
+#    attack_damage: 0.5  # 致密每级增加0.5伤害
+#  feather_falling:
+#    after_armor_reduction: 0.12  # 摔落缓冲每级提供12%的摔落伤害减免
+#  fire_protection:
+#    after_armor_reduction: 0.08  # 火焰保护每级提供8%的火焰伤害减免
+#  impaling:
+#    attack_damage: 2.5  # 穿刺每级增加2.5伤害
+#  power:
+#    section: add
+#    attack_damage: 0.5  # 力量每级增加50%的伤害
+#  projectile_protection:
+#    after_armor_reduction: 0.08  # 弹射物保护每级提供8%的弹射伤害减免
+#  protection:
+#    after_armor_reduction: 0.04  # 保护每级提供4%的伤害减免
+#  sharpness:
+#    attack_damage: 0.5  # 锋利每级增加0.5的伤害  # 和原版不一致
+#  smite:
+#    attack_damage: 2.5  # 亡灵杀手每级增加2.5伤害（对亡灵）

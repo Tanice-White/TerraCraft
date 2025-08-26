@@ -84,7 +84,6 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         TerraCalculableMeta potionMeta;
         TerraCalculableMeta tmp;
         for (PotionEffect effect : entity.getActivePotionEffects()) {
-            // TODO 药水效果会无限叠加，指数爆炸
             potionMeta = Registry.ORI_POTION.get(effect.getType().getKey().getKey());
             if (potionMeta != null) {
                 tmp = potionMeta.clone();

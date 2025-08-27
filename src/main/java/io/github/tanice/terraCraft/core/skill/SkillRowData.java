@@ -17,8 +17,8 @@ public class SkillRowData {
         this.skillName = skillName;
         String mn = cfg.getString(MYTHIC_SKILL_NAME);
         this.mythicSkillName = mn == null ? skillName : mn;
-        this.cd = cfg.getInt(CD, 0);
-        this.manaCost = cfg.getDouble(MANA_COST, 0D);
+        this.cd = cfg.getInt("cd", 0);
+        this.manaCost = cfg.getDouble("mana_cost", 0D);
     }
 
     public String getSkillName() {

@@ -3,7 +3,7 @@
   max: 20  # 最大等级  必须, 默认 100
   level_up_need: "升级材料"  # terra name
   chance: 0.8  # 每次有0.8的概率成功
-  level_down_when_failed: false  # 失败是否丢降级 默认为false
+  fail_level_down: false  # 失败是否丢降级 默认为false
   section: base  # 计算区
   attribute:
     attack_damage: 1

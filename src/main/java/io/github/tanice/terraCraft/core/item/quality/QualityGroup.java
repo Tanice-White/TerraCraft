@@ -8,28 +8,24 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.*;
 
-import static io.github.tanice.terraCraft.core.constant.ConfigKeys.*;
-
 /**
  * 品质组类，用于管理一组品质并实现基于权重的随机选择
  * 核心特性：权重越低的品质稀有度越高，出现概率越低
  */
 public class QualityGroup implements TerraQualityGroup {
-    private final Random rand;
     private final String name;
     /** 按权重升序排列的品质列表 */
-    private final List<TerraQuality> qualities;
+    private List<TerraQuality> qualities;
     /** 稀有度乘数数组 */
-    private final double[] rarityMultipliers;
+    private double[] rarityMultipliers;
     /** 控制稀有度差异的强度（数值越大，低权重与高权重的概率差距越悬殊） */
-    private final double rarityIntensity;
+    private double rarityIntensity;
     /** 调整后权重前缀和 */
-    private final double[] adjustedPrefixWeights;
+    private double[] adjustedPrefixWeights;
     /** 调整后的总权重（应用稀有度乘数后的总和） */
-    private final double totalAdjustedWeight;
+    private double totalAdjustedWeight;
 
     public QualityGroup(String name, ConfigurationSection cfg) {
-        this.rand = new Random();
         this.name = name;
         this.rarityIntensity = ConfigManager.getRarityIntensity();
 
@@ -42,36 +38,36 @@ public class QualityGroup implements TerraQualityGroup {
         this.totalAdjustedWeight = adjustedPrefixWeights.length > 0 ? adjustedPrefixWeights[adjustedPrefixWeights.length - 1] : 0;
     }
 
-    /**
-     * 随机选择品质（严格遵循：权重越低，概率越低，稀有度越高）
-     * @return 选中的品质，若组为空则返回null
-     */
+    public QualityGroup(String name, List<TerraQuality> qualities) {
+        this.name = name;
+        this.rarityIntensity = ConfigManager.getRarityIntensity();
+        this.qualities = qualities;
+        this.qualities.sort(Comparator.comparingInt(TerraQuality::getOriWeight));
+        this.rarityMultipliers = calculateRarityMultipliers();
+        this.adjustedPrefixWeights = calculateAdjustedPrefixWeights();
+        this.totalAdjustedWeight = adjustedPrefixWeights.length > 0 ? adjustedPrefixWeights[adjustedPrefixWeights.length - 1] : 0;
+    }
+
+    @Override
+    public void merge(TerraQualityGroup... groups) {
+        List<TerraQuality> allQualities = new ArrayList<>(this.qualities);
+        for (TerraQualityGroup group : groups) allQualities.addAll(group.getQualities());
+        this.qualities = allQualities;
+        /* 按权重升序 */
+        this.qualities.sort(Comparator.comparingInt(TerraQuality::getOriWeight));
+        this.rarityMultipliers = calculateRarityMultipliers();
+        this.adjustedPrefixWeights = calculateAdjustedPrefixWeights();
+        this.totalAdjustedWeight = adjustedPrefixWeights.length > 0 ? adjustedPrefixWeights[adjustedPrefixWeights.length - 1] : 0;
+    }
+
     @Override
     public TerraQuality randomSelect() {
         if (qualities.isEmpty() || totalAdjustedWeight <= 0) {
             return null;
         }
         /* 生成调整后权重范围内的随机数 */
-        double random = rand.nextDouble() * totalAdjustedWeight;
+        double random = Math.random() * totalAdjustedWeight;
         return qualities.get(findAdjustedIndex(random));
-    }
-
-    /**
-     * 输出稀有度分布日志，用于调试和验证概率分布
-     */
-    @Deprecated
-    public void getView() {
-        System.out.println("Quality group [" + name + "] 稀有度分布（权重越低越稀有）：");
-
-        for (int i = 0; i < qualities.size(); i++) {
-            TerraQuality quality = qualities.get(i);
-            int weight = quality.getOriWeight();
-            double adjustedWeight = weight * rarityMultipliers[i];
-            double probability = (adjustedWeight / totalAdjustedWeight) * 100;
-
-            System.out.printf("  %s: 权重=%d, 稀有度乘数=%.3f, 实际概率=%.2f%%%n",
-                    quality.getName(), weight, rarityMultipliers[i], probability);
-        }
     }
 
     @Override
@@ -90,20 +86,20 @@ public class QualityGroup implements TerraQualityGroup {
     }
 
     private void loadResource(ConfigurationSection cfg) {
-        ConfigurationSection sc;
+        ConfigurationSection sub;
         String displayName;
         int weight;
         for (String key : cfg.getKeys(false)) {
-            sc = cfg.getConfigurationSection(key);
-            if (sc == null) continue;
+            sub = cfg.getConfigurationSection(key);
+            if (sub == null) continue;
 
-            displayName = sc.getString(DISPLAY_NAME, key);
-            if (!sc.isSet(WEIGHT)) {
+            displayName = sub.getString("display_name", key);
+            weight = sub.getInt("weight");
+            if (weight == 0) {
                 TerraCraftLogger.error("Quality " + key + " in Group " + this.name + " is missing [weight] value! Skipped.");
                 continue;
             }
-            weight = sc.getInt(WEIGHT);
-            this.qualities.add(new Quality(key , weight, displayName, sc));
+            this.qualities.add(new Quality(key , weight, displayName, sub));
         }
     }
 

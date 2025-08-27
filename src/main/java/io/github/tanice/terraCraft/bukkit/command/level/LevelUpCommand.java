@@ -58,7 +58,7 @@ public class LevelUpCommand extends CommandRunner {
         }
         ItemStack offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.isEmpty()) {
-            sender.sendMessage(RED + "Please hold required material in your offhand");
+            sender.sendMessage(RED + "Please hold required material in offhand");
             return true;
         }
 

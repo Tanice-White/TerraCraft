@@ -45,7 +45,7 @@ public class InlayCommand extends CommandRunner {
             return true;
         }
         if (args.length > 1) {
-            sender.sendMessage(RED + "Too many arguments");
+            sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
         boolean ignoreChance = args.length > 0 && Boolean.parseBoolean(args[0]);

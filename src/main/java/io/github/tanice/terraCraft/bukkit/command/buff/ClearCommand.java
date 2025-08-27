@@ -28,17 +28,15 @@ public class ClearCommand extends CommandRunner {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        List<String> matches = playerList(args[0]);
-        if (matches.isEmpty()) {
-            sender.sendMessage(RED + "Player: " + args[0] + " does not exist");
+        if (args.length != 1) {
+            sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
-        if (matches.size() > 1) {
-            sender.sendMessage(RED + "Too many players: " + matches.size());
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null) {
+            sender.sendMessage(RED + "Invalid player name: " + args[0]);
             return true;
         }
-
-        Player player = Bukkit.getPlayer(matches.get(0));
         int num = TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffRecords(player).size();
         TerraCraftBukkit.inst().getBuffManager().unregister(player);
         sender.sendMessage(GREEN + "Successfully cleared all buffs(" + num + ") for player: " + player.getName());

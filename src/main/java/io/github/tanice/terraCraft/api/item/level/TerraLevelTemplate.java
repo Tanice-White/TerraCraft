@@ -20,4 +20,9 @@ public interface TerraLevelTemplate {
      * 获取模板属性的可变副本
      */
     TerraCalculableMeta getMeta();
+
+    /**
+     * 获取可在游戏内显示的属性字符串
+     */
+    String toString();
 }

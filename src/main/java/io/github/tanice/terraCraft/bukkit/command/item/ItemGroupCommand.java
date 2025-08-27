@@ -8,7 +8,7 @@ public class ItemGroupCommand extends CommandGroup {
     public ItemGroupCommand(JavaPlugin plugin) {
         super(plugin);
         this.register(new ItemGetCommand());
-        this.register(new ItemCheckCommand());
+        this.register(new ItemInfoCommand());
     }
 
     @Override

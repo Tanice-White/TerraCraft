@@ -6,7 +6,7 @@ import io.github.tanice.terraCraft.api.item.level.TerraLevelTemplate;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import org.bukkit.configuration.ConfigurationSection;
 
-import static io.github.tanice.terraCraft.core.constant.ConfigKeys.*;
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 import static io.github.tanice.terraCraft.core.util.EnumUtil.safeValueOf;
 
 public class LevelTemplate implements TerraLevelTemplate {
@@ -21,40 +21,59 @@ public class LevelTemplate implements TerraLevelTemplate {
 
     public LevelTemplate(String name, ConfigurationSection cfg) {
         this.name = name;
-        begin = cfg.getInt(BEGIN, 0);
-        max = cfg.getInt(MAX, 100);
-        chance = cfg.getDouble(CHANCE, 1);
+        begin = cfg.getInt("begin", 0);
+        max = cfg.getInt("max", 100);
+        chance = cfg.getDouble("chance", 1);
         /* items inner name */
-        material = cfg.getString(LEVEL_UP_NEED, "");
-        failedLevelDown = cfg.getBoolean(LEVEL_DOWN_WHEN_FAILED, false);
+        material = cfg.getString("level_up_need", "");
+        failedLevelDown = cfg.getBoolean("fail_level_down", false);
         meta = new CalculableMeta(cfg.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR));
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public int getBegin() {
         return this.begin;
     }
 
+    @Override
     public int getMax() {
         return this.max;
     }
 
+    @Override
     public double getChance() {
         return this.chance;
     }
 
+    @Override
     public String getMaterial() {
         return this.material;
     }
 
+    @Override
     public boolean isFailedLevelDown() {
         return this.failedLevelDown;
     }
 
+    @Override
     public TerraCalculableMeta getMeta() {
         return this.meta.clone();
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "LevelTemplate:" + "\n" +
+                "    " + AQUA + "name:" + WHITE + name + "\n" +
+                "    " + AQUA + "begin:" + WHITE + begin + "\n" +
+                "    " + AQUA + "max:" + WHITE + max + "\n" +
+                "    " + AQUA + "chance:" + WHITE + String.format("%.2f", chance) + "\n" +
+                "    " + AQUA + "material:" + WHITE + (material.isEmpty() ? "none" : material) + "\n" +
+                "    " + AQUA + "failed_level_down:" + WHITE + failedLevelDown + "\n" +
+                meta + RESET;
     }
 }

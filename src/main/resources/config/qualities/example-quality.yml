@@ -2,43 +2,45 @@
 # <gradient>TEXT_TO_DISPLAY</gradient>
 # <#fffff>TEXT_TO_DISPLAY
 
-# 可更改的属性(attrs)：
+# 可更改的属性(attribute)：
 # attack_damage、critical_strike_chance、critical_strike_damage、
 # skill_cooldown、mana_cost、armor、armor_toughness、
 # pre_armor_reduction、after_armor_reduction
-品质组名:
-  品质1:  # 这里的格式无效  # 需要单独设置 displayName 否则使用品质内部名
-    display_name: <red>破损</red>
+测试品质组名:
+  品质1: # 需要单独设置 displayName 否则使用品质内部名
+    display_name: "<red>破损的</red>"
     weight: 1  # 品质的权重用于随机选择 必写
-    calculate_type: add   # add or multiply
-    attrs:
-      attack_damage: -1
+    section: add   # base or add or multiply or fix  # 默认base
+    attribute:
+      attack_damage: -2
 
-  # 品质显示的名称为(蓝色的）品质2
-  <blue>品质2</blue>:
+  # 品质显示的名称为(蓝色的）品质2 但是非常不建议这么写
+  # <blue>品质2</blue>:
+  品质2:
     weight: 1
-    attrs:
+    attribute:
       critical_strike_chance: -0.1
       critical_strike_damage: -0.1
 
   品质3:
+    display_name: "<blue>神秘的</blue>"
     weight: 1
-    display_name: <blue>神秘</blue>  # 需要单独设置 displayName 否则使用品质内部名
-    attrs:
-      skill_cooldown: -0.1  # 技能冷却 (所有)
-      skill_mana_cost: -0.1  # 技能蓝耗 (所有)
+    attribute:
+      skill_cooldown: -0.1  # 技能冷却
+      skill_mana_cost: -0.1  # 技能蓝耗
 
   品质4:
-    weight: 1
-    attrs:
+    weight: 10
+    attribute:
       armor: 50
       armor_toughness: 1
 
   品质5:
     weight: 1.2
 
-品质组名1:
-  <#123456>伤害测试:
+伤害测试组:
+  伤害测试:
+    display_name: "<gradient:#FF00FF:#00FFFF>尖锐的</gradient>"
     weight: 2
-    attrs:
+    attribute:
       attack_damage: 5

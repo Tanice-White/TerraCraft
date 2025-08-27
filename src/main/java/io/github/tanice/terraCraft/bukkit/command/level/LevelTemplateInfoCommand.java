@@ -1,6 +1,5 @@
-package io.github.tanice.terraCraft.bukkit.command.buff;
+package io.github.tanice.terraCraft.bukkit.command.level;
 
-import io.github.tanice.terraCraft.api.buff.TerraBuffManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.command.CommandRunner;
 import org.bukkit.command.CommandSender;
@@ -8,9 +7,9 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
-import static io.github.tanice.terraCraft.api.command.TerraCommand.YELLOW;
 
-public class BuffInfoCommand extends CommandRunner {
+public class LevelTemplateInfoCommand extends CommandRunner {
+
     @Override
     public String getName() {
         return "info";
@@ -18,27 +17,27 @@ public class BuffInfoCommand extends CommandRunner {
 
     @Override
     public String getDescription() {
-        return "check the default config of the buff";
+        return "check the default config of the level template";
     }
 
     @Override
     public String getUsage() {
-        return "info <buff>";
+        return "info <template_name>";
     }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (args.length != 1) {
+        if (args.length > 1) {
             sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
-        TerraBuffManager buffManager = TerraCraftBukkit.inst().getBuffManager();
-        buffManager.getBuff(args[0]).ifPresentOrElse(buff -> sender.sendMessage(buff.toString()), () -> sender.sendMessage(RED + "No buff found matching " + args[0]));
+        TerraCraftBukkit.inst().getItemManager().getLevelTemplate(args[0])
+                .ifPresentOrElse(tmp -> sender.sendMessage(tmp.toString()), () -> sender.sendMessage(RED + "Invalid level template name"));
         return true;
     }
 
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
-        return TerraCraftBukkit.inst().getBuffManager().filterBuffs(args[0]).stream().toList();
+        return TerraCraftBukkit.inst().getItemManager().filterTemplates(args[0]).stream().toList();
     }
 }

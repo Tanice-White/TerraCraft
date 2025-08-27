@@ -11,4 +11,9 @@ public interface TerraQuality {
     String getDisplayName();
 
     TerraCalculableMeta getMeta();
+
+    /**
+     * 获取支持游戏内显示的字符串
+     */
+    String toString();
 }

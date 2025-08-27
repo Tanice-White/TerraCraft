@@ -32,12 +32,12 @@ public class GiveCommand extends CommandRunner {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        Player target = null;
-        if (sender instanceof Player p) target = p;
-        if (args.length < 1) {
-            sender.sendMessage(RED + "Missing buff name");
+        if (args.length < 1 || args.length > 4) {
+            sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
+        Player target = null;
+        if (sender instanceof Player p) target = p;
 
         StringBuilder str = new StringBuilder(args[0]);
         for (int i = 1; i < args.length; i++) {

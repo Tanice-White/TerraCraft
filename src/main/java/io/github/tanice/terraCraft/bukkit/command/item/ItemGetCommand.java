@@ -39,24 +39,12 @@ public class ItemGetCommand extends CommandRunner {
             sender.sendMessage(RED + "This command can only be executed by players");
             return true;
         }
-        if (args.length == 0) {
-            List<String> items = TerraCraftBukkit.inst().getItemManager().filterItems("").stream().sorted().toList();
-            sender.sendMessage(GOLD + BOLD + "=== Total " + items.size() + " items ===");
-            items.forEach(item -> sender.sendMessage(GRAY + "- " + YELLOW + item));
+        if (args.length < 1 || args.length > 3) {
+            sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
 
         String itemName = args[0];
-        List<String> matches = TerraCraftBukkit.inst().getItemManager().filterItems(itemName).stream().sorted().toList();
-        if (matches.isEmpty()) {
-            player.sendMessage(RED + "No items found matching '" + itemName + "'");
-            return true;
-        }
-        if (matches.size() > 1) {
-            sender.sendMessage(GOLD + BOLD + "=== " + matches.size() + " items matching '" + itemName + "' ===");
-            matches.forEach(item -> sender.sendMessage(GRAY + "- " + YELLOW + item));
-            return true;
-        }
         Player targetPlayer = player;
         int amount = 1;
         if (args.length >= 2) {
@@ -70,7 +58,7 @@ public class ItemGetCommand extends CommandRunner {
                     sender.sendMessage(RED + "Player: " + args[1] + " does not exist");
                     return true;
                 }
-                if (args.length >= 3) {
+                if (args.length == 3) {
                     try {
                         amount = Math.max(1, Integer.parseInt(args[2]));
                     } catch (NumberFormatException ignored2) {
@@ -79,7 +67,7 @@ public class ItemGetCommand extends CommandRunner {
             }
         }
         Optional<TerraBaseItem> item = TerraCraftBukkit.inst().getItemManager().getItem(itemName);
-        if (item.isEmpty()) sender.sendMessage(RED + "Unable to create item: " + itemName);
+        if (item.isEmpty()) sender.sendMessage(RED + "Unable to get item: " + itemName);
         else {
             ItemStack giveItem = item.get().getBukkitItem().clone();
             giveItem.setAmount(amount);

@@ -8,6 +8,7 @@ public class LevelGroupCommand extends CommandGroup {
         super(plugin);
         this.register(new LevelUpCommand());
         this.register(new LevelDownCommand());
+        this.register(new LevelTemplateInfoCommand());
     }
 
     @Override

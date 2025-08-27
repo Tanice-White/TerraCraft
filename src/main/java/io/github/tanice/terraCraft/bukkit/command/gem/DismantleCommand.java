@@ -47,7 +47,7 @@ public class DismantleCommand extends CommandRunner {
             return true;
         }
         if (args.length > 2) {
-            sender.sendMessage(RED + "Too many arguments");
+            sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
         ItemStack mainhandItem = player.getInventory().getItemInMainHand();

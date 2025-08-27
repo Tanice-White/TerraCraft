@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.item.component.TerraQualityComponent;
@@ -14,31 +13,33 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
 public class QualityComponent extends AbstractItemComponent implements TerraQualityComponent {
-    @Nullable
-    private String qualityGroup;
+
+    private List<String> groups;
     @Nullable
     private String quality;
 
-    public QualityComponent(@Nullable String quality, @Nullable String qualityGroup, boolean updatable) {
+    public QualityComponent(@Nullable String quality, @Nullable List<String> groups, boolean updatable) {
         super(updatable);
         this.quality = quality;
-        this.qualityGroup = qualityGroup;
+        this.groups = groups;
     }
 
-    public QualityComponent(@Nullable String quality, @Nullable String qualityGroup, ComponentState state) {
+    public QualityComponent(@Nullable String quality, @Nullable List<String> groups, ComponentState state) {
         super(state);
         this.quality = quality;
-        this.qualityGroup = qualityGroup;
+        this.groups = groups;
     }
 
     public QualityComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.qualityGroup = cfg.getString("group");
+        this.groups = cfg.getStringList("groups");
         this.quality = cfg.getString("default");
     }
 
@@ -98,7 +99,7 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
 
     @Override
     public int hashCode() {
-        return Objects.hash(quality, qualityGroup);
+        return Objects.hash(quality, groups);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
 
     @Override
     public TerraBaseComponent updatePartial() {
-        return new QualityComponent(null, this.qualityGroup, this.state);
+        return new QualityComponent(null, this.groups, this.state);
     }
 
     @Override
@@ -122,35 +123,42 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     }
 
     @Override
-    public @Nullable String getQualityGroup() {
-        return this.qualityGroup;
+    public List<String> getGroups() {
+        return this.groups;
     }
 
     @Override
-    public void setQualityGroup(@Nullable String group) {
-        this.qualityGroup = group;
+    public void setGroups(@Nullable List<String> group) {
+        this.groups = group == null ? new ArrayList<>() : group;
     }
 
     @Override
     public String toString() {
-        return BOLD + YELLOW + "quality:" + "\n" +
-                "    " + AQUA + "group:" +
-                (qualityGroup != null ? WHITE + qualityGroup : GRAY + "null") + "\n" +
-                "    " + AQUA + "value:" + RESET +
-                WHITE + (quality != null ? WHITE + quality : GRAY + "null") + RESET + "\n" +
-                "    " + AQUA + "state:" + WHITE + state + RESET;
+        StringBuilder sb = new StringBuilder();
+        sb.append(BOLD).append(YELLOW).append("quality:").append("\n");
+        sb.append("    ").append(AQUA).append("groups:");
+        if (groups != null && !groups.isEmpty()) {
+            sb.append(WHITE).append(String.join(", ", groups));
+        } else sb.append(GRAY).append("null");
+        sb.append("\n");
+        sb.append("    ").append(AQUA).append("value:");
+        if (quality != null && !quality.isEmpty()) sb.append(WHITE).append(quality);
+        else sb.append(GRAY).append("null");
+        sb.append("\n");
+        sb.append("    ").append(AQUA).append("state:").append(WHITE).append(state).append(RESET);
+        return sb.toString();
     }
 
     private void addToCompound(ReadWriteNBT compound) {
         if (quality != null) compound.setString("value", quality);
-        if (qualityGroup != null) compound.setString("group", qualityGroup);
+        if (groups != null) compound.getStringList("group").addAll(groups);
         compound.setByte("state", state.toNbtByte());
     }
 
     private static QualityComponent fromNBT(ReadableNBT nbt) {
         return new QualityComponent(
                 nbt.getString("value"),
-                nbt.getString("group"),
+                nbt.getStringList("group").toListCopy(),
                 new ComponentState(nbt.getByte("state"))
         );
     }

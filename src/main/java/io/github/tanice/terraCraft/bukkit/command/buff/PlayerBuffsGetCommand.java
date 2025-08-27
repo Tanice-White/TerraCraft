@@ -29,21 +29,15 @@ public class PlayerBuffsGetCommand extends CommandRunner {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (args.length < 1) {
-            sender.sendMessage(RED + "Missing player name");
+        if (args.length != 1) {
+            sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
-        List<String> matches = playerList(args[0]);
-        if (matches.isEmpty()) {
-            sender.sendMessage(RED + "Player: " + args[1] + " does not exist");
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null) {
+            sender.sendMessage(RED + "Invalid player name: " + args[0]);
             return true;
         }
-        if (matches.size() > 1) {
-            sender.sendMessage(RED + "Too many players: " + matches.size());
-            return true;
-        }
-
-        Player player = Bukkit.getPlayer(matches.get(0));
         sender.sendMessage(GOLD + "buffs carried in player " + player.getName());
         for (TerraBuffRecord record : TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffRecords(player)) {
             sender.sendMessage(AQUA + record.toString());

@@ -6,7 +6,8 @@ import io.github.tanice.terraCraft.api.item.quality.TerraQuality;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import org.bukkit.configuration.ConfigurationSection;
 
-import static io.github.tanice.terraCraft.core.constant.ConfigKeys.*;
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+import static io.github.tanice.terraCraft.core.util.EnumUtil.safeValueOf;
 
 public class Quality implements TerraQuality {
 
@@ -20,7 +21,7 @@ public class Quality implements TerraQuality {
         this.name = name;
         this.weight = weight;
         this.displayName = displayName;
-        this.meta = new CalculableMeta(cfg.getConfigurationSection(ATTRIBUTE_SECTION), AttributeActiveSection.BASE);
+        this.meta = new CalculableMeta(cfg.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.BASE));
     }
 
     @Override
@@ -41,5 +42,14 @@ public class Quality implements TerraQuality {
     @Override
     public TerraCalculableMeta getMeta() {
         return this.meta.clone();
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "Quality:" + "\n" +
+                "    " + AQUA + "name:" + WHITE + name + "\n" +
+                "    " + AQUA + "displayName:" + WHITE + displayName + "\n" +
+                "    " + AQUA + "weight:" + WHITE + weight + RESET + "\n" +
+                meta.toString() + RESET;
     }
 }

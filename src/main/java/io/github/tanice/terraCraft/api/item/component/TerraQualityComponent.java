@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.api.item.component;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public interface TerraQualityComponent extends TerraBaseComponent {
 
@@ -8,7 +9,7 @@ public interface TerraQualityComponent extends TerraBaseComponent {
 
     void setQuality(@Nullable String quality);
 
-    @Nullable String getQualityGroup();
+    List<String> getGroups();
 
-    void setQualityGroup(@Nullable String group);
+    void setGroups(@Nullable List<String> group);
 }

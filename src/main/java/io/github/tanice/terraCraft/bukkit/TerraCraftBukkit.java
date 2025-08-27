@@ -15,6 +15,7 @@ import io.github.tanice.terraCraft.bukkit.command.item.ItemGroupCommand;
 import io.github.tanice.terraCraft.bukkit.command.level.LevelGroupCommand;
 import io.github.tanice.terraCraft.bukkit.command.plugin.ReloadCommand;
 import io.github.tanice.terraCraft.bukkit.command.TerraCraftCommand;
+import io.github.tanice.terraCraft.bukkit.command.quality.QualityGroupCommand;
 import io.github.tanice.terraCraft.bukkit.listener.DamageListener;
 import io.github.tanice.terraCraft.bukkit.listener.HelperListener;
 import io.github.tanice.terraCraft.bukkit.listener.TerraEventListener;
@@ -77,6 +78,7 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         terraCraftCommand.register(new AttributeGroupCommand(this));
         terraCraftCommand.register(new GemGroupCommand(this));
         terraCraftCommand.register(new LevelGroupCommand(this));
+        terraCraftCommand.register(new QualityGroupCommand(this));
         terraCraftCommand.register(new ReloadCommand());
         terraCraftCommand.enable();
     }

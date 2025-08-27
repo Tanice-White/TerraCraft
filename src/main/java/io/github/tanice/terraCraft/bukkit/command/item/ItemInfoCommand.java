@@ -14,10 +14,18 @@ import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 import static io.github.tanice.terraCraft.api.command.TerraCommand.RESET;
 import static io.github.tanice.terraCraft.bukkit.util.TerraComponentUtil.getTerraComponentFrom;
 
-public class ItemCheckCommand extends CommandRunner {
+public class ItemInfoCommand extends CommandRunner {
     @Override
     public String getName() {
-        return "check";
+        return "info";
+    }
+
+    @Override
+    public String getUsage() {
+        return """
+                info
+                info <item_name>
+                """;
     }
 
     @Override
@@ -29,6 +37,10 @@ public class ItemCheckCommand extends CommandRunner {
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(RED + "This command can only be executed by players");
+            return true;
+        }
+        if (args.length > 1) {
+            sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
         if (args.length == 0) {
@@ -49,12 +61,8 @@ public class ItemCheckCommand extends CommandRunner {
             sender.sendMessage(sb.toString());
             return true;
         }
-        if (args.length == 1) {
-            TerraCraftBukkit.inst().getItemManager().getItem(args[0])
-                    .ifPresentOrElse(baseItem -> sender.sendMessage(baseItem.toString()), () -> sender.sendMessage(RED + "No terra named " + args[0]));
-            return true;
-        }
-        sender.sendMessage(RED + "Too many arguments");
+        TerraCraftBukkit.inst().getItemManager().getItem(args[0])
+                .ifPresentOrElse(baseItem -> sender.sendMessage(baseItem.toString()), () -> sender.sendMessage(RED + "No terra named " + args[0]));
         return true;
     }
 

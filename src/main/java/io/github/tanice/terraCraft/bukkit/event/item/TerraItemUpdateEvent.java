@@ -11,11 +11,13 @@ public class TerraItemUpdateEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
+    private final String terraName;
     private final ItemStack pre;
     private final ItemStack newer;
 
-    public TerraItemUpdateEvent(Player player, ItemStack pre, ItemStack newer) {
+    public TerraItemUpdateEvent(Player player, String terraName, ItemStack pre, ItemStack newer) {
         this.player = player;
+        this.terraName = terraName;
         this.pre = pre;
         this.newer = newer;
     }
@@ -37,5 +39,9 @@ public class TerraItemUpdateEvent extends Event {
 
     public ItemStack getNewerBukkitItem() {
         return this.newer;
+    }
+
+    public String getItemTerraName() {
+        return this.terraName;
     }
 }

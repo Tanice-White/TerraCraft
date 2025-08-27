@@ -5,11 +5,8 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.TerraItemManager;
-import io.github.tanice.terraCraft.api.item.component.ComponentState;
-import io.github.tanice.terraCraft.api.item.component.TerraBaseComponent;
-import io.github.tanice.terraCraft.api.item.component.TerraGemHolderComponent;
+import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -21,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
 // TODO + 原版属性
 public class GemHolderComponent extends AbstractItemComponent implements TerraGemHolderComponent {
@@ -134,15 +133,18 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
         return new GemHolderComponent(this.limit, null, this.state);
     }
 
+    @Override
     public List<ItemStack> getGems() {
         return this.gems == null ? List.of() : this.gems;
     }
 
+    @Override
     public void setGems(@Nullable List<ItemStack> gems) {
         if (gems != null) this.gems = gems;
         else this.gems = new ArrayList<>();
     }
 
+    @Override
     public int getLimit() {
         return this.limit;
     }
@@ -155,6 +157,27 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
         if (gems != null && !gems.isEmpty())
             compound.getOrCreateCompound("gems").mergeCompound(NBT.itemStackArrayToNBT(gems.toArray(ItemStack[]::new)));
         compound.setInteger("limit", limit);
+        compound.setByte("state", state.toNbtByte());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(BOLD).append(YELLOW).append("gem_holder:").append("\n");
+        sb.append("    ").append(AQUA).append("limit:").append(WHITE).append(limit).append("\n");
+        sb.append("    ").append(AQUA).append("gems:").append(RESET);
+        List<ItemStack> gemList = getGems();
+        if (gemList.isEmpty()) {
+            sb.append(GRAY).append("null");
+        } else {
+            TerraInnerNameComponent nameComponent;
+            for (int i = 0; i < gemList.size(); i++) {
+                nameComponent = TerraNameComponent.from(gemList.get(i));
+                sb.append(i < limit ? WHITE : GRAY).append(nameComponent == null ? RED + "InvalidTerraGem" : nameComponent.getName());
+            }
+        }
+        sb.append("\n").append("    ").append(AQUA).append("state:").append(WHITE).append(state).append(RESET);
+        return sb.toString();
     }
 
     private static GemHolderComponent fromNBT(ReadableNBT nbt) {

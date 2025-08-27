@@ -1,6 +1,7 @@
-全知全能:
+# MINIMESSAGE 的hover语法不支持在lore中使用
+NBT全知全能:
   id: book
-  display_name: "<red>测试用的"
+  display_name: "<red>NBT组件测试"
   custom_model_data: 10086
   dyed_color: 0xFF5500
   lore:
@@ -148,7 +149,7 @@
 
 谢版盾牌:
   id: feather
-  display_name: "<red>测试用的盾牌"
+  display_name: "<red>NBT盾牌(额外)测试"
   max_stack_size: 1
   shield:
     delay_seconds: 0
@@ -215,3 +216,91 @@ buff测试武器2:
       - "闪避 %90"  # 这里修改的是buff给予的概率，不是闪避成功的概率，这个概率在js内部改
   slot:
     content: offhand
+
+TerraMeta测试武器:
+  id: stone_sword  # 这个没法自更新
+  display_name: "<gradient:#FF0000:#FFA500:#FFFF00>Meta测试武器</gradient>"
+  lore:
+    - "<gradient:#4CAF50:#8BC34A><bold>基础攻击伤害: +8</bold></gradient>"
+    - "<gradient:#2196F3:#03A9F4><italic>基础防护: +5</italic></gradient>"
+    - "<gradient:#FFC107:#FFEB3B>固有暴击率: +80%</gradient>"
+    - "<gradient:#F44336:#E91E63>暴击伤害: +150%</gradient>"
+    - ""
+    - "<gradient:#9E9E9E:#616161>战士伤害增加100%</gradient>"
+  damage_type:
+    type: melee  # 造成战士伤害  # 可取值 MELEE,MAGIC,RANGED,ROUGE,SUMMON,OTHER,ENVIRONMENT
+  meta:
+    section: base  # 可选 TIMER, BEFORE_DAMAGE, BASE, ADD, MULTIPLY, FIX, BETWEEN_DAMAGE_AND_DEFENCE, AFTER_DAMAGE, ERROR, INNER
+    # 其中 BASE, ADD, MULTIPLY, FIX 表示计算meta 其余的会运行js脚本
+    attribute:
+      attack_damage: 8
+      armor: 5
+      critical_strike_chance: 0.8
+      critical_strike_damage: 1.5
+      # 玩家伤害属性增加
+      melee: 1  # 战士伤害增加100%
+  gem_holder:
+    limit: 2  # 宝石槽位数量限制
+    # 无初始宝石
+#  level:  # 展示有问题
+#    lvl: 2  # 设置初始强化成功的次数（和等级无关）
+#    template: 示例武器升级模板
+#  quality:  # 展示有问题
+#    updatable: true # 默认为true
+#    group: 可用品质组名
+#    default: 默认品质名
+#  terra_durability  # 耐久展示有问题
+
+TerraGem伤害增加测试:
+  id: coal
+  display_name: "<gradient:#FFE4E1:#FFFACD>伤害宝石</gradient>"
+  lore:
+    - "<gradient:#FF0000:#FF9900:#FFFF00:#00FF00>武器伤害增加10%</gradient>"
+    - "<gradient:#FFC107:#FF9800>镶嵌成功概率: <bold>100%</bold></gradient>"
+    - "<gradient:#2196F3:#03A9F4>拆卸成功概率: <bold>100%</bold></gradient>"
+    - "<gray>在ADD计算区增加基础伤害</gray>"
+  meta:
+    section: add
+    attribute:
+      attack_damage: 0.1  # 伤害提升 10%
+  gem:  # 宝石标签
+    inlay_chance: 1  # 镶嵌成功概率
+    inlay_fail_loss: false
+    dismantle_chance: 1  # 拆卸成功概率
+    dismantle_fail_loss: false
+
+TerraGem暴击率测试:
+  id: coal
+  display_name: "<gradient:#87CEEB:#4682B4>暴击宝石</gradient>"
+  lore:
+    - "<bold><gradient:#FFB6C1:#9370DB>让你100%暴击!</gradient></bold>"
+    - "<gradient:#FFC107:#FF9800>镶嵌成功概率: <bold>50%</bold><red></gradient><italic>失败会丢失</italic></red>"
+    - "<gradient:#2196F3:#03A9F4>拆卸成功概率: <bold>50%</bold><red></gradient><italic>失败会丢失</italic></red>"
+    - "<gray>在Base计算区增加100%暴击率</gray>"
+  meta:
+    section: base
+    attribute:
+      critical_strike_chance: 1
+  gem:
+    inlay_chance: 0.5  # 镶嵌成功概率
+    inlay_fail_loss: true
+    dismantle_chance: 0.5  # 拆卸成功概率
+    dismantle_fail_loss: true
+
+TerraGem护甲值测试:
+  id: diamond
+  display_name: "<gradient:#87CEEB:#4682B4>保护宝石</gradient>"
+  lore:
+    - "<gradient:#4B0082:#00BFFF>增加你的基础护甲数值</gradient>"
+    - "<gradient:#FFC107:#FF9800>镶嵌成功概率: <bold>20%</bold></gradient><red><italic>失败会丢失</italic></red>"
+    - "<gradient:#2196F3:#03A9F4>拆卸成功概率: <bold>20%</bold></gradient><red><italic>失败会丢失</italic></red>"
+    - "<gray>在Base计算区增加15护甲值</gray>"
+  meta:
+    section: base
+    attribute:
+      armor: 15
+  gem:
+    inlay_chance: 0.2  # 镶嵌成功概率
+    inlay_fail_loss: true
+    dismantle_chance: 0.2  # 拆卸成功概率
+    dismantle_fail_loss: true

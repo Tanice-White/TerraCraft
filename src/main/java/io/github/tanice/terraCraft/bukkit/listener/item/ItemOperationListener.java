@@ -61,7 +61,8 @@ public class ItemOperationListener implements Listener, TerraListener {
         ItemStack preClicked = clickedItem.clone();
         TerraGemComponent gemComponent = GemComponent.from(cursorItem);
         TerraGemHolderComponent holderComponent = GemHolderComponent.from(clickedItem);
-        if (gemComponent != null && holderComponent != null ) {
+        TerraInnerNameComponent nameComponent = TerraNameComponent.from(clickedItem);
+        if (gemComponent != null && holderComponent != null && nameComponent != null) {
             List<ItemStack> gems = holderComponent.getGems();
             int limit = holderComponent.getLimit();
             String res;
@@ -73,7 +74,7 @@ public class ItemOperationListener implements Listener, TerraListener {
                     res = "§a镶嵌成功";
                     /* nbt回写 */
                     holderComponent.apply(clickedItem);
-                    TerraEvents.call(new TerraItemUpdateEvent(player, preClicked, clickedItem));
+                    TerraEvents.call(new TerraItemUpdateEvent(player, nameComponent.getName(), preClicked, clickedItem));
                 } else {
                     /* 失败消耗 */
                     res = "§c镶嵌失败";
@@ -91,10 +92,11 @@ public class ItemOperationListener implements Listener, TerraListener {
 
         /* 物品升级 */
         TerraLevelComponent levelComponent = LevelComponent.from(clickedItem);
-        TerraInnerNameComponent terraName = TerraNameComponent.from(cursorItem);
-        if (levelComponent != null && terraName != null) {
+        TerraNameComponent clickedNameComponent = TerraNameComponent.from(clickedItem);
+        TerraInnerNameComponent cursorNameComponent = TerraNameComponent.from(cursorItem);
+        if (levelComponent != null && cursorNameComponent != null && clickedNameComponent != null) {
             TerraCraftBukkit.inst().getItemManager().getLevelTemplate(levelComponent.getTemplate()).ifPresent(template -> {
-                if (!template.getMaterial().equals(terraName.getName())) return;
+                if (!template.getMaterial().equals(cursorNameComponent.getName())) return;
 
                 int lvl = levelComponent.getLevel();
                 cursorItem.setAmount(cursorItem.getAmount() - 1);
@@ -104,14 +106,14 @@ public class ItemOperationListener implements Listener, TerraListener {
                         res = "§a强化成功";
                         levelComponent.setLevel(lvl + 1);
                         levelComponent.apply(clickedItem);
-                        TerraEvents.call(new TerraItemUpdateEvent(player, preClicked, clickedItem));
+                        TerraEvents.call(new TerraItemUpdateEvent(player, clickedNameComponent.getName(), preClicked, clickedItem));
                     } else {
                         res = "§c强化失败";
                         if (template.isFailedLevelDown() && lvl > 0) {
                             res += ", 物品降级";
                             levelComponent.setLevel(lvl - 1);
                             levelComponent.apply(clickedItem);
-                            TerraEvents.call(new TerraItemUpdateEvent(player, preClicked, clickedItem));
+                            TerraEvents.call(new TerraItemUpdateEvent(player, clickedNameComponent.getName(), preClicked, clickedItem));
                         }
                     }
                     player.sendMessage(res);

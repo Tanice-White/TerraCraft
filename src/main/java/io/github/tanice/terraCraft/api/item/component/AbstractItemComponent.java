@@ -40,4 +40,9 @@ public abstract class AbstractItemComponent implements TerraBaseComponent {
 
 
     public abstract void updateLore();
+
+    /**
+     * 获取支持游戏内指令页面显示的数据展示字符串
+     */
+    public abstract String toString();
 }

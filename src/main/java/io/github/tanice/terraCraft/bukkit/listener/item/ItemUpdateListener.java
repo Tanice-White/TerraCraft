@@ -8,8 +8,6 @@ import io.github.tanice.terraCraft.bukkit.event.item.TerraItemUpdateEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.TerraNameComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.UpdateCodeComponent;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
-import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,17 +68,16 @@ public class ItemUpdateListener implements Listener, TerraListener {
      * 物品更新
      */
     private void checkAndUpdateItem(Player player, ItemStack... itemStacks) {
-        TerraInnerNameComponent nameComponent;
         for (ItemStack item : itemStacks) {
             if (item == null || item.isEmpty()) continue;
             TerraUpdateCodeComponent codeComponent = UpdateCodeComponent.from(item);
-            nameComponent = TerraNameComponent.from(item);
+            TerraInnerNameComponent nameComponent = TerraNameComponent.from(item);
             if (codeComponent == null || nameComponent == null) continue;
             TerraCraftBukkit.inst().getItemManager().getItem(nameComponent.getName()).ifPresent(baseItem -> {
                 ItemStack preItem = item.clone();
                 if (baseItem.updateOld(item)) {
                     player.updateInventory();
-                    TerraEvents.call(new TerraItemUpdateEvent(player, preItem, item));
+                    TerraEvents.call(new TerraItemUpdateEvent(player, nameComponent.getName(), preItem, item));
                 }
             });
             return;

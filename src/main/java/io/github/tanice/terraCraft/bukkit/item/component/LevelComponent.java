@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 /**
  * 等级模板扩展
  */
@@ -141,5 +143,13 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
 
     private static LevelComponent fromNBT(ReadableNBT nbt) {
         return new LevelComponent(nbt.getInteger("lvl"), nbt.getString("template"), new ComponentState(nbt.getByte("state")));
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "level:" + "\n" +
+                "    " + AQUA + "lvl:" + WHITE + (level != null ? level : 0) + RESET + "\n" +
+                "    " + AQUA + "template:" + (levelTemplate != null ? WHITE + levelTemplate : GRAY + "null") + RESET + "\n" +
+                "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 }

@@ -14,6 +14,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.List;
+
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+import static io.github.tanice.terraCraft.api.command.TerraCommand.RESET;
 
 /**
  * 决定terra属性等组件是否生效
@@ -109,6 +113,13 @@ public class SlotComponent extends AbstractItemComponent implements TerraMetaSlo
     @Override
     public void setSlot(TerraEquipmentSlot slot) {
         this.slot = slot;
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "slot:" + "\n" +
+                "    " + AQUA + "content:" + slot.getStandardName().toLowerCase() + "\n" +
+                "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 
     private void addToCompound(ReadWriteNBT compound) {

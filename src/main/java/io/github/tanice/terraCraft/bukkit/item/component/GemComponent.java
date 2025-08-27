@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 public class GemComponent extends AbstractItemComponent implements TerraGemComponent {
     @Nullable
     private Float inlaySuccessChance;
@@ -169,5 +171,19 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
     @Override
     public String getComponentName() {
         return "gem";
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "gem:" + "\n" +
+                "    " + AQUA + "inlay_chance:" +
+                WHITE + (inlaySuccessChance != null ? inlaySuccessChance : "1(default)") + "\n" +
+                "    " + AQUA + "inlay_fail_loss:" +
+                WHITE + (inlayFailLoss != null ? inlayFailLoss : "1(default)") + "\n" +
+                "    " + AQUA + "dismantle_chance:" +
+                WHITE + (dismantleSuccessChance != null ? dismantleSuccessChance : "1(default)") + "\n" +
+                "    " + AQUA + "dismantle_fail_loss:" +
+                WHITE + (dismantleFailLoss != null ? dismantleFailLoss : "1(default)") + "\n" +
+                "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 }

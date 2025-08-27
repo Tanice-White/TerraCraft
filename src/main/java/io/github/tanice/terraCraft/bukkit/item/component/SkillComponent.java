@@ -16,6 +16,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 public class SkillComponent extends AbstractItemComponent implements TerraSkillComponent {
 
     @Nullable
@@ -104,6 +106,30 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
         this.skills = skills;
     }
 
+
+    @Override
+    public String getComponentName() {
+        return "skill";
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(BOLD).append(YELLOW).append("skill:").append("\n");
+        sb.append("    ").append(AQUA).append("content:");
+        List<String> skillList = getSkills();
+        if (skillList.isEmpty()) sb.append(GRAY).append("null").append("\n");
+        else {
+            sb.append(WHITE);
+            for (int i = 0; i < skillList.size(); i++) {
+                sb.append(skillList.get(i));
+                if (i != skillList.size() - 1) sb.append(", ");
+            }
+        }
+        sb.append("    ").append(AQUA).append("state:").append(WHITE).append(state).append(RESET);
+        return sb.toString();
+    }
+
     private void addToCompound(ReadWriteNBT compound) {
         if (skills != null && !skills.isEmpty()) compound.getStringList("content").addAll(skills);
         compound.setByte("state", state.toNbtByte());
@@ -114,10 +140,5 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
                 nbt.getStringList("content").toListCopy(),
                 new ComponentState(nbt.getByte("state"))
         );
-    }
-
-    @Override
-    public String getComponentName() {
-        return "skill";
     }
 }

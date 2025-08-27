@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
-public class GetCommand extends CommandRunner {
+public class ItemGetCommand extends CommandRunner {
     @Override
     public String getName() {
         return "get";

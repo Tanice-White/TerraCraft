@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 public class QualityComponent extends AbstractItemComponent implements TerraQualityComponent {
     @Nullable
     private String qualityGroup;
@@ -37,7 +39,7 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     public QualityComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
         this.qualityGroup = cfg.getString("group");
-        this.quality = cfg.getString("quality");
+        this.quality = cfg.getString("default");
     }
 
     @Nullable
@@ -127,6 +129,16 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     @Override
     public void setQualityGroup(@Nullable String group) {
         this.qualityGroup = group;
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "quality:" + "\n" +
+                "    " + AQUA + "group:" +
+                (qualityGroup != null ? WHITE + qualityGroup : GRAY + "null") + "\n" +
+                "    " + AQUA + "value:" + RESET +
+                WHITE + (quality != null ? WHITE + quality : GRAY + "null") + RESET + "\n" +
+                "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 
     private void addToCompound(ReadWriteNBT compound) {

@@ -11,6 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+import static io.github.tanice.terraCraft.api.command.TerraCommand.RESET;
+
 public class TerraNameComponent implements TerraInnerNameComponent {
 
     private final String name;
@@ -73,5 +76,10 @@ public class TerraNameComponent implements TerraInnerNameComponent {
     @Override
     public void setName(String name) {
         TerraCraftLogger.warning("Terra inner name cannot be changed");
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "terra_name:" + name + RESET;
     }
 }

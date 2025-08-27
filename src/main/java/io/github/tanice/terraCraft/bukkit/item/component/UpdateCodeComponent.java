@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 public class UpdateCodeComponent implements TerraUpdateCodeComponent {
 
     private int code;
@@ -65,5 +67,10 @@ public class UpdateCodeComponent implements TerraUpdateCodeComponent {
     @Override
     public void setCode(int code) {
         this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "update_code:" + code + RESET;
     }
 }

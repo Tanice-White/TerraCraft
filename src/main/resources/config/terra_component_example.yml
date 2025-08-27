@@ -53,7 +53,7 @@ meta:
   section: base  # 可选 TIMER, BEFORE_DAMAGE, BASE, ADD, MULTIPLY, FIX, BETWEEN_DAMAGE_AND_DEFENCE, AFTER_DAMAGE, ERROR, INNER
   # 其中 BASE, ADD, MULTIPLY, FIX 表示计算meta 其余的会运行js脚本
   attribute:
-    damage: 0
+    attack_damage: 0
     armor: 100
     critical_strike_chance: 0.8
     critical_strike_damage: 1.5
@@ -74,7 +74,7 @@ meta:
 quality:
   updatable: true # 默认为true
   group: 可用品质组名
-  quality: 默认品质名
+  default: 默认品质名
 
 skill:
   updatable: true

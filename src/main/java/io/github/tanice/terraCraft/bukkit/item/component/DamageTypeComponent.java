@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
 
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 import static io.github.tanice.terraCraft.core.util.EnumUtil.safeValueOf;
 
 public class DamageTypeComponent extends AbstractItemComponent implements TerraDamageTypeComponent {
@@ -112,5 +113,12 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     @Override
     public String getComponentName() {
         return "damage_type";
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "damage_type:" + RESET + "\n" +
+                "    " + AQUA + "type:" + WHITE + type.name().toLowerCase() + "\n" +
+                "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 }

@@ -65,6 +65,6 @@ public class TerraEventListener implements Listener, TerraListener {
         // TODO 更新lore
         TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(player);
         if (ConfigManager.isDebug())
-            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.ITEM, "Item: " + event.getNewerBukkitItem().displayName() + " in player " + player.getName() + " updated");
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.ITEM, "Item terra name: " + event.getItemTerraName() + " in player " + player.getName() + " updated");
     }
 }

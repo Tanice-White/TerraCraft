@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.bukkit.listener.attribute;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
+import io.github.tanice.terraCraft.core.registry.Registry;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -61,7 +62,7 @@ public class EntityAttributeListener implements Listener, TerraListener {
         }, 1);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityEquipmentChange(EntityEquipmentChangedEvent event) {
         LivingEntity entity = event.getEntity();
         TerraSchedulers.sync().runLater(() -> {
@@ -73,8 +74,10 @@ public class EntityAttributeListener implements Listener, TerraListener {
     }
 
     /** 药水效果监听 */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPotionEffect(EntityPotionEffectEvent event) {
+        /* 过滤不需要监听的药药水效果 */
+        if (Registry.ORI_POTION.get(event.getModifiedType().getKey().getKey()) == null) return;
         TerraSchedulers.sync().runLater(() -> {
             TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute((LivingEntity) event.getEntity());
         }, 1);

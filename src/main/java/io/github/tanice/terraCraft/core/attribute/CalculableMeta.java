@@ -185,24 +185,24 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(BOLD).append(YELLOW).append("meta:").append("\n");
-        sb.append(AQUA).append("Attributes:").append("\n");
+        sb.append(AQUA).append("    ").append("attributes:").append("\n");
         AttributeType[] attributeTypes = AttributeType.values();
         for (int i = 0; i < attributeTypes.length; i++) {
             if (i < attributeModifiers.length) {
-                sb.append("    ").append(AQUA).append(attributeTypes[i]).append(":")
+                sb.append("        ").append(AQUA).append(attributeTypes[i].toString().toLowerCase()).append(":")
                         .append(WHITE).append(attributeModifiers[i]).append("\n");
             }
         }
 
-        sb.append(AQUA).append("DamageTypes:").append(RESET).append("\n");
+        sb.append(AQUA).append("    ").append("damage types:").append(RESET).append("\n");
         DamageFromType[] damageTypes = DamageFromType.values();
         for (int i = 0; i < damageTypes.length; i++) {
             if (i < damageTypeModifiers.length) {
-                sb.append("    ").append(AQUA).append(damageTypes[i]).append(":")
+                sb.append("        ").append(AQUA).append(damageTypes[i].toString().toLowerCase()).append(":")
                         .append(WHITE).append(damageTypeModifiers[i]).append("\n");
             }
         }
-        sb.append(AQUA).append("ActiveSection:").append(WHITE).append(activeSection).append(RESET);
+        sb.append(AQUA).append("    ").append("active section:").append(WHITE).append(activeSection.toString().toLowerCase()).append(RESET);
         return sb.toString();
     }
 }

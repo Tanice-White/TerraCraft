@@ -49,20 +49,26 @@ public final class EquipmentUtil {
 
     /**
      * 获取实体装备的整合 meta
+     * 如果是插件物品则不增加原版伤害值
      */
     public static List<TerraCalculableMeta> getActiveEquipmentMeta(LivingEntity entity) {
         List<TerraCalculableMeta> res = new ArrayList<>(12);
+        TerraInnerNameComponent terraInnerNameComponent;
         TerraCalculableMeta customMeta;
         for (ItemStack item : getActiveEquipmentItemStack(entity)) {
-            /* 插件meta */
-            res.addAll(getItemMergedTerraMeta(item));
-            /* 加载原版meta */
-            /* 物品本身 */
-            TerraItemMetaLoadEvent itemMetaLoadEvent = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
-            if (itemMetaLoadEvent.getMeta() != null) res.add(itemMetaLoadEvent.getMeta());
-            else {
-                customMeta = Registry.ORI_ITEM.get(item.getType().toString());
-                if (customMeta != null) res.add(customMeta.clone());
+            terraInnerNameComponent = TerraNameComponent.from(item);
+            if (terraInnerNameComponent != null) {
+                /* 插件meta */
+                res.addAll(getItemMergedTerraMeta(item));
+            } else {
+                /* 加载原版meta */
+                /* 物品本身 */
+                TerraItemMetaLoadEvent itemMetaLoadEvent = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
+                if (itemMetaLoadEvent.getMeta() != null) res.add(itemMetaLoadEvent.getMeta());
+                else {
+                    customMeta = Registry.ORI_ITEM.get(item.getType().toString());
+                    if (customMeta != null) res.add(customMeta.clone());
+                }
             }
             /* 原版附魔 */
 //            for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {

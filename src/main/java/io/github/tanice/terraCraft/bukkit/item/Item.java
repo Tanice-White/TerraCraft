@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 public class Item extends AbstractItem implements TerraItem {
     private final String name;
     @Nullable
@@ -164,7 +166,7 @@ public class Item extends AbstractItem implements TerraItem {
 
     @Override
     @Nullable
-    public TerraCommandsComponent getCommandComponent() {
+    public TerraCommandComponent getCommandComponent() {
         return commandComponent;
     }
 
@@ -239,5 +241,28 @@ public class Item extends AbstractItem implements TerraItem {
                 commandComponent, damageTypeComponent, durabilityComponent, gemComponent, gemHolderComponent,
                 levelComponent, metaComponent, qualityComponent, skillComponent, slotComponent
         );
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(BOLD).append(GREEN).append("Terra Components in ").append(GREEN).append(name).append(RESET).append("\n");
+        sb.append(updateCodeComponent).append("\n");
+        if (damageTypeComponent != null) sb.append(damageTypeComponent).append("\n");
+        if (slotComponent != null) sb.append(slotComponent).append("\n");
+
+        if (levelComponent != null) sb.append(levelComponent).append("\n");
+        if (qualityComponent != null) sb.append(qualityComponent).append("\n");
+        if (durabilityComponent != null) sb.append(durabilityComponent).append("\n");
+
+        if (gemHolderComponent != null) sb.append(gemHolderComponent).append("\n");
+        if (gemComponent != null) sb.append(gemComponent).append("\n");
+        if (buffComponent != null) sb.append(buffComponent).append("\n");
+
+        if (commandComponent != null) sb.append(commandComponent).append("\n");
+        if (skillComponent != null) sb.append(skillComponent).append("\n");
+        if (metaComponent != null) sb.append(metaComponent).append("\n");
+        sb.append(RESET);
+        return sb.toString();
     }
 }

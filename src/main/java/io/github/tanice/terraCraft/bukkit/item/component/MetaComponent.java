@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 import static io.github.tanice.terraCraft.core.util.EnumUtil.safeValueOf;
 
 /**
@@ -116,6 +117,11 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
     @Override
     public void setMeta(TerraCalculableMeta meta) {
         this.meta = meta;
+    }
+
+    @Override
+    public String toString() {
+        return meta.toString() + "\n" + "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 
     private void addToCompound(ReadWriteNBT compound) {

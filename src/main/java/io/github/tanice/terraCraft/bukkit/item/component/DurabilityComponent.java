@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 // TODO 支持 weapon 的 攻击耐久减少 和 tool 的挖掘耐久减少
 public class DurabilityComponent extends AbstractItemComponent implements TerraDurabilityComponent {
     @Nullable
@@ -158,6 +160,16 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     public boolean broken() {
         if (this.damage == null) return false;
         return this.damage == this.maxDamage;
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "terra_durability:" + RESET + "\n" +
+                "    " + AQUA + "damage:" + WHITE + (damage != null ? damage : "null") + RESET + "\n" +
+                "    " + AQUA + "max_damage:" + WHITE + maxDamage + RESET + "\n" +
+                "    " + AQUA + "break_loss:" + WHITE + (breakLoss != null ? breakLoss : "null") + RESET + "\n" +
+                "    " + AQUA + "broken:" + WHITE + broken() + RESET + "\n" +
+                "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 
     private void addToCompound(ReadWriteNBT compound) {

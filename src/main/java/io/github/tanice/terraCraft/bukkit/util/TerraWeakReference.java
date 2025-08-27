@@ -4,7 +4,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.lang.ref.WeakReference;
 
-public class TerraWeakReference extends WeakReference<LivingEntity> {
+public final class TerraWeakReference extends WeakReference<LivingEntity> {
     private final int referentHashCode;
 
     public TerraWeakReference(LivingEntity referent) {

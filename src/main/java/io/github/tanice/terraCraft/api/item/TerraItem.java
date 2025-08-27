@@ -10,7 +10,7 @@ public interface TerraItem extends TerraBaseItem {
     TerraBuffComponent getBuffComponent();
 
     @Nullable
-    TerraCommandsComponent getCommandComponent();
+    TerraCommandComponent getCommandComponent();
 
     @Nullable
     TerraDamageTypeComponent getDamageTypeComponent();

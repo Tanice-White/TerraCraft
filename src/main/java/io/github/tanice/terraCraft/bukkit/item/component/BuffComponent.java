@@ -18,6 +18,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 public class BuffComponent extends AbstractItemComponent implements TerraBuffComponent {
     @Nullable
     private List<NBTBuff> hold;
@@ -221,5 +223,34 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     @Override
     public String getComponentName() {
         return "buff";
+    }
+
+    @Override
+    public String toString() {
+        return BOLD + YELLOW + "buff:" + "\n" +
+                AQUA + "    " + "hold:" +
+                buffListToString(hold) + "\n" +
+                AQUA + "    " + "attack_self:" +
+                buffListToString(attackSelf) + "\n" +
+                AQUA + "    " + "attack:" +
+                buffListToString(attack) + "\n" +
+                AQUA + "    " + "defense_self:" +
+                buffListToString(defenseSelf) + "\n" +
+                AQUA + "    " + "defense:" +
+                buffListToString(defense) + "\n" +
+                AQUA + "    " + "state:" + WHITE + state + RESET;
+    }
+
+    private String buffListToString(List<NBTBuff> buffs) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(RESET);
+        if (buffs != null && !buffs.isEmpty()) {
+            sb.append(WHITE);
+            for (int i = 0; i < buffs.size(); i++) {
+                sb.append(buffs.get(i));
+                if (i < buffs.size() - 1) sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 }

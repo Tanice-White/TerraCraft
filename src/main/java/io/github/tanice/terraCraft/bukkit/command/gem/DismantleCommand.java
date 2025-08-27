@@ -99,7 +99,7 @@ public class DismantleCommand extends CommandRunner {
             targetGem.setAmount(1);
             player.getInventory().addItem(targetGem);
             player.updateInventory();
-            sender.sendMessage(GREEN + "Removed gem: " + args[0]);
+            sender.sendMessage(GREEN + "Removed gem successfully");
         /* 失败 */
         } else {
             String res = RED + "Dismantle failed";

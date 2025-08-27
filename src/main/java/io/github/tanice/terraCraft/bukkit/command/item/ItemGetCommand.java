@@ -91,7 +91,7 @@ public class ItemGetCommand extends CommandRunner {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
-        if (args.length == 1) return TerraCraftBukkit.inst().getItemManager().filterItems(args[0]).stream().sorted().toList();;
+        if (args.length == 1) return TerraCraftBukkit.inst().getItemManager().filterItems(args[0]).stream().sorted().toList();
         if (args.length == 2) return playerList(args[1]);
         return Collections.emptyList();
     }

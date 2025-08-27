@@ -13,13 +13,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
 public class InlayCommand extends CommandRunner {
+
     @Override
     public String getName() {
         return "insert";
@@ -35,7 +35,7 @@ public class InlayCommand extends CommandRunner {
 
     @Override
     public String getDescription() {
-        return "Inlay a gem to the item in main hand, and able to ignore inlay chance or inlay failed loss";
+        return "Inlay the gem in offhand to the item in main hand, and able to ignore inlay chance or inlay failed loss";
     }
 
     @Override
@@ -84,7 +84,7 @@ public class InlayCommand extends CommandRunner {
                     }
                     player.sendMessage(res);
                 }
-            } else player.sendMessage(GOLD + "宝石槽位已满");
+            } else player.sendMessage(GOLD + "No more stack for gem");
             return true;
         }
         player.sendMessage(GOLD + "Please hold an item with gem_holder component in your main main hand and a gem in your off hand");
@@ -94,7 +94,6 @@ public class InlayCommand extends CommandRunner {
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) return List.of("true", "false");
-
         return Collections.emptyList();
     }
 }

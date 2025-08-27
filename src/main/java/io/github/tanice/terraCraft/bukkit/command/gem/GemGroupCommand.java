@@ -12,7 +12,7 @@ public class GemGroupCommand extends CommandGroup {
 
     @Override
     public String getDescription() {
-        return "Command related to terracraft gems operation";
+        return "Command related to terracraft gems";
     }
 
     @Override

@@ -19,6 +19,7 @@ import java.util.List;
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
 public class DismantleCommand extends CommandRunner {
+
     @Override
     public String getName() {
         return "dismantle";
@@ -26,7 +27,7 @@ public class DismantleCommand extends CommandRunner {
 
     @Override
     public String getDescription() {
-        return "dismantle a gem from the item in main hand, ignoring dismantle chance or dismantle failed loss";
+        return "dismantle a gem from the item in main hand, and able to ignore dismantle chance or dismantle failed loss";
     }
 
     @Override

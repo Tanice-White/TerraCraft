@@ -42,7 +42,7 @@ public class ItemCheckCommand extends CommandRunner {
             sb.append(BOLD).append(GREEN).append("Terra Components in the item").append(RESET).append("\n");
             List<TerraBaseComponent> components = getTerraComponentFrom(item);
             for (int i = 0; i < components.size(); i++) {
-                sb.append(components.get(i)).append("\n");
+                sb.append(components.get(i));
                 if (i != components.size() - 1) sb.append("\n");
             }
             sb.append(RESET);

@@ -74,19 +74,19 @@ public class SlotComponent extends AbstractItemComponent implements TerraMetaSlo
         }
     }
 
-    public void clear(TerraBaseItem item) {
+    public void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("slot");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("slot");
             });
         }
     }
 
-    public void remove(TerraBaseItem item) {
+    public void remove(ItemStack item) {
         clear(item);
     }
 

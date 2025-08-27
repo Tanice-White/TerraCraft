@@ -25,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Random;
 
+import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
+
 public class ItemOperationListener implements Listener, TerraListener {
 
     private final Random random = new Random();
@@ -69,22 +71,26 @@ public class ItemOperationListener implements Listener, TerraListener {
             if (limit > gems.size()) {
                 /* 镶嵌成功 */
                 if (random.nextDouble() < gemComponent.getInlaySuccessChance()) {
+                    ItemStack tmp = cursorItem.clone();
+                    tmp.setAmount(1);
+                    gems.add(tmp);
                     cursorItem.setAmount(cursorItem.getAmount() - 1);
-                    gems.add(cursorItem);
-                    res = "§a镶嵌成功";
+                    res = GREEN + "镶嵌成功";
                     /* nbt回写 */
+                    holderComponent.setGems(gems);
+                    GemHolderComponent.clear(clickedItem);
                     holderComponent.apply(clickedItem);
                     TerraEvents.call(new TerraItemUpdateEvent(player, nameComponent.getName(), preClicked, clickedItem));
                 } else {
                     /* 失败消耗 */
-                    res = "§c镶嵌失败";
+                    res = RED + "镶嵌失败";
                     if (gemComponent.isInlayFailLoss()) {
                         cursorItem.setAmount(cursorItem.getAmount() - 1);
                         res += ", 宝石消失";
                     }
                 }
                 player.sendMessage(res);
-            } else player.sendMessage("§c宝石槽位已满");
+            } else player.sendMessage(GOLD + "宝石槽位已满");
             /* 取消后续默认操作 */
             event.setCancelled(true);
             return;
@@ -103,21 +109,23 @@ public class ItemOperationListener implements Listener, TerraListener {
                 String res;
                 if (lvl < template.getMax() - template.getBegin()) {
                     if (random.nextDouble() < template.getChance()) {
-                        res = "§a强化成功";
+                        res = GREEN + "强化成功";
                         levelComponent.setLevel(lvl + 1);
+                        LevelComponent.clear(clickedItem);
                         levelComponent.apply(clickedItem);
                         TerraEvents.call(new TerraItemUpdateEvent(player, clickedNameComponent.getName(), preClicked, clickedItem));
                     } else {
-                        res = "§c强化失败";
+                        res = RED + "强化失败";
                         if (template.isFailedLevelDown() && lvl > 0) {
                             res += ", 物品降级";
                             levelComponent.setLevel(lvl - 1);
+                            LevelComponent.clear(clickedItem);
                             levelComponent.apply(clickedItem);
                             TerraEvents.call(new TerraItemUpdateEvent(player, clickedNameComponent.getName(), preClicked, clickedItem));
                         }
                     }
                     player.sendMessage(res);
-                } else player.sendMessage("§c物品已达最大等级");
+                } else player.sendMessage(GOLD + "物品已达最大等级");
                 event.setCancelled(true);
             });
         }

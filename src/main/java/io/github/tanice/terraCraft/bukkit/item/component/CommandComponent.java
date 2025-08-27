@@ -80,19 +80,19 @@ public class CommandComponent extends AbstractItemComponent implements TerraComm
 
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)){
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("command");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("command");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         clear(item);
     }
 

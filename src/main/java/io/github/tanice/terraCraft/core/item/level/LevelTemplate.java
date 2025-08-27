@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import org.bukkit.configuration.ConfigurationSection;
 
 import static io.github.tanice.terraCraft.core.constant.ConfigKeys.*;
+import static io.github.tanice.terraCraft.core.util.EnumUtil.safeValueOf;
 
 public class LevelTemplate implements TerraLevelTemplate {
     private final String name;
@@ -26,7 +27,7 @@ public class LevelTemplate implements TerraLevelTemplate {
         /* items inner name */
         material = cfg.getString(LEVEL_UP_NEED, "");
         failedLevelDown = cfg.getBoolean(LEVEL_DOWN_WHEN_FAILED, false);
-        meta = new CalculableMeta(cfg.getConfigurationSection(ATTRIBUTE_SECTION), AttributeActiveSection.BASE);
+        meta = new CalculableMeta(cfg.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR));
     }
 
     public String getName() {

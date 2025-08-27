@@ -102,19 +102,19 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
 
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("gem_hold");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("gem_hold");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         clear(item);
     }
 
@@ -135,7 +135,7 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
 
     @Override
     public List<ItemStack> getGems() {
-        return this.gems == null ? List.of() : this.gems;
+        return this.gems == null ? new ArrayList<>() : this.gems;
     }
 
     @Override
@@ -173,7 +173,8 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
             TerraInnerNameComponent nameComponent;
             for (int i = 0; i < gemList.size(); i++) {
                 nameComponent = TerraNameComponent.from(gemList.get(i));
-                sb.append(i < limit ? WHITE : GRAY).append(nameComponent == null ? RED + "InvalidTerraGem" : nameComponent.getName());
+                sb.append(i < limit ? WHITE : GRAY).append(nameComponent == null ? RED + "InvalidTerraGem" : nameComponent.getName()).append(RESET);
+                if (i != gemList.size() - 1) sb.append(", ");
             }
         }
         sb.append("\n").append("    ").append(AQUA).append("state:").append(WHITE).append(state).append(RESET);
@@ -188,7 +189,7 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
         if (gc != null) {
             ItemStack[] stacks = NBT.itemStackArrayFromNBT(gc);
             if (stacks == null) TerraCraftLogger.error("Error reading gemHolderComponent");
-            else gs = Arrays.stream(stacks).toList();
+            else gs = new ArrayList<>(Arrays.stream(stacks).toList());
         }
         return new GemHolderComponent(limit, gs, state);
     }

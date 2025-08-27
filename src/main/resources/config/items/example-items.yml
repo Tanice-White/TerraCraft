@@ -1,4 +1,5 @@
 # MINIMESSAGE 的hover语法不支持在lore中使用
+# 可堆叠物品不要有宝石槽位(Gem_holder)组件,否则将可以用来刷宝石
 NBT全知全能:
   id: book
   display_name: "<red>NBT组件测试"
@@ -242,13 +243,13 @@ TerraMeta测试武器:
   gem_holder:
     limit: 2  # 宝石槽位数量限制
     # 无初始宝石
-#  level:  # 展示有问题
-#    lvl: 2  # 设置初始强化成功的次数（和等级无关）
-#    template: 示例武器升级模板
-#  quality:  # 展示有问题
-#    updatable: true # 默认为true
-#    group: 可用品质组名
-#    default: 默认品质名
+  level:  # 展示有问题
+    lvl: 2  # 设置初始强化成功的次数（和等级无关, 最终的等级是等级模板的最低级+强化成功的次数）
+    template: "示例武器升级模板"
+  quality:  # 展示有问题
+    updatable: true # 默认为true
+    group: 可用品质组名
+    default: 默认品质名
 #  terra_durability  # 耐久展示有问题
 
 TerraGem伤害增加测试:
@@ -304,3 +305,22 @@ TerraGem护甲值测试:
     inlay_fail_loss: true
     dismantle_chance: 0.2  # 拆卸成功概率
     dismantle_fail_loss: true
+
+
+升级材料:
+  id: emerald
+  display_name: "<gradient:#1E90FF:#696969>测试武器的升级材料</gradient>"
+  lore:
+    - "<gradient:#FFD700:#8B4513>神奇的材料蕴含的神奇的力量</gradient>"
+    - "<gray>其实还能吃</gray>"
+  consumable:
+    animation: eat
+    consume_seconds: 2
+    particle: true
+    sound:
+      id: dig.sand
+      range: 8
+  command:  # 被消耗后触发的指令  @self 会换为触发玩家的名字
+    content:
+      - "give @self minecraft:arrow 5"
+      - "effect give @self minecraft:strength 30 1"

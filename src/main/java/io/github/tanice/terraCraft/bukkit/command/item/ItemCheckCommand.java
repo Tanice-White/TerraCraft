@@ -40,7 +40,12 @@ public class ItemCheckCommand extends CommandRunner {
 
             StringBuilder sb = new StringBuilder();
             sb.append(BOLD).append(GREEN).append("Terra Components in the item").append(RESET).append("\n");
-            for (TerraBaseComponent component : getTerraComponentFrom(item)) sb.append(component).append("\n");
+            List<TerraBaseComponent> components = getTerraComponentFrom(item);
+            for (int i = 0; i < components.size(); i++) {
+                sb.append(components.get(i)).append("\n");
+                if (i != components.size() - 1) sb.append("\n");
+            }
+            sb.append(RESET);
             sender.sendMessage(sb.toString());
             return true;
         }
@@ -55,7 +60,7 @@ public class ItemCheckCommand extends CommandRunner {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
-        if (args.length == 1) return TerraCraftBukkit.inst().getItemManager().filterItems(args[0]).stream().sorted().toList();;
+        if (args.length == 1) return TerraCraftBukkit.inst().getItemManager().filterItems(args[0]).stream().sorted().toList();
         return Collections.emptyList();
     }
 }

@@ -93,21 +93,21 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
 
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "unbreakable");
                 nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY).removeKey("durability");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.removeKey("Unbreakable");
                 nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY).removeKey("durability");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         clear(item);
     }
 

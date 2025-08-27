@@ -46,7 +46,7 @@ public class ItemOperationListener implements Listener, TerraListener {
     }
 
     /* 宝石镶嵌 物品升级 */
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    // @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         /* 检查是否是工作台界面 左键点击 */
         if (event.getInventory().getType() != InventoryType.WORKBENCH || event.getClick() != ClickType.LEFT) return;

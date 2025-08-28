@@ -150,7 +150,7 @@ tool:
   rules:
     random_key:
       items:
-        - minecraft:wooden_planks
+        - minecraft:bedrock
         - minecraft:stone
       drop: true
       speed: 8.0

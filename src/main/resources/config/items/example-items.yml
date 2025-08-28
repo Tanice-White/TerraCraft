@@ -341,11 +341,119 @@ TerraGem护甲值测试:
     base: 1
     factor: 0.5
     threshold: 45  # 角度 = js判定角度 / 2
-  ori_durability:
-    damage: 1
-    max_damage: 50
-    unbreakable: false
+  terra_durability:  # 原版耐久无用
+    damage: 0
+    max_damage: 10
+    break_loss: true
   buff:
     hold:
       - "格挡"
   # 让两个手都行，因为原版的盾牌组件判定是两只手都可以，也就都会防止击退
+  glint: true
+
+头盔耐久测试:
+  id: iron_helmet
+  display_name: "<yellow>头盔耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 10
+    break_loss: true
+  glint: true
+
+胸甲耐久测试:
+  id: iron_chestplate
+  display_name: "<yellow>胸甲耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 10
+    break_loss: true
+  glint: true
+
+护腿耐久测试:
+  id: iron_leggings
+  display_name: "<yellow>护腿耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 10
+    break_loss: true
+  glint: true
+
+靴子耐久测试:
+  id: iron_boots
+  display_name: "<yellow>靴子耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 10
+    break_loss: true
+  glint: true
+
+工具耐久测试:
+  id: wooden_axe
+  display_name: "<yellow>工具耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 10
+    break_loss: true
+  tool:
+    creative_destroy: false
+    damage_per_block: 10 # 本插件支持识别
+    default_speed: 0.1
+    rules:
+      random_key:
+        items:
+          - minecraft:bedrock
+          - minecraft:stone
+        drop: true
+        speed: 8.0
+  glint: true
+
+钓竿耐久测试:
+  id: fishing_rod
+  display_name: "<yellow>工具耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 10
+    break_loss: true
+  glint: true
+
+武器耐久测试:
+  id: golden_sword
+  display_name: "<yellow>武器耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 25
+    break_loss: false
+  glint: true
+  meta:
+    section: base
+    attribute:
+      attack_damage: 10
+  weapon:
+    damage_per_attack: 5  # 本插件支持识别
+
+弓耐久测试:
+  id: bow
+  display_name: "<yellow>弓耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 9
+    break_loss: false
+  glint: true
+
+弩耐久测试:
+  id: crossbow
+  display_name: "<yellow>弩耐久测试"
+  max_stack_size: 1
+  terra_durability:
+    damage: 0
+    max_damage: 9
+    break_loss: false
+  glint: true

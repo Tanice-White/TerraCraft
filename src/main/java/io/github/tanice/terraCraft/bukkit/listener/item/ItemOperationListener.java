@@ -54,16 +54,20 @@ public class ItemOperationListener implements Listener, TerraListener {
     /* 耐久监听-射箭*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onShoot(EntityShootBowEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
-        if (processDurability(event.getBow(), 1)) event.setCancelled(true);
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (processDurability(event.getBow(), 1)) {
+            ItemStack item = event.getConsumable();
+            if (event.shouldConsumeItem() && item != null && !item.isEmpty())
+                player.getInventory().addItem(item);
+            event.setCancelled(true);
+        }
     }
 
     /* 耐久监听-钓鱼 */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerReelIn(PlayerFishEvent event) {
         Player player = event.getPlayer();
-        if (event.getState() == PlayerFishEvent.State.REEL_IN) {
-            if (event.getCaught() == null) return;
+        if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH || event.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (!item.isEmpty() && item.getType() == Material.FISHING_ROD) {
                 if (processDurability(item, 1)) event.setCancelled(true);
@@ -150,6 +154,7 @@ public class ItemOperationListener implements Listener, TerraListener {
 
     /**
      * 盾牌耐久计算
+     * TODO 兼容原版耐久计算 使用 exp4j
      */
     private int blockDamage(double damage) {
         if (damage < 10) return 0;
@@ -158,6 +163,7 @@ public class ItemOperationListener implements Listener, TerraListener {
 
     /**
      * 护甲耐久计算
+     * TODO 兼容原版耐久计算 使用 exp4j
      */
     private int equipmentDamage(double damage) {
         return (int) Math.floor(Math.max(1, damage / 4));

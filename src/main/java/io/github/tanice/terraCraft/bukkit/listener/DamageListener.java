@@ -5,6 +5,7 @@ import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -33,6 +34,7 @@ public class DamageListener implements Listener, TerraListener {
     /* 原版无源伤害 */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
+        if (!ConfigManager.isDebug()) return;
         TerraSchedulers.sync().runLater(() -> {
             TerraCraftLogger.info("defender: " + event.getEntity().getName() + " " + event.getFinalDamage());
         }, 1);

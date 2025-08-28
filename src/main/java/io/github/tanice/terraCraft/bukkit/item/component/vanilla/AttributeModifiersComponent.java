@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraAttributeModifiersComponent;
 import io.github.tanice.terraCraft.bukkit.util.MiniMessageUtil;
@@ -68,7 +67,8 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (modifiers.isEmpty()) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
@@ -122,26 +122,26 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
         return Objects.hash(modifiers);
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "attribute_modifiers");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.removeKey("AttributeModifiers");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "attribute_modifiers");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "attribute_modifiers");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.removeKey("AttributeModifiers");
             });
         }

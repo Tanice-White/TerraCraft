@@ -2,9 +2,7 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
-import de.tr7zw.nbtapi.iface.ReadWriteNBTList;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraBuffComponent;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
@@ -84,7 +82,8 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + "." + "buff");
@@ -180,31 +179,20 @@ public class BuffComponent extends AbstractItemComponent implements TerraBuffCom
     }
 
     private void addToCompound(ReadWriteNBT component) {
-        ReadWriteNBTList<String> list;
         if (hold != null && !hold.isEmpty()) {
-            list = component.getStringList("hold");
-            list.clear();
-            list.addAll(hold.stream().map(NBTBuff::toString).toList());
+            component.getStringList("hold").addAll(hold.stream().map(NBTBuff::toString).toList());
         }
         if (attackSelf != null && !attackSelf.isEmpty()) {
-            list = component.getStringList("attack_self");
-            list.clear();
-            list.addAll(attackSelf.stream().map(NBTBuff::toString).toList());
+            component.getStringList("attack_self").addAll(attackSelf.stream().map(NBTBuff::toString).toList());
         }
         if (attack != null && !attack.isEmpty()) {
-            list = component.getStringList("attack");
-            list.clear();
-            list.addAll(attack.stream().map(NBTBuff::toString).toList());
+            component.getStringList("attack").addAll(attack.stream().map(NBTBuff::toString).toList());
         }
         if (defenseSelf != null && !defenseSelf.isEmpty()) {
-            list = component.getStringList("defense_self");
-            list.clear();
-            list.addAll(defenseSelf.stream().map(NBTBuff::toString).toList());
+            component.getStringList("defense_self").addAll(defenseSelf.stream().map(NBTBuff::toString).toList());
         }
         if (defense != null && !defense.isEmpty()) {
-            list = component.getStringList("defense");
-            list.clear();
-            list.addAll(defense.stream().map(NBTBuff::toString).toList());
+            component.getStringList("defense").addAll(defense.stream().map(NBTBuff::toString).toList());
         }
         component.setByte("state", state.toNbtByte());
     }

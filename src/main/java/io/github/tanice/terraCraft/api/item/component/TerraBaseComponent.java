@@ -8,9 +8,9 @@ public interface TerraBaseComponent {
     String MINECRAFT_PREFIX = "minecraft:";
     String TERRA_COMPONENT_KEY = "terracraft:components";
     /**
-     * 将组件附加到物品上
+     * 将组件覆盖到物品上
      */
-    void apply(ItemStack item);
+    void cover(ItemStack item);
 
     /**
      * 组件内部名称

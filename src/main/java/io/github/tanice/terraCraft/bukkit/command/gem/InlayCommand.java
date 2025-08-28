@@ -72,7 +72,7 @@ public class InlayCommand extends CommandRunner {
                     offHandItem.setAmount(offHandItem.getAmount() - 1);
                     /* nbt回写 */
                     holderComponent.setGems(gems);
-                    holderComponent.apply(mainHandItem);
+                    holderComponent.cover(mainHandItem);
                     TerraEvents.call(new TerraItemUpdateEvent(player, nameComponent.getName(), preClicked, mainHandItem));
                     player.sendMessage(GREEN + "Inlay successfully");
                 /* 失败 */

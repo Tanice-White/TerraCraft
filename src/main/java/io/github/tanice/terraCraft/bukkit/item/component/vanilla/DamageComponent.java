@@ -1,7 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraDamageComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
@@ -40,7 +39,8 @@ public class DamageComponent implements TerraDamageComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (damage != null) nbt.setInteger(MINECRAFT_PREFIX + "damage", damage);
@@ -61,24 +61,24 @@ public class DamageComponent implements TerraDamageComponent {
         return "ori_durability";
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "damage");
                 nbt.removeKey(MINECRAFT_PREFIX + "max_damage");
                 nbt.removeKey(MINECRAFT_PREFIX + "unbreakable");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.removeKey("Unbreakable");
                 nbt.removeKey("Damage");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "damage");
                 nbt.removeKey(MINECRAFT_PREFIX + "max_damage");
                 nbt.removeKey(MINECRAFT_PREFIX + "unbreakable");
@@ -87,7 +87,7 @@ public class DamageComponent implements TerraDamageComponent {
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "unbreakable");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt -> {
+            NBT.modify(item, nbt -> {
                 nbt.removeKey("Unbreakable");
                 nbt.removeKey("Damage");
             });

@@ -2,7 +2,6 @@ package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraWeaponComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
@@ -32,7 +31,8 @@ public class WeaponComponent implements TerraWeaponComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (disableBlockingForSeconds == null && itemDamagePerAttack == null) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
@@ -50,17 +50,17 @@ public class WeaponComponent implements TerraWeaponComponent {
         return "weapon";
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "weapon");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "weapon");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "weapon");
             });

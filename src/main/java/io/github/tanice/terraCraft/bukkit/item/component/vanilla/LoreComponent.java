@@ -1,7 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraLoreComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
@@ -22,7 +21,8 @@ public class LoreComponent implements TerraLoreComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (lore == null) return;
         /*  lore经常出莫名其妙的bug, 用meta */
         NBT.modify(item, nbt -> {
@@ -35,26 +35,26 @@ public class LoreComponent implements TerraLoreComponent {
         return "lore";
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.removeKey(MINECRAFT_PREFIX + "lore");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt ->{
+            NBT.modify(item, nbt ->{
                 nbt.getOrCreateCompound("display").removeKey("lore");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.removeKey(MINECRAFT_PREFIX + "lore");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "lore");
             });
         } else {
-            NBT.modify(item.getBukkitItem(), nbt ->{
+            NBT.modify(item, nbt ->{
                 nbt.getOrCreateCompound("display").removeKey("lore");
             });
         }

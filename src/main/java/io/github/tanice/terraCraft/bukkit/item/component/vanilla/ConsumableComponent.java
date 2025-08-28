@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraConsumableComponent;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTEffect;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTSound;
@@ -56,7 +55,8 @@ public class ConsumableComponent implements TerraConsumableComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "consumable");
@@ -85,17 +85,17 @@ public class ConsumableComponent implements TerraConsumableComponent {
         return "consumable";
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "consumable");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "consumable");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "consumable");
             });

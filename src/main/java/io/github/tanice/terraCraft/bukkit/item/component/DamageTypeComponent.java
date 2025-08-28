@@ -4,7 +4,6 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.attribute.DamageFromType;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraDamageTypeComponent;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
@@ -58,7 +57,8 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".damage_type");

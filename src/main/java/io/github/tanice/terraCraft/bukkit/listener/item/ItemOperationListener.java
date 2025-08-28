@@ -78,8 +78,7 @@ public class ItemOperationListener implements Listener, TerraListener {
                     res = GREEN + "镶嵌成功";
                     /* nbt回写 */
                     holderComponent.setGems(gems);
-                    GemHolderComponent.clear(clickedItem);
-                    holderComponent.apply(clickedItem);
+                    holderComponent.cover(clickedItem);
                     TerraEvents.call(new TerraItemUpdateEvent(player, nameComponent.getName(), preClicked, clickedItem));
                 } else {
                     /* 失败消耗 */
@@ -111,16 +110,15 @@ public class ItemOperationListener implements Listener, TerraListener {
                     if (random.nextDouble() < template.getChance()) {
                         res = GREEN + "强化成功";
                         levelComponent.setLevel(lvl + 1);
-                        LevelComponent.clear(clickedItem);
-                        levelComponent.apply(clickedItem);
+
+                        levelComponent.cover(clickedItem);
                         TerraEvents.call(new TerraItemUpdateEvent(player, clickedNameComponent.getName(), preClicked, clickedItem));
                     } else {
                         res = RED + "强化失败";
                         if (template.isFailedLevelDown() && lvl > 0) {
                             res += ", 物品降级";
                             levelComponent.setLevel(lvl - 1);
-                            LevelComponent.clear(clickedItem);
-                            levelComponent.apply(clickedItem);
+                            levelComponent.cover(clickedItem);
                             TerraEvents.call(new TerraItemUpdateEvent(player, clickedNameComponent.getName(), preClicked, clickedItem));
                         }
                     }

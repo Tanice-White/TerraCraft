@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.TerraItemManager;
 import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
@@ -83,7 +82,8 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".gem_hold");
@@ -154,8 +154,9 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     }
 
     private void addToCompound(ReadWriteNBT compound) {
-        if (gems != null && !gems.isEmpty())
+        if (gems != null && !gems.isEmpty()) {
             compound.getOrCreateCompound("gems").mergeCompound(NBT.itemStackArrayToNBT(gems.toArray(ItemStack[]::new)));
+        }
         compound.setInteger("limit", limit);
         compound.setByte("state", state.toNbtByte());
     }

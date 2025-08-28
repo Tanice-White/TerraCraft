@@ -8,6 +8,7 @@ import io.github.tanice.terraCraft.bukkit.item.component.GemComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.GemHolderComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.TerraNameComponent;
 import io.github.tanice.terraCraft.bukkit.util.MiniMessageUtil;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -86,20 +87,24 @@ public class DismantleCommand extends CommandRunner {
                 player.sendMessage(RED + "No gem found with name: " + gemName);
                 return true;
             }
-        } else targetGem = gems.removeFirst();
+        } else targetGem = gems.getFirst();
 
         TerraGemComponent gemComponent = GemComponent.from(targetGem);
         if (gemComponent == null) ignoreChance = true;
         /* 成功 */
         if (ignoreChance || Math.random() < gemComponent.getInlaySuccessChance()) {
-            gems.remove(targetGem);
-            gemHolderComponent.setGems(gems);
-            GemHolderComponent.clear(mainhandItem);
-            gemHolderComponent.apply(mainhandItem);
-            targetGem.setAmount(1);
-            player.getInventory().addItem(targetGem);
-            player.updateInventory();
-            sender.sendMessage(GREEN + "Removed gem successfully");
+            if (gems.remove(targetGem)) {
+                gemHolderComponent.setGems(gems);
+                gemHolderComponent.cover(mainhandItem);
+                targetGem.setAmount(1);
+                player.getInventory().addItem(targetGem);
+                player.updateInventory();
+                sender.sendMessage(GREEN + "Removed gem successfully");
+            } else {
+                sender.sendMessage(RED + "Failed to remove gem");
+                TerraCraftLogger.error("Player: " + player.getName() + " attempted to remove a null gem");
+                return true;
+            }
         /* 失败 */
         } else {
             String res = RED + "Dismantle failed";

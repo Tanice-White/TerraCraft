@@ -83,16 +83,14 @@ public class LevelUpCommand extends CommandRunner {
             /* 成功 */
             if (ig || Math.random() < terraLevelTemplate.getChance()) {
                 levelComponent.setLevel(level + 1);
-                LevelComponent.clear(mainHandItem);
-                levelComponent.apply(mainHandItem);
+                levelComponent.cover(mainHandItem);
                 sender.sendMessage(GREEN + "Level up successfully");
             /* 失败 */
             } else {
                 String res = RED + "Level up failed";
                 if (terraLevelTemplate.isFailedLevelDown() && level > 0) {
                     levelComponent.setLevel(level - 1);
-                    LevelComponent.clear(mainHandItem);
-                    levelComponent.apply(mainHandItem);
+                    levelComponent.cover(mainHandItem);
                     res += ", level down";
                 }
                 player.sendMessage(res);

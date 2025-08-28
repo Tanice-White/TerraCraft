@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraBaseComponent;
 import io.github.tanice.terraCraft.api.item.component.TerraLevelComponent;
@@ -65,7 +64,8 @@ public class LevelComponent extends AbstractItemComponent implements TerraLevelC
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".level");

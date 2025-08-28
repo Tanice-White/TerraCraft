@@ -55,8 +55,7 @@ public class RecastCommand extends CommandRunner {
         TerraQuality quality = group.randomSelect();
         String qn = quality == null ? null : quality.getName();
         qualityComponent.setQuality(qn);
-        QualityComponent.clear(item);
-        qualityComponent.apply(item);
+        qualityComponent.cover(item);
         sender.sendMessage(GREEN + "quality recast to " + YELLOW + (qn == null ? "null" : qn) +RESET);
         return true;
     }

@@ -69,7 +69,8 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".meta");
@@ -126,12 +127,8 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
 
     private void addToCompound(ReadWriteNBT compound) {
         compound.setString("active_section", meta.getActiveSection().name().toLowerCase());
-        ReadWriteNBTList<Double> doubleList = compound.getDoubleList("attribute");
-        doubleList.clear();
-        doubleList.addAll(Arrays.stream(meta.getAttributeModifierArray()).boxed().toList());
-        doubleList = compound.getDoubleList("damage_type");
-        doubleList.clear();
-        doubleList.addAll(Arrays.stream(meta.getDamageTypeModifierArray()).boxed().toList());
+        compound.getDoubleList("attribute").addAll(Arrays.stream(meta.getAttributeModifierArray()).boxed().toList());
+        compound.getDoubleList("damage_type").addAll(Arrays.stream(meta.getDamageTypeModifierArray()).boxed().toList());
         compound.setByte("state", state.toNbtByte());
     }
 

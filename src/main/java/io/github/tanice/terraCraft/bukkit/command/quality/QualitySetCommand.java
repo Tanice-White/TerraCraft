@@ -58,8 +58,7 @@ public class QualitySetCommand extends CommandRunner {
         for (TerraQuality q : getQualities(qualityComponent)) {
             if (q.getName().equals(args[0])) {
                 qualityComponent.setQuality(q.getName());
-                QualityComponent.clear(item);
-                qualityComponent.apply(item);
+                qualityComponent.cover(item);
                 sender.sendMessage(GREEN + "quality recast to " + YELLOW + q.getDisplayName() +RESET);
                 return true;
             }

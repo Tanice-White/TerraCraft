@@ -52,84 +52,84 @@ public class Item extends AbstractItem implements TerraItem {
             sub = cfg.getConfigurationSection("buff");
             if (sub != null) {
                 buffComponent = new BuffComponent(sub);
-                buffComponent.apply(bukkitItem);
+                buffComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("command")) {
             sub = cfg.getConfigurationSection("command");
             if (sub != null) {
                 commandComponent = new CommandComponent(sub);
-                commandComponent.apply(bukkitItem);
+                commandComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("damage_type")) {
             sub = cfg.getConfigurationSection("damage_type");
             if (sub != null) {
                 damageTypeComponent = new DamageTypeComponent(sub);
-                damageTypeComponent.apply(bukkitItem);
+                damageTypeComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("terra_durability")) {
             sub = cfg.getConfigurationSection("terra_durability");
             if (sub != null) {
                 durabilityComponent = new DurabilityComponent(sub);
-                durabilityComponent.apply(bukkitItem);
+                durabilityComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("gem")) {
             sub = cfg.getConfigurationSection("gem");
             if (sub != null) {
                 gemComponent = new GemComponent(sub);
-                gemComponent.apply(bukkitItem);
+                gemComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("gem_holder")) {
             sub = cfg.getConfigurationSection("gem_holder");
             if (sub != null) {
                 gemHolderComponent = new GemHolderComponent(sub);
-                gemHolderComponent.apply(bukkitItem);
+                gemHolderComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("level")) {
             sub = cfg.getConfigurationSection("level");
             if (sub != null) {
                 levelComponent = new LevelComponent(sub);
-                levelComponent.apply(bukkitItem);
+                levelComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("meta")) {
             sub = cfg.getConfigurationSection("meta");
             if (sub != null) {
                 metaComponent = new MetaComponent(sub);
-                metaComponent.apply(bukkitItem);
+                metaComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("quality")) {
             sub = cfg.getConfigurationSection("quality");
             if (sub != null) {
                 qualityComponent = new QualityComponent(sub);
-                qualityComponent.apply(bukkitItem);
+                qualityComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("skill")) {
             sub = cfg.getConfigurationSection("skill");
             if (sub != null) {
                 skillComponent = new SkillComponent(sub);
-                skillComponent.apply(bukkitItem);
+                skillComponent.cover(bukkitItem);
             }
         }
         if (cfg.isSet("slot")) {
             sub = cfg.getConfigurationSection("slot");
             if (sub != null) {
                 slotComponent = new SlotComponent(sub);
-                slotComponent.apply(bukkitItem);
+                slotComponent.cover(bukkitItem);
             }
         }
 
         terraNameComponent = new TerraNameComponent(id);
-        terraNameComponent.apply(bukkitItem);
+        terraNameComponent.cover(bukkitItem);
         updateCodeComponent = new UpdateCodeComponent(this.hashCode());
-        updateCodeComponent.apply(bukkitItem);
+        updateCodeComponent.cover(bukkitItem);
     }
 
     @Override
@@ -143,18 +143,18 @@ public class Item extends AbstractItem implements TerraItem {
         super.updateOld(old);
         /* innerName 不能被更改 */
         /* updateCode 必须被更改 */
-        updateCodeComponent.apply(old);
-        if (buffComponent != null && buffComponent.canUpdate()) buffComponent.updatePartial().apply(old);
-        if (commandComponent != null && commandComponent.canUpdate()) commandComponent.updatePartial().apply(old);
-        if (damageTypeComponent != null && damageTypeComponent.canUpdate()) damageTypeComponent.updatePartial().apply(old);
-        if (durabilityComponent != null && durabilityComponent.canUpdate()) durabilityComponent.updatePartial().apply(old);
-        if (gemComponent != null && gemComponent.canUpdate()) gemComponent.updatePartial().apply(old);
-        if (gemHolderComponent != null && gemHolderComponent.canUpdate()) gemHolderComponent.updatePartial().apply(old);
-        if (levelComponent != null && levelComponent.canUpdate()) levelComponent.updatePartial().apply(old);
-        if (metaComponent != null && metaComponent.canUpdate()) metaComponent.updatePartial().apply(old);
-        if (qualityComponent != null && qualityComponent.canUpdate()) qualityComponent.updatePartial().apply(old);
-        if (skillComponent != null && skillComponent.canUpdate()) skillComponent.updatePartial().apply(old);
-        if (slotComponent != null && slotComponent.canUpdate()) slotComponent.updatePartial().apply(old);
+        updateCodeComponent.cover(old);
+        if (buffComponent != null && buffComponent.canUpdate()) buffComponent.updatePartial().cover(old);
+        if (commandComponent != null && commandComponent.canUpdate()) commandComponent.updatePartial().cover(old);
+        if (damageTypeComponent != null && damageTypeComponent.canUpdate()) damageTypeComponent.updatePartial().cover(old);
+        if (durabilityComponent != null && durabilityComponent.canUpdate()) durabilityComponent.updatePartial().cover(old);
+        if (gemComponent != null && gemComponent.canUpdate()) gemComponent.updatePartial().cover(old);
+        if (gemHolderComponent != null && gemHolderComponent.canUpdate()) gemHolderComponent.updatePartial().cover(old);
+        if (levelComponent != null && levelComponent.canUpdate()) levelComponent.updatePartial().cover(old);
+        if (metaComponent != null && metaComponent.canUpdate()) metaComponent.updatePartial().cover(old);
+        if (qualityComponent != null && qualityComponent.canUpdate()) qualityComponent.updatePartial().cover(old);
+        if (skillComponent != null && skillComponent.canUpdate()) skillComponent.updatePartial().cover(old);
+        if (slotComponent != null && slotComponent.canUpdate()) slotComponent.updatePartial().cover(old);
         return true;
     }
 

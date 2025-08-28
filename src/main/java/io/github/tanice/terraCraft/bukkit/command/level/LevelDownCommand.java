@@ -43,8 +43,7 @@ public class LevelDownCommand extends CommandRunner {
             return true;
         }
         levelComponent.setLevel(level - 1);
-        LevelComponent.clear(item);
-        levelComponent.apply(item);
+        levelComponent.cover(item);
         sender.sendMessage(GREEN + "Level down Successfully");
         return true;
     }

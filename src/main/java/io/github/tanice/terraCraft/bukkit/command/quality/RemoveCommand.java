@@ -42,8 +42,7 @@ public class RemoveCommand extends CommandRunner {
             return true;
         }
         qualityComponent.setQuality(null);
-        QualityComponent.clear(item);
-        qualityComponent.apply(item);
+        qualityComponent.cover(item);
         sender.sendMessage(GREEN + "Remove item quality successfully");
         return true;
     }

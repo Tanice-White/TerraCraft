@@ -1,7 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraCustomModelDataComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
@@ -19,7 +18,8 @@ public class CustomModelDataComponent implements TerraCustomModelDataComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (cmd != null) nbt.getOrCreateCompound(MINECRAFT_PREFIX + "custom_model_data").getFloatList("floats").add(cmd.floatValue());
@@ -32,21 +32,21 @@ public class CustomModelDataComponent implements TerraCustomModelDataComponent {
         return "custom_model_data";
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "custom_model_data");
             });
-        } else NBT.modify(item.getBukkitItem(), nbt -> {nbt.removeKey("CustomModelData");});
+        } else NBT.modify(item, nbt -> {nbt.removeKey("CustomModelData");});
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt -> {
+            NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "custom_model_data");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "custom_model_data");
             });
-        } else NBT.modify(item.getBukkitItem(), nbt -> {nbt.removeKey("CustomModelData");});
+        } else NBT.modify(item, nbt -> {nbt.removeKey("CustomModelData");});
     }
 
     @Override

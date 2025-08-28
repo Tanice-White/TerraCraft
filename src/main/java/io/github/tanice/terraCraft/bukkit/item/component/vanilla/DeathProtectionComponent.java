@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraDeathProtectionComponent;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTEffect;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
@@ -34,7 +33,8 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (effects.isEmpty()) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt ->{
@@ -54,17 +54,17 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
         return "death_protection";
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.removeKey(MINECRAFT_PREFIX + "death_protection");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.removeKey(MINECRAFT_PREFIX + "death_protection");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "death_protection");
             });

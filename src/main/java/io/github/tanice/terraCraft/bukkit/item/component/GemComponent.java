@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraGemComponent;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
@@ -70,7 +69,8 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".gem");
@@ -150,24 +150,6 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
         this.dismantleFailLoss = loss;
     }
 
-    private void addToCompound(ReadWriteNBT compound) {
-        compound.setByte("state", state.toNbtByte());
-        if (inlaySuccessChance != null) compound.setFloat("inlay_chance", inlaySuccessChance);
-        if (inlayFailLoss != null) compound.setBoolean("inlay_loss", inlayFailLoss);
-        if (dismantleSuccessChance != null) compound.setFloat("dismantle_chance", dismantleSuccessChance);
-        if (dismantleFailLoss != null) compound.setBoolean("dismantle_loss", dismantleFailLoss);
-    }
-
-    private static GemComponent fromNBT(ReadableNBT nbt) {
-        return new GemComponent(
-                nbt.getFloat("inlay_chance"),
-                nbt.getBoolean("inlay_loss"),
-                nbt.getFloat("dismantle_chance"),
-                nbt.getBoolean("dismantle_loss"),
-                new ComponentState(nbt.getByte("state"))
-        );
-    }
-
     @Override
     public String getComponentName() {
         return "gem";
@@ -185,5 +167,23 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
                 "    " + AQUA + "dismantle_fail_loss:" +
                 WHITE + (dismantleFailLoss != null ? dismantleFailLoss : "1(default)") + "\n" +
                 "    " + AQUA + "state:" + WHITE + state + RESET;
+    }
+
+    private void addToCompound(ReadWriteNBT compound) {
+        compound.setByte("state", state.toNbtByte());
+        if (inlaySuccessChance != null) compound.setFloat("inlay_chance", inlaySuccessChance);
+        if (inlayFailLoss != null) compound.setBoolean("inlay_loss", inlayFailLoss);
+        if (dismantleSuccessChance != null) compound.setFloat("dismantle_chance", dismantleSuccessChance);
+        if (dismantleFailLoss != null) compound.setBoolean("dismantle_loss", dismantleFailLoss);
+    }
+
+    private static GemComponent fromNBT(ReadableNBT nbt) {
+        return new GemComponent(
+                nbt.getFloat("inlay_chance"),
+                nbt.getBoolean("inlay_loss"),
+                nbt.getFloat("dismantle_chance"),
+                nbt.getBoolean("dismantle_loss"),
+                new ComponentState(nbt.getByte("state"))
+        );
     }
 }

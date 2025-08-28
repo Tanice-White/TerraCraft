@@ -62,7 +62,8 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".quality");
@@ -151,14 +152,16 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
 
     private void addToCompound(ReadWriteNBT compound) {
         if (quality != null) compound.setString("value", quality);
-        if (groups != null) compound.getStringList("group").addAll(groups);
+        if (groups != null) {
+            compound.getStringList("groups").addAll(groups);
+        }
         compound.setByte("state", state.toNbtByte());
     }
 
     private static QualityComponent fromNBT(ReadableNBT nbt) {
         return new QualityComponent(
                 nbt.getString("value"),
-                nbt.getStringList("group").toListCopy(),
+                nbt.getStringList("groups").toListCopy(),
                 new ComponentState(nbt.getByte("state"))
         );
     }

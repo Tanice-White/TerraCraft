@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraPotionComponent;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTPotion;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
@@ -59,7 +58,8 @@ public class PotionComponent implements TerraPotionComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
+    public void cover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "potion_contents");
@@ -85,18 +85,18 @@ public class PotionComponent implements TerraPotionComponent {
         return "potion";
     }
 
-    public static void clear(TerraBaseItem item) {
+    public static void clear(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.removeKey(MINECRAFT_PREFIX + "potion_contents");
                 nbt.removeKey(MINECRAFT_PREFIX + "potion_duration_scale");
             });
         }
     }
 
-    public static void remove(TerraBaseItem item) {
+    public static void remove(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            NBT.modifyComponents(item.getBukkitItem(), nbt ->{
+            NBT.modifyComponents(item, nbt ->{
                 nbt.removeKey(MINECRAFT_PREFIX + "potion_contents");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "potion_contents");
                 nbt.removeKey(MINECRAFT_PREFIX + "potion_duration_scale");

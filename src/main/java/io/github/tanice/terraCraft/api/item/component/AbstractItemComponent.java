@@ -31,12 +31,12 @@ public abstract class AbstractItemComponent implements TerraBaseComponent {
     }
 
     @Override
-    public void apply(ItemStack item) {
-        doApply(item);
+    public void cover(ItemStack item) {
+        doCover(item);
         updateLore();
     }
 
-    public abstract void doApply(ItemStack item);
+    public abstract void doCover(ItemStack item);
 
 
     public abstract void updateLore();

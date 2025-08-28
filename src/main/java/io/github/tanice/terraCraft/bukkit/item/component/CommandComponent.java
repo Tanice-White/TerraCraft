@@ -59,18 +59,17 @@ public class CommandComponent extends AbstractItemComponent implements TerraComm
     }
 
     @Override
-    public void doApply(ItemStack item) {
+    public void doCover(ItemStack item) {
+        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)){
             NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".command");
-                component.setByte("state", state.toNbtByte());
-                component.getStringList("content").addAll(commands);
+                addToCompound(component);
             });
         } else {
             NBT.modify(item, nbt -> {
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(TERRA_COMPONENT_KEY + ".command");
-                component.setByte("state", state.toNbtByte());
-                component.getStringList("content").addAll(commands);
+                addToCompound(component);
             });
         }
     }
@@ -129,5 +128,10 @@ public class CommandComponent extends AbstractItemComponent implements TerraComm
         }
         sb.append(AQUA).append("    ").append("state:").append(WHITE).append(state).append(RESET);
         return sb.toString();
+    }
+
+    private void addToCompound(ReadWriteNBT component) {
+        component.setByte("state", state.toNbtByte());
+        component.getStringList("content").addAll(commands);
     }
 }

@@ -6,14 +6,11 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
 import io.github.tanice.terraCraft.api.buff.BuffActiveCondition;
-import io.github.tanice.terraCraft.api.buff.TerraBuffManager;
 import io.github.tanice.terraCraft.api.buff.TerraRunnableBuff;
 import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.api.js.TerraJSEngineManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.bukkit.item.component.BuffComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.DamageTypeComponent;
-import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.util.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
@@ -21,7 +18,6 @@ import io.github.tanice.terraCraft.core.skill.SkillDamageMeta;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -48,10 +44,8 @@ public final class DamageCalculator {
         DamageFromType type = getDamageType(attacker);
         TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, oriDamage, isOriCritical, isMelee);
         /* 前置Buff处理 */
-        if (!processBeforeBuffs(protocol, false)) {
-            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol;
-        }
+        if (!processBeforeBuffs(protocol, false)) return protocol;
+
         if (ConfigManager.isDebug())
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "1-AfterCreate: " + protocol.getFinalDamage());
 
@@ -69,21 +63,14 @@ public final class DamageCalculator {
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "4-AfterDamageFloat: " + protocol.getFinalDamage());
 
         /* 中间（防御前）Buff处理 */
-        if (!processBetweenBuffs(protocol, false)) {
-            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol;
-        }
+        if (!processBetweenBuffs(protocol, false)) return protocol;
         /* 防御方减免计算 */
         applyDefenseReductions(protocol);
         if (ConfigManager.isDebug())
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "5-AfterDefenseReduction: " + protocol.getFinalDamage());
 
         /* 防后Buff处理 */
-        if (!processAfterBuffs(protocol, false)) {
-            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol;
-        }
-        activateBuffForAttackerAndDefender(attacker, defender);
+        processAfterBuffs(protocol, false);
         return protocol;
     }
 
@@ -95,10 +82,7 @@ public final class DamageCalculator {
         DamageFromType type = getDamageType(attacker);
         TerraDamageProtocol protocol = new TerraDamageProtocol(attacker, defender, attackerCalculator, defenderCalculator, type, 0, false, false);
         /* 前置Buff处理 */
-        if (!processBeforeBuffs(protocol, true)) {
-            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol;
-        }
+        if (!processBeforeBuffs(protocol, true)) return protocol;
         /* 伤害浮动 */
         if(skillMeta.getDamage() < 0) {
             protocol.setFinalDamage(skillMeta.getDamageK() * attackerCalculator.getMeta().get(AttributeType.ATTACK_DAMAGE));
@@ -107,17 +91,11 @@ public final class DamageCalculator {
         applyCriticalDamage(protocol, skillMeta);
         applyFloatDamage(protocol);
         /* 中间（防御前）Buff处理 */
-        if (!processBetweenBuffs(protocol, true)) {
-            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol;
-        }
+        if (!processBetweenBuffs(protocol, true)) return protocol;
         /* 防御方减免计算 */
         applyDefenseReductions(protocol, skillMeta);
         /* 防后Buff处理 */
-        if (!processAfterBuffs(protocol, true)) {
-            if (protocol.isHit()) activateBuffForAttackerAndDefender(attacker, defender);
-            return protocol;
-        }
+        processAfterBuffs(protocol, true);
         return protocol;
     }
 
@@ -248,26 +226,5 @@ public final class DamageCalculator {
         damage = Math.max(0, damage);
         damage *= (1 - dMeta.get(AttributeType.AFTER_ARMOR_REDUCTION));
         protocol.setFinalDamage(damage);
-    }
-
-    private static void activateBuffForAttackerAndDefender(@Nullable LivingEntity attacker, LivingEntity defender) {
-        TerraBuffManager buffManager = TerraCraftBukkit.inst().getBuffManager();
-        /* attacker 给 defender 增加 buff */
-        BuffComponent buffComponent;
-        if (attacker != null) {
-            for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(attacker)){
-                buffComponent = BuffComponent.from(item);
-                if (buffComponent == null) continue;
-                buffManager.activateBuffs(attacker, buffComponent.getAttackSelf());
-                buffManager.activateBuffs(defender, buffComponent.getAttack());
-            }
-        }
-        /* defender 给 attacker 增加 buff */
-        for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(defender)){
-            buffComponent = BuffComponent.from(item);
-            if (buffComponent == null) continue;
-            buffManager.activateBuffs(defender, buffComponent.getDefenseSelf());
-            if (attacker != null) buffManager.activateBuffs(attacker, buffComponent.getDefense());
-        }
     }
 }

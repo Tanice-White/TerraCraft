@@ -145,7 +145,7 @@ repair:
 # ToolComponent
 tool:
   creative_destroy: false
-  damage_per_block: 10
+  damage_per_block: 10 # 本插件支持识别
   default_speed: 0.1
   rules:
     random_key:
@@ -172,6 +172,6 @@ use_remainder:
 
 weapon:
   disable_shield_seconds: 5
-  damage_per_attack: 2
+  damage_per_attack: 2  # 本插件支持识别
 
 

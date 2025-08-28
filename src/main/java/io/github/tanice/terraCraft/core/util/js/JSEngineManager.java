@@ -12,13 +12,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class JSEngineManager implements TerraJSEngineManager, AutoCloseable {
-    private final Context jsContext;
-    private final Map<String, Value> functionCache;
-    private final AtomicBoolean closed;
+    private Context jsContext;
+    private Map<String, Value> functionCache;
+    private AtomicBoolean closed;
 
     private static final String FUNCTION_NAME = "run";
 
     public JSEngineManager() {
+        reload();
+    }
+
+    public void reload() {
         functionCache = new ConcurrentHashMap<>();
         closed = new AtomicBoolean(false);
 
@@ -32,22 +36,16 @@ public final class JSEngineManager implements TerraJSEngineManager, AutoCloseabl
 
         // 注册全局Java对象
         Value bindings = jsContext.getBindings("js");
-        bindings.putMember("Random", java.util.Random.class);
-        bindings.putMember("Math", java.lang.Math.class);
-
         bindings.putMember("Player", org.bukkit.entity.Player.class);
         bindings.putMember("LivingEntity", org.bukkit.entity.LivingEntity.class);
         bindings.putMember("Entity", org.bukkit.entity.Entity.class);
-        bindings.putMember("Particle", org.bukkit.Particle.class);
-        bindings.putMember("Color", org.bukkit.Color.class);
         bindings.putMember("Location", org.bukkit.Location.class);
-        bindings.putMember("Sound", org.bukkit.Sound.class);
-    }
-
-    public void reload() {
     }
 
     public void unload() {
+        closed.set(true);
+        functionCache.clear();
+        jsContext.close();
     }
 
     @Override

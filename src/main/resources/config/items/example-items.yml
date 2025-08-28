@@ -252,6 +252,9 @@ TerraMeta测试武器:
       - "测试品质组名"
       - "伤害测试组"
     default: # 默认品质名
+  buff:
+    attack:
+      - "流血 #200 %1 :2"
 #  terra_durability  # 耐久展示有问题
 
 TerraGem伤害增加测试:
@@ -326,3 +329,23 @@ TerraGem护甲值测试:
     content:
       - "give @self minecraft:arrow 5"
       - "effect give @self minecraft:strength 30 1"
+
+# 这只是一个模仿原版盾牌的示例，但是很遗憾，无法实现破盾中强迫玩家放下盾牌的效果（使用buff覆盖即可，但是玩家仍然举着盾牌）
+# 可以使用其他的方式，例如一个不能举的盾牌，在副手生效，检测攻击自动尝试格挡即可
+插件盾牌实现:
+  id: shield
+  display_name: "<red>插件盾牌测试"
+  max_stack_size: 1
+  shield:  # 借助原版盾牌动作，下面的三个配置必须要写, 和js配合
+    delay_seconds: 0.5  # 延迟0.5s算作blocking
+    base: 1
+    factor: 0.5
+    threshold: 45  # 角度 = js判定角度 / 2
+  ori_durability:
+    damage: 1
+    max_damage: 50
+    unbreakable: false
+  buff:
+    hold:
+      - "格挡"
+  # 让两个手都行，因为原版的盾牌组件判定是两只手都可以，也就都会防止击退

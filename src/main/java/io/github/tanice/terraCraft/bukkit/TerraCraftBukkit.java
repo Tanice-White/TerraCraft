@@ -24,6 +24,7 @@ import io.github.tanice.terraCraft.core.attribute.EntityAttributeManager;
 import io.github.tanice.terraCraft.core.buff.BuffManager;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.item.ItemManager;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.player.PlayerDataManager;
 import io.github.tanice.terraCraft.core.skill.SkillManager;
 import io.github.tanice.terraCraft.core.util.database.DatabaseManager;
@@ -98,11 +99,14 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         if (playerDataManager != null) playerDataManager.unload();
         if (databaseManager != null) databaseManager.unload();
         TerraSchedulers.shutdown();
+
+        TerraCraftLogger.success("TerraCraft disabled");
+        TerraCraftLogger.success("Thank you for using the TerraCraft plugin!");
+        TerraCraftLogger.success("If you have any questions or suggestions, feel free to share feedback :)");
     }
 
     @Override
     public void reload() {
-        TerraSchedulers.clear();
         databaseManager.reload();
         ConfigManager.load();
 

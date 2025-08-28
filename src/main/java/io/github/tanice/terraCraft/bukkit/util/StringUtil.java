@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StringUtil {
+public final class StringUtil {
     /**
      * 将输入字符串按逗号分割为字符串列表，自动处理前后空格
      */

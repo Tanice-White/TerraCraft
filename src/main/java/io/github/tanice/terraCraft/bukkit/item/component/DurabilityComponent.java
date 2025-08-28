@@ -133,7 +133,7 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
 
     @Override
     public void setDamage(int damage) {
-        this.damage = damage;
+        this.damage = Math.min(damage, this.maxDamage);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
     @Override
     public boolean broken() {
         if (this.damage == null) return false;
-        return this.damage == this.maxDamage;
+        return this.damage >= this.maxDamage;
     }
 
     @Override

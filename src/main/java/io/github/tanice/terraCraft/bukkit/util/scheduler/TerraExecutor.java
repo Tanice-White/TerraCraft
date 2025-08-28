@@ -13,6 +13,4 @@ public interface TerraExecutor {
     void cancel(long taskId);
 
     void shutdown();
-
-    void clear();
 }

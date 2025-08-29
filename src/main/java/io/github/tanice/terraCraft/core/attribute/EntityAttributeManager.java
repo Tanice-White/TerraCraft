@@ -2,13 +2,13 @@ package io.github.tanice.terraCraft.core.attribute;
 
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.attribute.calculator.TerraAttributeCalculator;
+import io.github.tanice.terraCraft.bukkit.util.TerraWeakReference;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.EntityAttributeCalculator;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import org.bukkit.entity.LivingEntity;
 
-import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,11 +22,11 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
     private static final int CLEAN_UP_CD = 9;
 
     /** 标记实体是否正在计算中 */
-    private final ConcurrentMap<WeakReference<LivingEntity>, AtomicBoolean> computingFlags;
+    private final ConcurrentMap<TerraWeakReference, AtomicBoolean> computingFlags;
     /** 脏标记 */
-    private final ConcurrentMap<WeakReference<LivingEntity>, AtomicBoolean> dirtyFlags;
+    private final ConcurrentMap<TerraWeakReference, AtomicBoolean> dirtyFlags;
     /** 计算结果-实体属性 */
-    private final ConcurrentMap<WeakReference<LivingEntity>, TerraAttributeCalculator> calculatorMap;
+    private final ConcurrentMap<TerraWeakReference, TerraAttributeCalculator> calculatorMap;
 
     public EntityAttributeManager() {
         computingFlags = new ConcurrentHashMap<>();
@@ -50,7 +50,7 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
 
     @Override
     public TerraAttributeCalculator getAttributeCalculator(LivingEntity entity) {
-        WeakReference<LivingEntity> reference = new WeakReference<>(entity);
+        TerraWeakReference reference = new TerraWeakReference(entity);
         TerraAttributeCalculator calculator = calculatorMap.get(reference);
         /* 没有则现场计算 */
         if (calculator == null) {
@@ -68,23 +68,19 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
 
     @Override
     public void updateAttribute(LivingEntity entity) {
-        WeakReference<LivingEntity> reference = new WeakReference<>(entity);
+        TerraWeakReference reference = new TerraWeakReference(entity);
         dirtyFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
 
         AtomicBoolean computing = computingFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
         if (computing.compareAndSet(false, true)) {
             TerraSchedulers.async().run(() -> processAttributeUpdate(reference));
-
-            if (ConfigManager.isDebug()) {
-                TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updated");
-            }
             /* 计算中，标记为脏 */
         } else dirtyFlags.get(reference).set(true);
     }
 
     @Override
     public void unregister(LivingEntity entity) {
-        WeakReference<LivingEntity> reference = new WeakReference<>(entity);
+        TerraWeakReference reference = new TerraWeakReference(entity);
         computingFlags.remove(reference);
         dirtyFlags.remove(reference);
         calculatorMap.remove(reference);
@@ -93,28 +89,31 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
     /**
      * 处理实体更新
      */
-    private void processAttributeUpdate(WeakReference<LivingEntity> reference) {
+    private void processAttributeUpdate(TerraWeakReference reference) {
         try {
-            LivingEntity e = reference.get();
-            if (e != null && e.isValid()) {
+            LivingEntity entity = reference.get();
+            if (entity != null && entity.isValid()) {
                 /* 计算前清除脏标记 */
                 dirtyFlags.get(reference).set(false);
-                calculatorMap.put(reference, new EntityAttributeCalculator(e));
+                calculatorMap.put(reference, new EntityAttributeCalculator(entity));
+                if (ConfigManager.isDebug()) {
+                    TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updated");
+                }
             }
         } finally {
             computingFlags.get(reference).set(false);
             /* 如果期间有新请求，继续处理 */
             if (dirtyFlags.get(reference).getAndSet(false)) {
                 if (computingFlags.get(reference).compareAndSet(false, true)) {
-                    TerraSchedulers.async().run(() -> processAttributeUpdate(reference));
+                    processAttributeUpdate(reference);
                 }
             }
         }
     }
 
     private void cleanup() {
-        Iterator<Map.Entry<WeakReference<LivingEntity>, TerraAttributeCalculator>> it = calculatorMap.entrySet().iterator();
-        Map.Entry<WeakReference<LivingEntity>, TerraAttributeCalculator> entry;
+        Iterator<Map.Entry<TerraWeakReference, TerraAttributeCalculator>> it = calculatorMap.entrySet().iterator();
+        Map.Entry<TerraWeakReference, TerraAttributeCalculator> entry;
         LivingEntity e;
         while (it.hasNext()) {
             entry = it.next();

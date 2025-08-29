@@ -2,8 +2,6 @@ package io.github.tanice.terraCraft.api.buff;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 
-import java.util.Set;
-
 public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
 
     /**

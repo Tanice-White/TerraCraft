@@ -35,12 +35,10 @@ public class WeaponComponent implements TerraWeaponComponent {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "weapon");
-                if (disableBlockingForSeconds != null)
-                    component.setFloat("disable_blocking_for_seconds", disableBlockingForSeconds);
+                if (disableBlockingForSeconds != null) component.setFloat("disable_blocking_for_seconds", disableBlockingForSeconds);
                 if (itemDamagePerAttack != null) component.setInteger("damage_per_attack", itemDamagePerAttack);
             });
         } else TerraCraftLogger.warning("weapon component is only supported in Minecraft 1.21.5 or newer versions");
-
     }
 
     @Override
@@ -49,7 +47,7 @@ public class WeaponComponent implements TerraWeaponComponent {
     }
 
     public static void clear(ItemStack item) {
-        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "weapon");
             });
@@ -57,7 +55,7 @@ public class WeaponComponent implements TerraWeaponComponent {
     }
 
     public static void remove(ItemStack item) {
-        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
                 nbt.removeKey(MINECRAFT_PREFIX + "weapon");
                 nbt.getOrCreateCompound("!" + MINECRAFT_PREFIX + "weapon");

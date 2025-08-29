@@ -332,6 +332,7 @@ TerraGem护甲值测试:
 
 # 这只是一个模仿原版盾牌的示例，但是很遗憾，无法实现破盾中强迫玩家放下盾牌的效果（使用buff覆盖即可，但是玩家仍然举着盾牌）
 # 可以使用其他的方式，例如一个不能举的盾牌，在副手生效，检测攻击自动尝试格挡即可
+# 但是目前没有找到扣除对应耐久的方法
 插件盾牌实现:
   id: shield
   display_name: "<red>插件盾牌测试"
@@ -341,10 +342,6 @@ TerraGem护甲值测试:
     base: 1
     factor: 0.5
     threshold: 45  # 角度 = js判定角度 / 2
-  terra_durability:  # 原版耐久无用
-    damage: 0
-    max_damage: 10
-    break_loss: true
   buff:
     hold:
       - "格挡"
@@ -415,12 +412,17 @@ TerraGem护甲值测试:
 钓竿耐久测试:
   id: fishing_rod
   display_name: "<yellow>工具耐久测试"
+  lore:
+    - "<gray>我还支持原版的break_sound :)"
+    - "<gray>       -terra_durability"
   max_stack_size: 1
   terra_durability:
     damage: 0
     max_damage: 10
     break_loss: true
   glint: true
+  break_sound: # terra_durability也支持原版的break_sound指令，range无效
+    id: random.anvil_land
 
 武器耐久测试:
   id: golden_sword
@@ -447,6 +449,8 @@ TerraGem护甲值测试:
     max_damage: 9
     break_loss: false
   glint: true
+  break_sound: # terra_durability也支持原版的break_sound指令，range无效
+    id: block.wooden_door.open
 
 弩耐久测试:
   id: crossbow

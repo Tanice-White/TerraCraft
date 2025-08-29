@@ -63,8 +63,8 @@ public final class EquipmentUtil {
             } else {
                 /* 加载原版meta */
                 /* 物品本身 */
-                TerraItemMetaLoadEvent itemMetaLoadEvent = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
-                if (itemMetaLoadEvent.getMeta() != null) res.add(itemMetaLoadEvent.getMeta());
+                TerraItemMetaLoadEvent event = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
+                if (event.getMeta() != null) res.add(event.getMeta());
                 else {
                     customMeta = Registry.ORI_ITEM.get(item.getType().toString());
                     if (customMeta != null) res.add(customMeta.clone());

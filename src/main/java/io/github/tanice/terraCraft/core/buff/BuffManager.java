@@ -49,8 +49,6 @@ public final class BuffManager implements TerraBuffManager {
     private final ConcurrentMap<TerraWeakReference, ConcurrentMap<String, TerraBuffRecord>> entityBuffs;
     /** 需要主线程执行的 buff 队列 */
     private final LinkedBlockingQueue<TerraBuffRecord> buffTaskQueue;
-    /** 需要唤起属性改变事件的玩家队列 */
-    private final LinkedBlockingQueue<LivingEntity> eventQueue;
 
     public BuffManager(TerraPlugin plugin) {
         this.random = new Random();
@@ -60,7 +58,6 @@ public final class BuffManager implements TerraBuffManager {
 
         this.entityBuffs = new ConcurrentHashMap<>();
         this.buffTaskQueue = new LinkedBlockingQueue<>();
-        this.eventQueue = new LinkedBlockingQueue<>();
 
         this.loadResource();
         TerraSchedulers.async().repeat(this::processBuffLifeCycle, 1, BUFF_RUN_CD);
@@ -75,7 +72,6 @@ public final class BuffManager implements TerraBuffManager {
         buffs.clear();
         entityBuffs.clear();
         buffTaskQueue.clear();
-        eventQueue.clear();
         loadResource();
     }
 
@@ -84,7 +80,6 @@ public final class BuffManager implements TerraBuffManager {
         buffs.clear();
         entityBuffs.clear();
         buffTaskQueue.clear();
-        eventQueue.clear();
     }
 
     @Override
@@ -205,6 +200,7 @@ public final class BuffManager implements TerraBuffManager {
 
     /**
      * 获取实体的有效 buff Meta
+     * 不排除即将remove的buff记录 --防止出现空挡
      */
     @Override
     public List<TerraBaseBuff> getEntityActiveBuffs(LivingEntity entity) {
@@ -215,13 +211,14 @@ public final class BuffManager implements TerraBuffManager {
 
         List<TerraBaseBuff> res = new ArrayList<>(records.size());
         for (TerraBuffRecord r : records.values()) {
-            if (!r.isTimer())res.add(r.getBuff());
+            if (!r.isTimer()) res.add(r.getBuff());
         }
         return res;
     }
 
     /**
      * 获取实体buff记录
+     * 标记移除的也会获取到
      */
     @Override
     public Collection<TerraBuffRecord> getEntityActiveBuffRecords(LivingEntity entity) {
@@ -232,11 +229,24 @@ public final class BuffManager implements TerraBuffManager {
     }
 
     /**
+     * 同一个异步线程上，更新 hold_buff
+     * @param entity 目标实体
+     */
+    private void ActivateHoldBuffsSingleThread(LivingEntity entity) {
+        List<TerraBaseBuff> buffs = new ArrayList<>();
+        for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(entity)) {
+            BuffComponent buffComponent = BuffComponent.from(item);
+            if (buffComponent == null) continue;
+            buffs.addAll(buffComponent.getHold().stream().map(NBTBuff::getAsTerraBuff).filter(Objects::nonNull).toList());
+        }
+        addBuffsToEntity(entity, buffs, true);
+    }
+
+    /**
      * 执行 buff 效果
      */
     private void doBuffEffects() {
         List<TerraBuffRecord> buffsToExecute = new ArrayList<>();
-        List<LivingEntity> attributeToChange = new ArrayList<>();
         TerraJSEngineManager engineManager = TerraCraftBukkit.inst().getJSEngineManager();
         /* 主线程执行buff效果 可以设置负载，过高则分给下 RUN_CD - 1 个tick */
         buffTaskQueue.drainTo(buffsToExecute);
@@ -246,11 +256,8 @@ public final class BuffManager implements TerraBuffManager {
             e = record.getEntityReference().get();
             if (e == null || !e.isValid()) continue;
             baseBuff = record.getBuff();
-            if (baseBuff instanceof TerraRunnableBuff b) engineManager.executeFunction(b.getFileName(), (LivingEntity) e);
+            if (baseBuff instanceof TerraRunnableBuff b) engineManager.executeFunction(b.getFileName(), e);
         }
-        /* 改变玩家属性 */
-        eventQueue.drainTo(attributeToChange);
-        for (LivingEntity en : attributeToChange) TerraEvents.callSync(new TerraAttributeUpdateEvent(en));
     }
 
 
@@ -260,7 +267,7 @@ public final class BuffManager implements TerraBuffManager {
     private void processBuffLifeCycle() {
         ConcurrentMap<String, TerraBuffRecord> ebs;
         TerraBuffRecord record;
-        boolean changed;
+        boolean tagged;
 
         for (Map.Entry<TerraWeakReference, ConcurrentMap<String, TerraBuffRecord>> buffMapEntry : this.entityBuffs.entrySet()) {
             LivingEntity entity = buffMapEntry.getKey().get();
@@ -269,11 +276,10 @@ public final class BuffManager implements TerraBuffManager {
             ebs = buffMapEntry.getValue();
             if (ebs == null || ebs.isEmpty()) continue;
 
-            changed = false;
+            tagged = false; // 是否标记了需要移除的buff
             for (Iterator<TerraBuffRecord> innerIt = ebs.values().iterator(); innerIt.hasNext(); ) {
                 record = innerIt.next();
                 if (record.isToRemove()) {
-                    changed = true;
                     innerIt.remove();
                     continue;
                 }
@@ -281,6 +287,7 @@ public final class BuffManager implements TerraBuffManager {
                 /* 检查持续时间 */
                 if (record.getDurationCounter() < 0) {
                     record.setToRemove(true);
+                    tagged = true;
                     continue;
                 }
                 /* 检查触发cd */
@@ -289,35 +296,34 @@ public final class BuffManager implements TerraBuffManager {
                     else TerraCraftLogger.error("buffTaskQueue overflow!");
                 }
             }
-            activateHoldBuffs(entity);
-            if (changed) eventQueue.offer(entity);
+            if (tagged) ActivateHoldBuffsSingleThread(entity);
         }
     }
 
+    /**
+     * 较为耗时, 异步执行
+     */
     private void addBuffsToEntity(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean ignoreChance) {
         if (entity == null || !entity.isValid()) return;
         boolean changed = false;
         for (TerraBaseBuff buff : buffs) {
             if (!ignoreChance && random.nextDouble() > buff.getChance()) continue;
             ConcurrentMap<String, TerraBuffRecord> ebs = entityBuffs.computeIfAbsent(new TerraWeakReference(entity), id -> new ConcurrentHashMap<>());
-            /* 处理buff冲突 */
-            boolean flag = false;
-            for (String s : ebs.keySet()) {
-                if (buff.mutexWith(s)) {
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag) continue;
-            /* 处理buff覆盖 */
+            boolean skip = false;
             for (TerraBuffRecord r : ebs.values()) {
-                if (r.getBuff().canOverride(buff.getName())) {
-                    flag = true;
+                if (r.isToRemove()) continue; // 忽略即将移除的
+                // 存在冲突 或 被现有buff覆盖，均跳过当前buff
+                if (buff.mutexWith(r.getBuff().getName()) || r.getBuff().canOverride(buff.getName())) {
+                    skip = true;
                     break;
                 }
             }
-            if (flag) continue;
-            for (String n : ebs.keySet()) if (buff.canOverride(n)) ebs.remove(n);
+            if (skip) continue;
+            // 移除被当前buff覆盖的"有效buff"
+            ebs.entrySet().removeIf(entry -> {
+                TerraBuffRecord r = entry.getValue();
+                return !r.isToRemove() && buff.canOverride(entry.getKey());
+            });
             /* 执行增加 */
             ebs.compute(buff.getName(), (name, existingRecord) -> {
                 if (existingRecord != null) {

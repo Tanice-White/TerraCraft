@@ -5,6 +5,7 @@ import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -55,7 +56,8 @@ public class ItemOperationListener implements Listener, TerraListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onShoot(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        if (processDurability(event.getBow(), 1)) {
+        if (player.getGameMode() == GameMode.CREATIVE) return;
+        if (processDurability(player, event.getBow(), 1)) {
             ItemStack item = event.getConsumable();
             if (event.shouldConsumeItem() && item != null && !item.isEmpty())
                 player.getInventory().addItem(item);
@@ -67,14 +69,15 @@ public class ItemOperationListener implements Listener, TerraListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerReelIn(PlayerFishEvent event) {
         Player player = event.getPlayer();
+        if (player.getGameMode() == GameMode.CREATIVE) return;
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH || event.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (!item.isEmpty() && item.getType() == Material.FISHING_ROD) {
-                if (processDurability(item, 1)) event.setCancelled(true);
+                if (processDurability(player, item, 1)) event.setCancelled(true);
             } else {
                 item = player.getInventory().getItemInOffHand();
                 if (!item.isEmpty() && item.getType() == Material.FISHING_ROD) {
-                    if (processDurability(item, 1)) event.setCancelled(true);
+                    if (processDurability(player, item, 1)) event.setCancelled(true);
                 }
             }
         }
@@ -83,53 +86,42 @@ public class ItemOperationListener implements Listener, TerraListener {
     /* 耐久监听-方块交互 */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        if (player.getGameMode() == GameMode.CREATIVE) return;
         /* 硬度为0不消耗耐久 */
         if (event.getBlock().getType().getHardness() == 0.0f) return;
-        Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (processDurability(item, damagePerBlock(item))) event.setCancelled(true);
+        if (processDurability(player, item, damagePerBlock(item))) event.setCancelled(true);
     }
 
     /* 耐久监听-盾牌档伤害事件的优先级是high */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity entityAttacker = event.getDamager();
         Entity entityDefender = event.getEntity();
         ItemStack item;
         /* 攻击方处理 */
         if (entityAttacker instanceof Player attacker) {
-            item = attacker.getInventory().getItemInMainHand();
-            if (processDurability(item, damagePerAttack(item))) event.setCancelled(true);
+            if (attacker.getGameMode() != GameMode.CREATIVE) {
+                item = attacker.getInventory().getItemInMainHand();
+                if (processDurability(attacker, item, damagePerAttack(item))) event.setCancelled(true);
+            }
             /* 抛射物 */
         } else if (entityAttacker instanceof Projectile projectile) {
             ProjectileSource source = projectile.getShooter();
-            if (!(source instanceof Player)) return;
-            /* 只有三叉戟需要监听耐久 */
-            if (projectile instanceof Trident trident && processDurability(trident.getItemStack(), damagePerAttack(trident.getItemStack()))) {
-                event.setCancelled(true);
+            if (source instanceof Player attacker && attacker.getGameMode() != GameMode.CREATIVE) {
+                /* 只有三叉戟需要监听耐久 */
+                if (projectile instanceof Trident trident && processDurability(attacker, trident.getItemStack(), damagePerAttack(trident.getItemStack()))) {
+                    event.setCancelled(true);
+                }
             }
         }
         /* 防御方处理 */
-        if (entityDefender instanceof LivingEntity defender) {
+        if (entityDefender instanceof Player defender && defender.getGameMode() != GameMode.CREATIVE) {
             EntityEquipment equipment = defender.getEquipment();
             if (equipment == null) return;
-            /* 根据事件是否取消判定盾牌是否生效 */
-            if (defender instanceof Player player) {
-                if (event.isCancelled() && player.isBlocking()) {
-                    if (isShield(equipment.getItemInMainHand())) {
-                        // 损坏 则 事件不取消
-                        if (processDurability(player.getInventory().getItemInMainHand(), blockDamage(event.getFinalDamage()))) event.setCancelled(false);
-                    }
-                    else if (isShield(equipment.getItemInOffHand())) {
-                        if (processDurability(player.getInventory().getItemInOffHand(), blockDamage(event.getFinalDamage()))) event.setCancelled(false);
-                    }
-                    return;
-                }
-            }
-            if (event.isCancelled()) return;
-            /* 事件未取消 */
             /* 护甲耐久减少 */
-            for (ItemStack i : equipment.getArmorContents()) processDurability(i, equipmentDamage(event.getFinalDamage()));
+            for (ItemStack i : equipment.getArmorContents()) processDurability(defender, i, equipmentDamage(event.getFinalDamage()));
         }
     }
 
@@ -138,7 +130,7 @@ public class ItemOperationListener implements Listener, TerraListener {
      * @param item 需要丢失耐久的物品
      * @return 物品是否损坏--用于取消事件
      */
-    private boolean processDurability(@Nullable ItemStack item, int damage) {
+    private boolean processDurability(Player player, @Nullable ItemStack item, int damage) {
         if (item == null) return false;
         TerraDurabilityComponent component = DurabilityComponent.from(item);
         if (component == null) return false;
@@ -147,6 +139,8 @@ public class ItemOperationListener implements Listener, TerraListener {
         component.setDamage(component.getDamage() + damage);
         component.cover(item);
         if (component.broken()) {
+            // 播放break_sound
+            player.playSound(player, breakSound(item), 0.8f, 1.2f);
             if (component.isBreakLoss()) item.setAmount(0);
         }
         return false;

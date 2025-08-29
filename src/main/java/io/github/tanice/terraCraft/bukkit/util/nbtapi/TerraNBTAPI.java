@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static io.github.tanice.terraCraft.api.item.component.TerraBaseComponent.MINECRAFT_PREFIX;
 
@@ -70,6 +71,20 @@ public final class TerraNBTAPI {
             return damagePerAttack.get();
         }
         return 1;
+    }
+
+    /**
+     * 获取原版的break_sound
+     */
+    public static String breakSound(ItemStack item) {
+        AtomicReference<String> res = new AtomicReference<>("minecraft:entity.item.break");
+        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
+            NBT.getComponents(item, nbt -> {
+                ReadableNBT compound = nbt.getCompound(MINECRAFT_PREFIX + "break_sound");
+                if (compound != null) res.set(compound.getString("sound_id"));
+            });
+        }
+        return res.get();
     }
 
 }

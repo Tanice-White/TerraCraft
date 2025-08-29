@@ -50,12 +50,11 @@ public class BuffRecord implements TerraBuffRecord {
      */
     @Override
     public void merge(TerraBaseBuff other) {
-        int p = this.buff.getDuration();
-        int n = other.getDuration();
-        other.setDuration(Math.max(p, n));
-        int d = p - this.durationCounter;
-        this.durationCounter = other.getDuration() - d;
-        this.buff = other;
+        TerraBaseBuff newBuff = other.clone();
+        /* 计算合并后的时长 */
+        /* duration用最长的, cd等其他属性用最新的 */
+        this.durationCounter = Math.max(buff.getDuration(), other.getDuration());
+        this.buff = newBuff;
         this.toRemove = false;
     }
 
@@ -76,8 +75,9 @@ public class BuffRecord implements TerraBuffRecord {
 
     @Override
     public void cooldown(int delta) {
-        cooldownCounter -= delta;
-        durationCounter -= delta;
+        /* runnable的cooldown会一直减少,可能会溢出 */
+        if (cooldownCounter >= 0) cooldownCounter -= delta;
+        if (durationCounter >= 0) durationCounter -= delta;
     }
 
     @Override

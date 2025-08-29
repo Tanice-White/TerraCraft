@@ -35,7 +35,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
      */
     protected EnumMap<AttributeActiveSection, TerraCalculableMeta> transformTmp;
 
-    public EntityAttributeCalculator(LivingEntity livingEntity) {
+    public EntityAttributeCalculator(LivingEntity entity) {
         this.useDamageReductionBalance = ConfigManager.useDamageReductionBalanceForPlayer();
         this.transformTmp = new EnumMap<>(AttributeActiveSection.class);
         this.beforeList = new ArrayList<>();
@@ -43,7 +43,7 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
         this.afterList = new ArrayList<>();
         this.meta = new CalculableMeta(AttributeActiveSection.BASE);
 
-        this.initBuffListsAndTransformTmp(livingEntity);
+        this.initBuffListsAndTransformTmp(entity);
         this.initDamageTypeModifiers();
         this.initAttributeTypeModifiers();
     }

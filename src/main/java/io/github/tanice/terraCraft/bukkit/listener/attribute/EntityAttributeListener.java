@@ -56,9 +56,9 @@ public class EntityAttributeListener implements Listener, TerraListener {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player p = event.getPlayer();
         TerraSchedulers.sync().runLater(() -> {
-            TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(p);
             /* buff没有更新则需要手动触发更新 */
             TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute(p);
+            TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(p);
             TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);
         }, 1);
     }
@@ -68,9 +68,9 @@ public class EntityAttributeListener implements Listener, TerraListener {
         LivingEntity entity = event.getEntity();
         TerraSchedulers.sync().runLater(() -> {
             /* activateHoldBuffs() 会自动触发属性变动 */
+            TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute(entity);
             TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(entity);
             /* buff没有更新则需要手动触发更新 */
-            TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute(entity);
             if (entity instanceof Player p) TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);
         }, 1);
     }

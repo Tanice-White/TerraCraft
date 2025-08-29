@@ -68,6 +68,7 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
 
     @Override
     public void updateAttribute(LivingEntity entity) {
+        if (entity == null || !entity.isValid()) return;
         TerraWeakReference reference = new TerraWeakReference(entity);
         dirtyFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
 

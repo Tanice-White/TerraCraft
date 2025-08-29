@@ -7,6 +7,7 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.registry.Registry;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
 import org.bukkit.entity.LivingEntity;
@@ -50,22 +51,23 @@ public final class EquipmentUtil {
     /**
      * 获取实体装备的整合 meta
      * 如果是插件物品则不增加原版伤害值
+     * 能被异步执行，所有事件需要在主线程上call!!!!!!
      */
     public static List<TerraCalculableMeta> getActiveEquipmentMeta(LivingEntity entity) {
         List<TerraCalculableMeta> res = new ArrayList<>(12);
-        TerraInnerNameComponent terraInnerNameComponent;
+        TerraInnerNameComponent nameComponent;
         TerraCalculableMeta customMeta;
         for (ItemStack item : getActiveEquipmentItemStack(entity)) {
-            terraInnerNameComponent = TerraNameComponent.from(item);
-            if (terraInnerNameComponent != null) {
-                /* 插件meta */
-                res.addAll(getItemMergedTerraMeta(item));
-            } else {
+            nameComponent = TerraNameComponent.from(item);
+            /* 插件meta */
+            if (nameComponent != null) res.addAll(getItemMergedTerraMeta(item));
+            else {
                 /* 加载原版meta */
-                /* 物品本身 */
-                TerraItemMetaLoadEvent event = TerraEvents.callAndReturn(new TerraItemMetaLoadEvent(item));
-                if (event.getMeta() != null) res.add(event.getMeta());
-                else {
+                TerraItemMetaLoadEvent event = new TerraItemMetaLoadEvent(item);
+                TerraEvents.callSync(event);
+                if (event.getMeta() != null) {
+                    res.add(event.getMeta());
+                } else {
                     customMeta = Registry.ORI_ITEM.get(item.getType().toString());
                     if (customMeta != null) res.add(customMeta.clone());
                 }

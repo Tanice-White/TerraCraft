@@ -66,7 +66,7 @@ public final class TerraNBTAPI {
             NBT.getComponents(item, nbt -> {
                 ReadableNBT component = nbt.resolveCompound(MINECRAFT_PREFIX + "weapon");
                 if (component == null) return;
-                if (component.hasTag("damage_per_attack")) damagePerAttack.set(component.getInteger("damage_per_attack"));
+                if (component.hasTag("item_damage_per_attack")) damagePerAttack.set(component.getInteger("damage_per_attack"));
             });
             return damagePerAttack.get();
         }

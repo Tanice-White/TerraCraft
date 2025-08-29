@@ -141,7 +141,7 @@ NBT全知全能:
     seconds: 5
   use_remainder:
     id: axolotl_bucket
-    component: "{\"custom_name\":\"??\"}"  # 正常格式：{custom_name:'{"color":"yellow","text":"打咩哟"}'}
+    component: "{\"minecraft:custom_name\":\"??\"}"  # 正常格式：{minecraft:custom_name:'{"color":"yellow","text":"打咩哟"}'}  # 所有组件一定要有minecraft:！！！！
     count: 1
   weapon:
     disable_shield_seconds: 5
@@ -422,7 +422,7 @@ TerraGem护甲值测试:
     break_loss: true
   glint: true
   break_sound: # terra_durability也支持原版的break_sound指令，range无效
-    id: random.anvil_land
+    id: block.anvil.land
 
 武器耐久测试:
   id: golden_sword

@@ -140,7 +140,7 @@ public class ItemOperationListener implements Listener, TerraListener {
         component.cover(item);
         if (component.broken()) {
             // 播放break_sound
-            player.playSound(player, breakSound(item), 0.8f, 1.2f);
+            player.playSound(player, breakSound(item), 1f, 1.2f);
             if (component.isBreakLoss()) item.setAmount(0);
         }
         return false;

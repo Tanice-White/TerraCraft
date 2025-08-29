@@ -7,14 +7,14 @@ import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.item.component.SkillComponent;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
+import io.github.tanice.terraCraft.bukkit.util.TerraWeakReference;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.MMHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,13 +48,13 @@ public final class SkillManager implements TerraSkillManager {
     private final ConcurrentMap<String, SkillMeta> skillMap;
 
     /** 标记实体是否正在计算中 */
-    private final ConcurrentMap<UUID, AtomicBoolean> computingFlags;
+    private final ConcurrentMap<TerraWeakReference, AtomicBoolean> computingFlags;
     /** 脏标记 */
-    private final ConcurrentMap<UUID, AtomicBoolean> dirtyFlags;
+    private final ConcurrentMap<TerraWeakReference, AtomicBoolean> dirtyFlags;
     /** 玩家可释放的技能 */
-    private final Map<UUID, EnumMap<Trigger, Set<SkillRowData>>> playerSkillMap;
+    private final Map<TerraWeakReference, EnumMap<Trigger, Set<SkillRowData>>> playerSkillMap;
     /** 玩家ID -> 技能对象 -> 下一次可释放的时间戳(毫秒) */
-    private final ConcurrentMap<UUID, ConcurrentMap<String, Long>> playerSkillCooldowns;
+    private final ConcurrentMap<TerraWeakReference, ConcurrentMap<String, Long>> playerSkillCooldowns;
 
 
     public SkillManager(TerraPlugin plugin) {
@@ -90,10 +90,10 @@ public final class SkillManager implements TerraSkillManager {
      * 释放技能(通过监听玩家事件)
      */
     public void castSkill(Player player, Trigger trigger) {
-        UUID playerId = player.getUniqueId();
+        TerraWeakReference reference = new TerraWeakReference(player);
 
         /* 获取玩家所有可用技能 */
-        EnumMap<Trigger, Set<SkillRowData>> triggerSkillMap = playerSkillMap.get(playerId);
+        EnumMap<Trigger, Set<SkillRowData>> triggerSkillMap = playerSkillMap.get(reference);
         if (triggerSkillMap == null || triggerSkillMap.isEmpty()) return;
         /* 获取指定触发器对应的技能集合 */
         Set<SkillRowData> skills = triggerSkillMap.get(trigger);
@@ -127,7 +127,7 @@ public final class SkillManager implements TerraSkillManager {
      * @param nextAvailableTime 毫秒
      */
     public void setSkillCooldown(Player player, SkillRowData skill, long nextAvailableTime) {
-        playerSkillCooldowns.compute(player.getUniqueId(), (uid, skillMap) -> {
+        playerSkillCooldowns.compute(new TerraWeakReference(player), (uid, skillMap) -> {
             if (skillMap == null) skillMap = new ConcurrentHashMap<>();
             skillMap.put(skill.getSkillName(), nextAvailableTime);
             return skillMap;
@@ -138,7 +138,7 @@ public final class SkillManager implements TerraSkillManager {
      * 检查技能是否就绪 (只读)
      */
     public boolean isSkillCooldownReady(Player player, String skillName, long currentTime) {
-        ConcurrentMap<String, Long> skillMap = playerSkillCooldowns.get(player.getUniqueId());
+        ConcurrentMap<String, Long> skillMap = playerSkillCooldowns.get(new TerraWeakReference(player));
         if (skillMap == null || skillMap.isEmpty()) return true;
 
         Long nextAvailableTime = skillMap.get(skillName);
@@ -151,7 +151,7 @@ public final class SkillManager implements TerraSkillManager {
      * 获取技能剩余冷却时间 (只读)
      */
     public long getSkillRemainingCooldown(Player player, String skillName, long currentTime) {
-        ConcurrentMap<String, Long> skillMap = playerSkillCooldowns.get(player.getUniqueId());
+        ConcurrentMap<String, Long> skillMap = playerSkillCooldowns.get(new TerraWeakReference(player));
         if (skillMap == null) return 0;
 
         Long nextAvailableTime = skillMap.get(skillName);
@@ -165,9 +165,9 @@ public final class SkillManager implements TerraSkillManager {
      * 提交玩家技能更新
      */
     public void updatePlayerSkills(Player player) {
-        UUID uuid = player.getUniqueId();
-        dirtyFlags.computeIfAbsent(uuid, k -> new AtomicBoolean(false));
-        AtomicBoolean computing = computingFlags.computeIfAbsent(uuid, k -> new AtomicBoolean(false));
+        TerraWeakReference reference = new TerraWeakReference(player);
+        dirtyFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
+        AtomicBoolean computing = computingFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
 
         if (computing.compareAndSet(false, true)) {
             TerraSchedulers.async().run(() -> updateAvailableSkills(player));
@@ -176,19 +176,19 @@ public final class SkillManager implements TerraSkillManager {
                 TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL, "Player " + player.getName() + " available skills updated");
 
             /* 计算中，标记为脏 */
-        } else dirtyFlags.get(uuid).set(true);
+        } else dirtyFlags.get(reference).set(true);
     }
 
     /**
      * 更新玩家可用技能
      */
     private void updateAvailableSkills(Player player) {
-        UUID uuid = player.getUniqueId();
+        TerraWeakReference reference = new TerraWeakReference(player);
         try {
             /* 计算前清除脏标记 */
-            dirtyFlags.get(uuid).set(false);
+            dirtyFlags.get(reference).set(false);
             EnumMap<Trigger, Set<SkillRowData>> tsm = playerSkillMap.computeIfAbsent(
-                    uuid, k -> new EnumMap<>(Trigger.class)
+                    reference, k -> new EnumMap<>(Trigger.class)
             );
             /* 防止旧数据残留 */
             tsm.clear();
@@ -224,10 +224,10 @@ public final class SkillManager implements TerraSkillManager {
             }
 
         } finally {
-            computingFlags.get(uuid).set(false);
+            computingFlags.get(reference).set(false);
             /* 如果期间有新请求，继续处理 */
-            if (dirtyFlags.get(uuid).getAndSet(false)) {
-                if (computingFlags.get(uuid).compareAndSet(false, true)) {
+            if (dirtyFlags.get(reference).getAndSet(false)) {
+                if (computingFlags.get(reference).compareAndSet(false, true)) {
                     TerraSchedulers.async().run(() -> updateAvailableSkills(player));
                 }
             }
@@ -239,19 +239,25 @@ public final class SkillManager implements TerraSkillManager {
      */
     private void cleanup() {
         long expiredThreshold = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(REMAIN_TIME);
-        playerSkillCooldowns.forEach((uuid, skillMap) -> {
-            Entity e = Bukkit.getEntity(uuid);
-            if (e == null || !e.isValid()) {
-                playerSkillCooldowns.remove(uuid, skillMap);
-                return;
+        Iterator<Map.Entry<TerraWeakReference, ConcurrentMap<String, Long>>> it = playerSkillCooldowns.entrySet().iterator();
+        Map.Entry<TerraWeakReference, ConcurrentMap<String, Long>> entry;
+        TerraWeakReference reference;
+        ConcurrentMap<String, Long> cooldownMap;
+        LivingEntity entity;
+        while (it.hasNext()) {
+            entry = it.next();
+            reference = entry.getKey();
+            cooldownMap = entry.getValue();
+            entity = reference.get();
+
+            cooldownMap.entrySet().removeIf(skillEntry -> skillEntry.getValue() <= expiredThreshold);
+            if (entity == null || !entity.isValid() || !(entity instanceof Player) || cooldownMap.isEmpty()) {
+                it.remove();
+                playerSkillMap.remove(reference);
+                computingFlags.remove(reference);
+                dirtyFlags.remove(reference);
             }
-            skillMap.entrySet().removeIf(entry -> {
-                long nextAvailableTime = entry.getValue();
-                return nextAvailableTime <= expiredThreshold;
-            });
-            /* 玩家没有技能条目则删除 */
-            if (skillMap.isEmpty()) playerSkillCooldowns.remove(uuid, skillMap);
-        });
+        }
     }
 
     private void loadResourceFiles(){

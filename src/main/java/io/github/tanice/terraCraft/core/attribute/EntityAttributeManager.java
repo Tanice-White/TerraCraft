@@ -74,6 +74,9 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
         AtomicBoolean computing = computingFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
         if (computing.compareAndSet(false, true)) {
             TerraSchedulers.async().run(() -> processAttributeUpdate(reference));
+            if (ConfigManager.isDebug()) {
+                TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updating");
+            }
             /* 计算中，标记为脏 */
         } else dirtyFlags.get(reference).set(true);
     }
@@ -96,16 +99,14 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
                 /* 计算前清除脏标记 */
                 dirtyFlags.get(reference).set(false);
                 calculatorMap.put(reference, new EntityAttributeCalculator(entity));
-                if (ConfigManager.isDebug()) {
-                    TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.CALCULATOR, "Entity: " + entity.getName() + " attribute updated");
-                }
             }
         } finally {
             computingFlags.get(reference).set(false);
             /* 如果期间有新请求，继续处理 */
             if (dirtyFlags.get(reference).getAndSet(false)) {
                 if (computingFlags.get(reference).compareAndSet(false, true)) {
-                    processAttributeUpdate(reference);
+                    /* 异步线程->避免递归的栈溢出 */
+                    TerraSchedulers.async().run(() -> processAttributeUpdate(reference));
                 }
             }
         }
@@ -114,14 +115,16 @@ public class EntityAttributeManager implements TerraEntityAttributeManager {
     private void cleanup() {
         Iterator<Map.Entry<TerraWeakReference, TerraAttributeCalculator>> it = calculatorMap.entrySet().iterator();
         Map.Entry<TerraWeakReference, TerraAttributeCalculator> entry;
-        LivingEntity e;
+        TerraWeakReference reference;
+        LivingEntity entity;
         while (it.hasNext()) {
             entry = it.next();
-            e = entry.getKey().get();
-            if (e != null && e.isValid()) continue;
-            computingFlags.remove(entry.getKey());
-            dirtyFlags.remove(entry.getKey());
-            calculatorMap.remove(entry.getKey());
+            reference = entry.getKey();
+            entity = reference.get();
+            if (entity != null && entity.isValid()) continue;
+            it.remove();
+            computingFlags.remove(reference);
+            dirtyFlags.remove(reference);
         }
     }
 }

@@ -65,24 +65,35 @@ public final class TerraSchedulers {
         @Override
         public void run(Runnable task) {
             TerraSchedulers.stateCheck();
-
+            long id = ids.getAndAdd(1);
             BukkitTask bukkitTask = Bukkit.getScheduler().runTask(
-                    TerraCraftBukkit.inst(),
-                    task
-            );
-            tasks.put(ids.getAndAdd(1), bukkitTask.getTaskId());
+                    TerraCraftBukkit.inst(), () -> {
+                        try {
+                            task.run();
+                        } finally {
+                            tasks.remove(id);
+                        }
+                    });
+            tasks.put(id, bukkitTask.getTaskId());
         }
 
         @Override
         public void runLater(Runnable task, long delayTicks) {
             TerraSchedulers.stateCheck();
+            long id = ids.getAndAdd(1);
 
             BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(
                     TerraCraftBukkit.inst(),
-                    task,
+                    () -> {
+                        try {
+                            task.run();
+                        } finally {
+                            tasks.remove(id);
+                        }
+                    },
                     delayTicks
             );
-            tasks.put(ids.getAndAdd(1), bukkitTask.getTaskId());
+            tasks.put(id, bukkitTask.getTaskId());
         }
 
         @Override
@@ -153,20 +164,37 @@ public final class TerraSchedulers {
         @Override
         public void run(Runnable task) {
             TerraSchedulers.stateCheck();
+            long id = ids.getAndAdd(1);
 
-            tasks.put(ids.getAndAdd(1), this.executor.submit(task));
+            Runnable wrappedTask = () -> {
+                try {
+                    task.run();
+                } finally {
+                    tasks.remove(id);
+                }
+            };
+
+            tasks.put(id, this.executor.submit(wrappedTask));
         }
 
         @Override
         public void runLater(Runnable task, long delayTicks) {
             TerraSchedulers.stateCheck();
+            long id = ids.getAndAdd(1);
 
+            Runnable wrappedTask = () -> {
+                try {
+                    task.run();
+                } finally {
+                    tasks.remove(id);
+                }
+            };
             ScheduledFuture<?> future = this.executor.schedule(
-                    task,
+                    wrappedTask,
                     Tick.to(delayTicks, TimeUnit.MILLISECONDS),
                     TimeUnit.MILLISECONDS
             );
-            tasks.put(ids.getAndAdd(1), future);
+            tasks.put(id, future);
         }
 
         @Override

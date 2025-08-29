@@ -43,13 +43,16 @@ public class TooltipComponent implements TerraTooltipComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (hideTooltip != null || hiddenComponents != null) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
                 NBT.modifyComponents(item, nbt -> {
                     ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "tooltip_display");
                     if (hideTooltip != null) component.setBoolean("hide_tooltip", hideTooltip);
-                    if (hiddenComponents != null) component.getStringList("hidden_components").addAll(hiddenComponents);
+                    if (hiddenComponents != null) {
+                        /* 覆盖 */
+                        component.getStringList("hidden_components").clear();
+                        component.getStringList("hidden_components").addAll(hiddenComponents);
+                    }
                 });
             } else {
                 /* 1.20.5 - 1.21.4 */
@@ -62,6 +65,7 @@ public class TooltipComponent implements TerraTooltipComponent {
                 if (hiddenComponents != null) {
                     NBT.modify(item, nbt -> {
                         nbt.modifyMeta((readableNBT, meta) -> {
+                            meta.removeItemFlags(meta.getItemFlags().toArray(ItemFlag[]::new));
                             for (String s : hiddenComponents) meta.addItemFlags(safeValueOf(ItemFlag.class, "HIDE_" + s, ItemFlag.HIDE_DYE));
                         });
                     });

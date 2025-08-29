@@ -73,6 +73,8 @@ public class ConsumableComponent implements TerraConsumableComponent {
                 if (hasConsumeParticles != null) component.setBoolean("has_consume_particles", hasConsumeParticles);
 
                 ReadWriteNBTCompoundList compoundList = component.getCompoundList("on_consume_effects");
+                /* 覆盖 */
+                compoundList.clear();
                 for (NBTEffect ce : effects) ce.addToCompound(compoundList.addCompound());
                 if (sound != null) sound.addToCompound(component.getOrCreateCompound("sound"));
             });

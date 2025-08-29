@@ -22,7 +22,6 @@ public class DyedColorComponent implements TerraDyedColor {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (color != null) nbt.setInteger(MINECRAFT_PREFIX + "dyed_color", color);

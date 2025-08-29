@@ -27,7 +27,6 @@ public class BreakSoundComponent implements TerraBreakSoundComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (sound != null) sound.addToCompound(nbt.getOrCreateCompound(MINECRAFT_PREFIX + "break_sound"));

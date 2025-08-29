@@ -68,11 +68,12 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (modifiers.isEmpty()) return;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBTCompoundList compoundList = nbt.getCompoundList(MINECRAFT_PREFIX + "attribute_modifiers");
+                /* 覆盖 */
+                compoundList.clear();
                 ReadWriteNBT component;
                 for (AttributeModifierComponent modifier : modifiers) {
                     component = compoundList.addCompound();
@@ -98,6 +99,8 @@ public class AttributeModifiersComponent implements TerraAttributeModifiersCompo
         } else {
             NBT.modify(item, nbt -> {
                 ReadWriteNBTCompoundList compoundList = nbt.getCompoundList("AttributeModifiers");
+                /* 覆盖 */
+                compoundList.clear();
                 ReadWriteNBT component;
                 for (AttributeModifierComponent modifier : modifiers) {
                     component = compoundList.addCompound();

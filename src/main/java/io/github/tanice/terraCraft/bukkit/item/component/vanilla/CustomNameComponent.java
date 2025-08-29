@@ -26,10 +26,9 @@ public class CustomNameComponent implements TerraCustomNameComponent {
     @Override
     public void cover(ItemStack item) {
         /* 名称的component变化未列出, 经常出莫名其妙的bug, 用meta */
-        clear(item);
         if (name == null) return;
         NBT.modify(item, nbt -> {
-            nbt.modifyMeta((rNbt, meta) -> {meta.displayName(name);});
+            nbt.modifyMeta((rNbt, meta) -> meta.displayName(name));
         });
 
     }

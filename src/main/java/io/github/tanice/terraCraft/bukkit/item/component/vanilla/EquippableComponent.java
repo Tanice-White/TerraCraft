@@ -74,13 +74,14 @@ public class EquippableComponent implements TerraEquippableComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "equippable");
 
-                if (allowedEntities != null && !allowedEntities.isEmpty())
+                if (allowedEntities != null && !allowedEntities.isEmpty()) {
+                    component.getStringList("allowed_entities").clear();
                     component.getStringList("allowed_entities").addAll(allowedEntities.stream().map(TerraNamespaceKey::get).toList());
+                }
                 if (assetId != null) {
                     if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_4)) component.setString("asset_id", assetId.get());
                     else component.setString("model", assetId.get());

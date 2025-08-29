@@ -20,7 +20,6 @@ public class DamageResistantComponent implements TerraDamageResistantComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt ->{
                 nbt.getOrCreateCompound(MINECRAFT_PREFIX + "damage_resistant").setString("types", "#" + resistantType.get());

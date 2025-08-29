@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBTList;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraCustomModelDataComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
@@ -19,10 +20,14 @@ public class CustomModelDataComponent implements TerraCustomModelDataComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
-                if (cmd != null) nbt.getOrCreateCompound(MINECRAFT_PREFIX + "custom_model_data").getFloatList("floats").add(cmd.floatValue());
+                if (cmd != null) {
+                    ReadWriteNBTList<Float> cmds = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "custom_model_data").getFloatList("floats");
+                    /* 确保只覆盖第一个位置的值 */
+                    if (cmds.isEmpty()) cmds.add(cmd.floatValue());
+                    else cmds.set(0, cmd.floatValue());
+                }
             });
         } else NBT.modify(item, nbt -> {nbt.setInteger("CustomModelData", cmd);});
     }

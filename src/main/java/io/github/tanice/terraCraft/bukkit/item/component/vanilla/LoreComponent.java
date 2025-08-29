@@ -22,7 +22,6 @@ public class LoreComponent implements TerraLoreComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (lore == null) return;
         /*  lore经常出莫名其妙的bug, 用meta */
         NBT.modify(item, nbt -> {

@@ -24,7 +24,6 @@ public class CustomDataComponent implements TerraCustomDataComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
     }
 
     @Override

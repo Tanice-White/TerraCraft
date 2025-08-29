@@ -37,7 +37,6 @@ public class UseRemainderComponent implements TerraUseRemainderComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT compound = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "use_remainder");

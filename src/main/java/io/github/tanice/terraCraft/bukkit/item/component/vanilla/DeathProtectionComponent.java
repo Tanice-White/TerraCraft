@@ -40,6 +40,8 @@ public class DeathProtectionComponent implements TerraDeathProtectionComponent {
             NBT.modifyComponents(item, nbt ->{
                 if (effects.isEmpty()) return;
                 ReadWriteNBTCompoundList compoundList = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "death_protection").getCompoundList("death_effects");
+                /* 覆盖 */
+                compoundList.clear();
                 ReadWriteNBT component;
                 for (NBTEffect effect : effects) {
                     component = compoundList.addCompound();

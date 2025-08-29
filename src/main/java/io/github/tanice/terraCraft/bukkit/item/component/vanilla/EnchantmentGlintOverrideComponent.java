@@ -20,7 +20,6 @@ public class EnchantmentGlintOverrideComponent implements TerraEnchantmentGlintO
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if(glint != null) nbt.setBoolean(MINECRAFT_PREFIX + "enchantment_glint_override", glint);

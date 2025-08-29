@@ -19,7 +19,6 @@ public class JukeboxPlayable implements TerraJukeboxPlayable {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21)) {
             NBT.modifyComponents(item, nbt -> {
                 if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {

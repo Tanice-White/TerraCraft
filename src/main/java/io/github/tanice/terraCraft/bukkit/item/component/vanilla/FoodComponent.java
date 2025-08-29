@@ -34,7 +34,6 @@ public class FoodComponent implements TerraFoodComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "food");

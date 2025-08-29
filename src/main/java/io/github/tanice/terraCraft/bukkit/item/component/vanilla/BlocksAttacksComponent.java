@@ -83,7 +83,6 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "blocks_attacks");
@@ -97,6 +96,8 @@ public class BlocksAttacksComponent implements TerraBlocksAttacksComponent {
                 if (canPass != null) component.setString("bypass_by", "#" + canPass.get());
                 if (!damageReductions.isEmpty()) {
                     ReadWriteNBTCompoundList drCompoundList = component.getCompoundList("damage_reductions");
+                    /* 覆盖 */
+                    drCompoundList.clear();
                     for (DamageReduction dr : damageReductions) {
                         bsCompound = drCompoundList.addCompound();
                         bsCompound.setFloat("base", dr.base);

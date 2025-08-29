@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 
 import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBTList;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraRepairComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
@@ -35,7 +36,6 @@ public class RepairComponent implements TerraRepairComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (cost != null) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
                 NBT.modifyComponents(item, nbt -> {
@@ -51,9 +51,10 @@ public class RepairComponent implements TerraRepairComponent {
         if (item != null && !items.isEmpty()) {
             if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
                 NBT.modifyComponents(item, nbt -> {
-                    nbt
-                            .getOrCreateCompound(MINECRAFT_PREFIX + "repairable")
-                            .getStringList("items").addAll(items.stream().map(TerraNamespaceKey::get).toList());
+                    ReadWriteNBTList<String> list = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "repairable").getStringList("items");
+                    /* 覆盖 */
+                    list.clear();
+                    list.addAll(items.stream().map(TerraNamespaceKey::get).toList());
                 });
             } else TerraCraftLogger.warning("Repairable component is only supported in Minecraft 1.21.2 or newer versions");
         }

@@ -57,7 +57,6 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
 
     @Override
     public void doCover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skill");
@@ -132,7 +131,10 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     private void addToCompound(ReadWriteNBT compound) {
-        if (skills != null && !skills.isEmpty()) compound.getStringList("content").addAll(skills);
+        if (skills != null && !skills.isEmpty()) {
+            compound.getStringList("content").clear();
+            compound.getStringList("content").addAll(skills);
+        }
         compound.setByte("state", state.toNbtByte());
     }
 

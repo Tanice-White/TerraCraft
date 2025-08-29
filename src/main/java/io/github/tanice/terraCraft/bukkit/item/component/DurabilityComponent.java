@@ -71,7 +71,6 @@ public class DurabilityComponent extends AbstractItemComponent implements TerraD
 
     @Override
     public void doCover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 nbt.getOrCreateCompound(MINECRAFT_PREFIX + "unbreakable");

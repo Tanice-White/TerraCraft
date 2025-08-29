@@ -83,7 +83,6 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
 
     @Override
     public void doCover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".gem_hold");
@@ -130,6 +129,7 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
 
     @Override
     public TerraBaseComponent updatePartial() {
+        /* 为null确保继承原本的gem */
         return new GemHolderComponent(this.limit, null, this.state);
     }
 
@@ -155,6 +155,7 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
 
     private void addToCompound(ReadWriteNBT compound) {
         if (gems != null && !gems.isEmpty()) {
+            compound.getOrCreateCompound("gems").clearNBT();
             compound.getOrCreateCompound("gems").mergeCompound(NBT.itemStackArrayToNBT(gems.toArray(ItemStack[]::new)));
         }
         compound.setInteger("limit", limit);

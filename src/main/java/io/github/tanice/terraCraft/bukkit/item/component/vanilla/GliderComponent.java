@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 public class GliderComponent implements TerraGliderComponent {
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) {
             NBT.modifyComponents(item, nbt -> {
                 nbt.getOrCreateCompound(MINECRAFT_PREFIX + "glider");

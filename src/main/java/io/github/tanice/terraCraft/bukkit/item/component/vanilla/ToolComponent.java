@@ -51,7 +51,6 @@ public class ToolComponent implements TerraToolComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "tool");
@@ -62,6 +61,8 @@ public class ToolComponent implements TerraToolComponent {
                 if (damagePerBlock != null) component.setInteger("damage_per_block", damagePerBlock);
                 if (defaultMiningSpeed != null) component.setFloat("default_mining_speed", defaultMiningSpeed);
                 ReadWriteNBTCompoundList compoundList = component.getCompoundList("rules");
+                /* 覆盖 */
+                compoundList.clear();
                 for (DigConfig rule : rules) rule.addToCompound(compoundList.addCompound());
             });
         } else TerraCraftLogger.warning("Tool component is only supported in Minecraft 1.20.5 or newer versions");

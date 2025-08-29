@@ -59,13 +59,14 @@ public class PotionComponent implements TerraPotionComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "potion_contents");
                 if (color != null) component.setInteger("custom_color", color);
                 if (!potions.isEmpty()) {
                     ReadWriteNBTCompoundList compoundList = component.getCompoundList("custom_effects");
+                    /* 覆盖 */
+                    compoundList.clear();
                     for (NBTPotion potion : potions) potion.addToCompound(compoundList.addCompound());
                 }
                 if (customName != null && ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_2)) component.setString("custom_name", customName);

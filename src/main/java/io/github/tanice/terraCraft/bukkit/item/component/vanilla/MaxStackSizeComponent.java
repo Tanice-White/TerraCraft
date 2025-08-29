@@ -20,7 +20,6 @@ public class MaxStackSizeComponent implements TerraMaxStackSizeComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (size != null) nbt.setInteger(MINECRAFT_PREFIX + "max_stack_size", size);

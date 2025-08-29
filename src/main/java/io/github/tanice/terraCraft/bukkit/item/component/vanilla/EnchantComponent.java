@@ -63,7 +63,6 @@ public class EnchantComponent implements TerraEnchantComponent {
 
     @Override
     public void cover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 if (enchantmentValue > 0) {
@@ -73,6 +72,8 @@ public class EnchantComponent implements TerraEnchantComponent {
                 }
                 if (enchantments != null && levels != null && !enchantments.isEmpty() && !levels.isEmpty()) {
                     ReadWriteNBT subCompound = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "enchantments");
+                    /* 覆盖 */
+                    subCompound.clearNBT();
                     for (int i = 0; i < enchantments.size(); i++) {
                         subCompound.setInteger(enchantments.get(i).get(), levels.get(i));
                     }
@@ -82,6 +83,8 @@ public class EnchantComponent implements TerraEnchantComponent {
             NBT.modify(item, nbt ->{
                 if (enchantments != null && levels != null && !enchantments.isEmpty() && !levels.isEmpty()) {
                     ReadWriteNBTCompoundList compoundList = nbt.getCompoundList("Enchantments");
+                    /* 覆盖 */
+                    compoundList.clear();
                     ReadWriteNBT compound;
                     for (int i = 0; i < enchantments.size(); i++) {
                         compound = compoundList.addCompound();

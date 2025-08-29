@@ -60,7 +60,6 @@ public class CommandComponent extends AbstractItemComponent implements TerraComm
 
     @Override
     public void doCover(ItemStack item) {
-        clear(item);
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)){
             NBT.modifyComponents(item, nbt ->{
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".command");
@@ -132,6 +131,7 @@ public class CommandComponent extends AbstractItemComponent implements TerraComm
 
     private void addToCompound(ReadWriteNBT component) {
         component.setByte("state", state.toNbtByte());
+        component.getStringList("content").clear();
         component.getStringList("content").addAll(commands);
     }
 }

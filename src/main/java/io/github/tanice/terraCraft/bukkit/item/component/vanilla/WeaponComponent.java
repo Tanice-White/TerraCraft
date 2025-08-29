@@ -36,7 +36,7 @@ public class WeaponComponent implements TerraWeaponComponent {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.getOrCreateCompound(MINECRAFT_PREFIX + "weapon");
                 if (disableBlockingForSeconds != null) component.setFloat("disable_blocking_for_seconds", disableBlockingForSeconds);
-                if (itemDamagePerAttack != null) component.setInteger("damage_per_attack", itemDamagePerAttack);
+                if (itemDamagePerAttack != null) component.setInteger("item_damage_per_attack", itemDamagePerAttack);
             });
         } else TerraCraftLogger.warning("weapon component is only supported in Minecraft 1.21.5 or newer versions");
     }

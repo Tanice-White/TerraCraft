@@ -48,7 +48,7 @@ public class EntityAttributeListener implements Listener, TerraListener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         TerraCraftBukkit plugin = TerraCraftBukkit.inst();
-        plugin.getBuffManager().unregister(player);
+        plugin.getBuffManager().deactivateEntityBuffs(player);
         plugin.getEntityAttributeManager().unregister(player);
     }
 

@@ -6,6 +6,7 @@ import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.item.component.BuffComponent;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class DamageListener implements Listener, TerraListener {
 
@@ -103,16 +105,16 @@ public class DamageListener implements Listener, TerraListener {
             for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(attacker)){
                 buffComponent = BuffComponent.from(item);
                 if (buffComponent == null) continue;
-                buffManager.activateBuffs(attacker, buffComponent.getAttackSelf());
-                buffManager.activateBuffs(defender, buffComponent.getAttack());
+                buffManager.activateBuffs(attacker, buffComponent.getAttackSelf().stream().map(NBTBuff::getAsTerraBuff).filter(Objects::nonNull).toList());
+                buffManager.activateBuffs(defender, buffComponent.getAttack().stream().map(NBTBuff::getAsTerraBuff).filter(Objects::nonNull).toList());
             }
         }
         /* defender 给 attacker 增加 buff */
         for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(defender)){
             buffComponent = BuffComponent.from(item);
             if (buffComponent == null) continue;
-            buffManager.activateBuffs(defender, buffComponent.getDefenseSelf());
-            if (attacker != null) buffManager.activateBuffs(attacker, buffComponent.getDefense());
+            buffManager.activateBuffs(defender, buffComponent.getDefenseSelf().stream().map(NBTBuff::getAsTerraBuff).filter(Objects::nonNull).toList());
+            if (attacker != null) buffManager.activateBuffs(attacker, buffComponent.getDefense().stream().map(NBTBuff::getAsTerraBuff).filter(Objects::nonNull).toList());
         }
     }
 }

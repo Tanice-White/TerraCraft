@@ -38,7 +38,7 @@ public class ClearCommand extends CommandRunner {
             return true;
         }
         int num = TerraCraftBukkit.inst().getBuffManager().getEntityActiveBuffRecords(player).size();
-        TerraCraftBukkit.inst().getBuffManager().unregister(player);
+        TerraCraftBukkit.inst().getBuffManager().deactivateEntityBuffs(player);
         sender.sendMessage(GREEN + "Successfully cleared all buffs(" + num + ") for player: " + player.getName());
         return true;
     }

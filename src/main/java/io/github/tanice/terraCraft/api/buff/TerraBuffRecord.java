@@ -36,7 +36,6 @@ public interface TerraBuffRecord {
 
     /**
      * 获取buff持续时间
-     * @return buff的持续时间
      */
     int getDurationCounter();
 
@@ -48,13 +47,21 @@ public interface TerraBuffRecord {
 
     /**
      * 此记录的buff是否是周期生效buff
-     * @return 是否是周期生效buff
      */
     boolean isTimer();
 
     /**
-     * 此记录的buff是否是js定义的
-     * @return 是否是js定义的
+     * 此记录的buff是否是js定义
      */
     boolean isRunnable();
+
+    /**
+     * 记录buff是否已经失效
+     */
+    boolean isToRemove();
+
+    /**
+     * 设置buff的有效性
+     */
+    void setToRemove(boolean remove);
 }

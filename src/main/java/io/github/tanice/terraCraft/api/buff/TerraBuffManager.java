@@ -1,6 +1,5 @@
 package io.github.tanice.terraCraft.api.buff;
 
-import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -32,13 +31,6 @@ public interface TerraBuffManager {
     Collection<String> filterBuffs(String name);
 
     /**
-     * 删除目标实体的所有buff
-     *
-     * @param entity 目标实体
-     */
-    void unregister(LivingEntity entity);
-
-    /**
      * 从数据库加载玩家buff
      * @param player 玩家实体
      */
@@ -55,27 +47,23 @@ public interface TerraBuffManager {
      */
     void saveAllPlayerRecords();
 
+    void activateBuff(LivingEntity entity, TerraBaseBuff buff);
+
     /**
      * 为实体添加装备物品上的hold buffs
      */
     void activateHoldBuffs(LivingEntity entity);
 
-    void activateBuff(LivingEntity entity, NBTBuff buff);
-
-    void activateBuff(LivingEntity entity, NBTBuff buff, boolean isPermanent);
-
-    void activateBuff(LivingEntity entity, TerraBaseBuff buff);
-
-    void activateBuff(LivingEntity entity, TerraBaseBuff buff, boolean isPermanent);
-
-
-    void activateBuffs(LivingEntity entity, List<NBTBuff> buffs);
-
-    void activateBuffs(LivingEntity entity, List<NBTBuff> buffs, boolean isPermanent);
-
     void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs);
 
-    void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean isPermanent);
+    void activateBuffs(LivingEntity entity, Collection<TerraBaseBuff> buffs, boolean ignoreChance);
+
+    /**
+     * 让实体的某一个buff失效
+     * @param entity 目标实体
+     * @param buff 目标buff
+     */
+    void deactivateBuff(LivingEntity entity, TerraBaseBuff buff);
 
     /**
      * 让实体的buff集合失效

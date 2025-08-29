@@ -19,16 +19,17 @@ public class BuffRecord implements TerraBuffRecord {
     private final boolean timer;
     private final boolean runnable;
 
+    private boolean toRemove;
+
     private int cooldownCounter;
     private int durationCounter;
 
     public BuffRecord(LivingEntity entity, TerraBaseBuff buff) {
         this.entityReference = new TerraWeakReference(entity);
         this.buff = buff;
-
         this.timer = buff instanceof TerraTimerBuff;
         this.runnable = buff instanceof TerraRunnableBuff;
-
+        this.toRemove = false;
         this.cooldownCounter = 0;
         this.durationCounter = buff.getDuration();
     }
@@ -36,10 +37,9 @@ public class BuffRecord implements TerraBuffRecord {
     public BuffRecord(String uuid, TerraBaseBuff buff, int cooldownCounter, int durationCounter) {
         this.entityReference = new TerraWeakReference(Bukkit.getPlayer(UUID.fromString(uuid)));
         this.buff = buff;
-
         this.timer = buff instanceof TerraTimerBuff;
         this.runnable = buff instanceof TerraRunnableBuff;
-
+        this.toRemove = false;
         this.cooldownCounter = cooldownCounter;
         this.durationCounter = durationCounter;
     }
@@ -56,6 +56,7 @@ public class BuffRecord implements TerraBuffRecord {
         int d = p - this.durationCounter;
         this.durationCounter = other.getDuration() - d;
         this.buff = other;
+        this.toRemove = false;
     }
 
     @Override
@@ -100,12 +101,23 @@ public class BuffRecord implements TerraBuffRecord {
     }
 
     @Override
+    public boolean isToRemove() {
+        return this.toRemove;
+    }
+
+    @Override
+    public void setToRemove(boolean remove) {
+        this.toRemove = remove;
+    }
+
+    @Override
     public String toString() {
-        return BOLD + YELLOW + "Buff Details in " + WHITE + (entityReference != null ? entityReference.get() : "None") + " :" + RESET + "\n" +
-                AQUA + "Base Buff:" + WHITE + buff + "\n" +
-                AQUA + "Timer:" + WHITE + timer + "\n" +
-                AQUA + "Runnable:" + WHITE + runnable + "\n" +
-                AQUA + "Cooldown Counter:" + WHITE + cooldownCounter + "\n" +
-                AQUA + "Duration Counter:" + WHITE + durationCounter + RESET;
+        return BOLD + YELLOW + "buff in " + WHITE + (entityReference != null ? entityReference.get() : "null") + " :" + RESET + "\n" +
+                AQUA + "buff:" + WHITE + buff + "\n" +
+                AQUA + "timer:" + WHITE + timer + "\n" +
+                AQUA + "runnable:" + WHITE + runnable + "\n" +
+                AQUA + "cooldown:" + WHITE + cooldownCounter + "\n" +
+                AQUA + "duration:" + WHITE + durationCounter + "\n" +
+                AQUA + "to remove" + WHITE + toRemove + RESET;
     }
 }

@@ -1,5 +1,8 @@
 # MINIMESSAGE 的hover语法不支持在lore中使用
 # 可堆叠物品不要有宝石槽位(Gem_holder)组件,否则将可以用来刷宝石
+
+# 槽位一定要限制：不然会出现玩家双手武器伤害和效果都能生效的问题
+
 NBT全知全能:
   id: book
   display_name: "<red>NBT组件测试"

@@ -20,4 +20,5 @@ public final class Registry<T> {
     public static Registry<TerraCalculableMeta> ORI_ITEM = new Registry<>();
     public static Registry<TerraCalculableMeta> ORI_POTION = new Registry<>();
     // public static Registry<TerraCalculableMeta> ORI_ENCHANT = new Registry<>();
+    public static Registry<TerraCalculableMeta> ORI_LIVING_ENTITY = new Registry<>();
 }

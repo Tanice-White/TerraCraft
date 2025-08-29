@@ -7,6 +7,8 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.registry.Registry;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
 import org.bukkit.entity.LivingEntity;
@@ -52,7 +54,7 @@ public final class EquipmentUtil {
      * 如果是插件物品则不增加原版伤害值
      * 能被异步执行，所有事件需要在主线程上call!!!!!!
      */
-    public static List<TerraCalculableMeta> getActiveEquipmentMeta(LivingEntity entity) {
+    public static List<TerraCalculableMeta> getEntityActiveMeta(LivingEntity entity) {
         List<TerraCalculableMeta> res = new ArrayList<>(12);
         TerraInnerNameComponent nameComponent;
         TerraCalculableMeta customMeta;
@@ -64,11 +66,13 @@ public final class EquipmentUtil {
                 /* 加载原版meta */
                 TerraItemMetaLoadEvent event = new TerraItemMetaLoadEvent(item);
                 TerraEvents.callSync(event);
-                if (event.getMeta() != null) {
-                    res.add(event.getMeta());
-                } else {
-                    customMeta = Registry.ORI_ITEM.get(item.getType().toString());
-                    if (customMeta != null) res.add(customMeta.clone());
+                if (event.getMeta() != null) res.add(event.getMeta());
+                else {
+                    customMeta = Registry.ORI_ITEM.get(item.getType().toString().toLowerCase());
+                    if (customMeta != null) {
+                        if (ConfigManager.isDebug()) TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.REGISTRY, "found vanilla item: " + item.getType().toString().toLowerCase());
+                        res.add(customMeta.clone());
+                    }
                 }
             }
             /* 原版附魔 */
@@ -80,6 +84,12 @@ public final class EquipmentUtil {
 //                    if (customMeta != null) res.add(customMeta);
 //                }
 //            }
+        }
+        // 生物体meta
+        customMeta = Registry.ORI_LIVING_ENTITY.get(entity.getType().toString().toLowerCase());
+        if (customMeta != null) {
+            if (ConfigManager.isDebug()) TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.REGISTRY, "found vanilla living entity: " + entity.getType().toString().toLowerCase());
+            res.add(customMeta);
         }
         return res;
     }

@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.bukkit.listener.attribute;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
+import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.registry.Registry;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.entity.LivingEntity;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -36,7 +38,10 @@ public class EntityAttributeListener implements Listener, TerraListener {
 
     @EventHandler
     void onPlayerJoin(PlayerJoinEvent event) {
-        // TODO operate database
+        TerraSchedulers.sync().runLater(() -> {
+            // TODO operate database
+            updateAttribute(event.getPlayer());
+        }, 1);
     }
 
     @EventHandler
@@ -54,34 +59,35 @@ public class EntityAttributeListener implements Listener, TerraListener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        Player p = event.getPlayer();
-        TerraSchedulers.sync().runLater(() -> {
-            /* buff没有更新则需要手动触发更新 */
-            TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute(p);
-            TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(p);
-            TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);
-        }, 1);
+        TerraSchedulers.sync().runLater(() -> updateAttribute(event.getPlayer()), 1);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityEquipmentChange(EntityEquipmentChangedEvent event) {
-        LivingEntity entity = event.getEntity();
-        TerraSchedulers.sync().runLater(() -> {
-            /* activateHoldBuffs() 会自动触发属性变动 */
-            TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute(entity);
-            TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(entity);
-            /* buff没有更新则需要手动触发更新 */
-            if (entity instanceof Player p) TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);
-        }, 1);
+        TerraSchedulers.sync().runLater(() -> updateAttribute(event.getEntity()), 1);
     }
 
     /** 药水效果监听 */
     @EventHandler(ignoreCancelled = true)
     public void onPotionEffect(EntityPotionEffectEvent event) {
         /* 过滤不需要监听的药药水效果 */
-        if (Registry.ORI_POTION.get(event.getModifiedType().getKey().getKey()) == null) return;
+        if (Registry.ORI_POTION.get(event.getModifiedType().getKey().getKey().toLowerCase()) == null) return;
         TerraSchedulers.sync().runLater(() -> {
             TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute((LivingEntity) event.getEntity());
         }, 1);
+    }
+
+    @EventHandler
+    public void onEntitySpawn(EntitySpawnEvent event) {
+        if (!(event.getEntity() instanceof LivingEntity entity)) return;
+        TerraSchedulers.sync().runLater(() -> updateAttribute(entity), 1);
+    }
+
+    private void updateAttribute(LivingEntity entity) {
+        /* activateHoldBuffs() 会自动触发属性变动 */
+        TerraCraftBukkit.inst().getEntityAttributeManager().updateAttribute(entity);
+        TerraCraftBukkit.inst().getBuffManager().activateHoldBuffs(entity);
+        /* buff没有更新则需要手动触发更新 */
+        if (entity instanceof Player p) TerraCraftBukkit.inst().getSkillManager().updatePlayerSkills(p);
     }
 }

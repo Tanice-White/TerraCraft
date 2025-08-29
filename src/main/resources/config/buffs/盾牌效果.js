@@ -4,7 +4,6 @@ export const condition = "defender"
 export const priority= 0;
 export const section = "after_damage";
 
-const Math = java.lang.Math;
 const Float = Java.type('java.lang.Float');
 export function run(protocol) {
     const attacker = protocol.getAttacker();

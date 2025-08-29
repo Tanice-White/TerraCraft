@@ -29,11 +29,6 @@ public final class ConfigManager {
     private static double version;
     private static boolean debug;
     private static boolean generateExamples;
-    private static boolean generateDamageIndicator;
-    private static String defaultPrefix;
-    private static String criticalPrefix;
-    private static double criticalLargeScale;
-    private static double viewRange;
     private static double worldK;
     private static boolean damageFloat;
     private static double damageFloatRange;
@@ -52,10 +47,11 @@ public final class ConfigManager {
     private static Map<String, Boolean> oriUpdateConfigMap;
 
     public static void load() {
-        loadRegistry();
         File configFile = new File(TerraCraftBukkit.inst().getDataFolder(), "config.yml");
         if (!configFile.exists())generateExampleConfig();
         else if (generateExamples) generateExampleConfig();
+
+        loadRegistry();
 
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(configFile);
         ConfigurationSection sub;
@@ -63,19 +59,12 @@ public final class ConfigManager {
         version = cfg.getDouble("VERSION", -1);
         debug = cfg.getBoolean("DEBUG", false);
         generateExamples = cfg.getBoolean("generate_examples", true);
-        viewRange = cfg.getDouble("view_range", 20D);
         worldK = cfg.getDouble("world_k", 1D);
         damageFloat = cfg.getBoolean("damage_float", false);
         damageFloatRange = cfg.getDouble("damage_float_range", 0D);
         useDamageReductionBalanceForPlayer = cfg.getBoolean("use_damage_reduction_balance_for_player", false);
 
-        // TODO REMOVE
         originalCriticalStrikeAddition = cfg.getDouble("original_critical_strike_addition", 0.2D);
-        generateDamageIndicator = cfg.getBoolean("generate_damage_indicator", false);
-        defaultPrefix = cfg.getString("default_prefix", "§6");
-        criticalPrefix = cfg.getString("critical_prefix", "§4");
-        criticalLargeScale = cfg.getDouble("critical_large_scale", 1D);
-        // TODO END
 
         sub = cfg.getConfigurationSection("database");
         if (sub == null) {
@@ -124,26 +113,6 @@ public final class ConfigManager {
 
     public static boolean shouldGenerateExamples() {
         return generateExamples;
-    }
-
-    public static boolean shouldGenerateDamageIndicator() {
-        return generateDamageIndicator;
-    }
-
-    public static String getDefaultPrefix() {
-        return defaultPrefix;
-    }
-
-    public static String getCriticalPrefix() {
-        return criticalPrefix;
-    }
-
-    public static double getCriticalLargeScale() {
-        return criticalLargeScale;
-    }
-
-    public static double getViewRange() {
-        return viewRange;
     }
 
     public static double getWorldK() {
@@ -243,21 +212,27 @@ public final class ConfigManager {
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(configFile);
         ConfigurationSection tmp;
         ConfigurationSection sub = cfg.getConfigurationSection("item");
+        int total = 0;
         if (sub != null) {
             for (String key : sub.getKeys(false)) {
                 tmp = sub.getConfigurationSection(key);
                 if (tmp == null) continue;
-                Registry.ORI_ITEM.register(key.toUpperCase(), new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                Registry.ORI_ITEM.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                total ++;
             }
         }
+        TerraCraftLogger.success("[Registry] Loaded " + total + " ORI_ITEM");
+        total = 0;
         sub = cfg.getConfigurationSection("potion");
         if (sub != null) {
             for (String key : sub.getKeys(false)) {
                 tmp = sub.getConfigurationSection(key);
                 if (tmp == null) continue;
-                Registry.ORI_POTION.register(key, new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                Registry.ORI_POTION.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                total ++;
             }
         }
+        TerraCraftLogger.success("[Registry] Loaded " + total + " ORI_POTION");
 //        sub = cfg.getConfigurationSection("enchant");
 //        if (sub != null) {
 //            for (String key : sub.getKeys(false)) {
@@ -266,5 +241,16 @@ public final class ConfigManager {
 //                Registry.ORI_ENCHANT.register(key, new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
 //            }
 //        }
+        total = 0;
+        sub = cfg.getConfigurationSection("living_entity");
+        if (sub != null) {
+            for (String key : sub.getKeys(false)) {
+                tmp = sub.getConfigurationSection(key);
+                if (tmp == null) continue;
+                Registry.ORI_LIVING_ENTITY.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                total ++;
+            }
+        }
+        TerraCraftLogger.success("[Registry] Loaded " + total + " ORI_LIVING_ENTITY");
     }
 }

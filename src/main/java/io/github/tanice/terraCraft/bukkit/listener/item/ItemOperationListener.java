@@ -104,7 +104,8 @@ public class ItemOperationListener implements Listener, TerraListener {
         if (entityAttacker instanceof Player attacker) {
             if (attacker.getGameMode() != GameMode.CREATIVE) {
                 item = attacker.getInventory().getItemInMainHand();
-                if (processDurability(attacker, item, damagePerAttack(item))) event.setCancelled(true);
+                /* 将伤害值为1 */
+                if (processDurability(attacker, item, damagePerAttack(item))) event.setDamage(1);
             }
             /* 抛射物 */
         } else if (entityAttacker instanceof Projectile projectile) {
@@ -112,7 +113,7 @@ public class ItemOperationListener implements Listener, TerraListener {
             if (source instanceof Player attacker && attacker.getGameMode() != GameMode.CREATIVE) {
                 /* 只有三叉戟需要监听耐久 */
                 if (projectile instanceof Trident trident && processDurability(attacker, trident.getItemStack(), damagePerAttack(trident.getItemStack()))) {
-                    event.setCancelled(true);
+                    event.setCancelled(true);  /* 抛射物取消事件 */
                 }
             }
         }
@@ -142,7 +143,7 @@ public class ItemOperationListener implements Listener, TerraListener {
             // 播放break_sound
             player.playSound(player, breakSound(item), 1f, 1.2f);
             if (component.isBreakLoss()) item.setAmount(0);
-            return true;
+            /* 本次可以使用 */
         }
         return false;
     }

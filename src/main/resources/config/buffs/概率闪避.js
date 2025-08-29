@@ -9,8 +9,7 @@ export function run(protocol) {
     // 可以自己在内部扩展生效条件
     var attacker = protocol.getAttacker();
     var defender = protocol.getDefender();
-    var random = new Random();
-    if (random.nextDouble() < chance) {
+    if (Math.random() < chance) {
         attacker.sendMessage("对方闪避了");
         defender.sendMessage("~闪避~")
         // 可以播放个声音啥的

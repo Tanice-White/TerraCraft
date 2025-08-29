@@ -438,7 +438,7 @@ TerraGem护甲值测试:
     attribute:
       attack_damage: 10
   weapon:
-    damage_per_attack: 5  # 本插件支持识别
+    damage_per_attack: 5  # 本插件支持识别，三叉戟也支持
 
 弓耐久测试:
   id: bow

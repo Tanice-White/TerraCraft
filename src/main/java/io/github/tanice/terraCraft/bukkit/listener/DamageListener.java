@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.listener;
 
+import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.buff.TerraBuffManager;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
@@ -11,6 +12,7 @@ import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.registry.Registry;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -60,16 +62,28 @@ public class DamageListener implements Listener, TerraListener {
         if (!(entityDefender instanceof LivingEntity defender)) return;
         /* 来源是生物 */
         if (entityAttacker instanceof LivingEntity attacker) {
-            protocol = DamageCalculator.calculate(attacker, defender, 0, event.isCritical(), true);
+            protocol = DamageCalculator.calculate(
+                    attacker,
+                    defender,
+                    attacker instanceof Player ? 0 : event.getDamage(),
+                    event.isCritical(),
+                    true);
             event.setDamage(Math.max(1, protocol.getFinalDamage()));  // 配合后面的护盾防御检测
             if (!protocol.isHit()) event.setCancelled(true);
         /* 抛射物 */
         } else if (entityAttacker instanceof Projectile projectile) {
             ProjectileSource source = projectile.getShooter();
-            /* 实体发射的 xx箭 三叉戟 烟花火箭 烈焰弹 */
+            /* 生物发射的 xx箭 三叉戟 烟花火箭 烈焰弹 */
             if ((projectile instanceof AbstractArrow || projectile instanceof Firework || projectile instanceof Fireball) && source instanceof LivingEntity attacker) {
                 /* 三叉戟有meta需要单独计算 */
-                protocol = DamageCalculator.calculate(attacker, defender, projectile instanceof Trident ? 0 : event.getDamage(), false, false);
+                protocol = DamageCalculator.calculate(
+                        attacker,
+                        defender,
+                        projectile instanceof Trident
+                                ? (attacker instanceof Player ? 0 : event.getDamage() - Registry.ORI_ITEM.get("trident").get(AttributeType.ATTACK_DAMAGE))
+                                : event.getDamage(),
+                        false,
+                        false);
                 event.setDamage(Math.max(1, protocol.getFinalDamage()));  // 配合后面的护盾防御检测
                 if (!protocol.isHit()) event.setCancelled(true);
             }

@@ -2,167 +2,295 @@
 # 武器类
 item:
   wooden_sword:
-    attack_damage: 4
+    section: base
+    attribute:
+      attack_damage: 4
   stone_sword:
-    attack_damage: 5
+    section: base
+    attribute:
+      attack_damage: 5
   iron_sword:
-    attack_damage: 6
+    section: base
+    attribute:
+      attack_damage: 6
   golden_sword:
-    attack_damage: 4
+    section: base
+    attribute:
+      attack_damage: 4
   diamond_sword:
-    attack_damage: 7
+    section: base
+    attribute:
+      attack_damage: 7
   netherite_sword:
-    attack_damage: 8
+    section: base
+    attribute:
+      attack_damage: 8
 
   wooden_axe:
-    attack_damage: 7
+    section: base
+    attribute:
+      attack_damage: 7
   stone_axe:
-    attack_damage: 9
+    section: base
+    attribute:
+      attack_damage: 9
   iron_axe:
-    attack_damage: 9
+    section: base
+    attribute:
+      attack_damage: 9
   golden_axe:
-    attack_damage: 7
+    section: base
+    attribute:
+      attack_damage: 7
   diamond_axe:
-    attack_damage: 9
+    section: base
+    attribute:
+      attack_damage: 9
   netherite_axe:
-    attack_damage: 10
+    section: base
+    attribute:
+      attack_damage: 10
 
   # 三叉戟
   trident:
-    attack_damage: 9
+    section: base
+    attribute:
+      attack_damage: 9
   # 重锤
   mace:
-    attack_damage: 6
+    section: base
+    attribute:
+      attack_damage: 6
 
   # 稿
   wooden_pickaxe:
-    attack_damage: 2
+    section: base
+    attribute:
+      attack_damage: 2
   stone_pickaxe:
-    attack_damage: 3
+    section: base
+    attribute:
+      attack_damage: 3
   iron_pickaxe:
-    attack_damage: 4
+    section: base
+    attribute:
+      attack_damage: 4
   golden_pickaxe:
-    attack_damage: 2
+    section: base
+    attribute:
+      attack_damage: 2
   diamond_pickaxe:
-    attack_damage: 5
+    section: base
+    attribute:
+      attack_damage: 5
   netherite_pickaxe:
-    attack_damage: 6
+    section: base
+    attribute:
+      attack_damage: 6
 
   # 铲子
   wooden_shovel:
-    attack_damage: 2.5
+    section: base
+    attribute:
+      attack_damage: 2.5
   stone_shovel:
-    attack_damage: 3.5
+    section: base
+    attribute:
+      attack_damage: 3.5
   iron_shovel:
-    attack_damage: 4.5
+    section: base
+    attribute:
+      attack_damage: 4.5
   golden_shovel:
-    attack_damage: 2.5
+    section: base
+    attribute:
+      attack_damage: 2.5
   diamond_shovel:
-    attack_damage: 5.5
+    section: base
+    attribute:
+      attack_damage: 5.5
   netherite_shovel:
-    attack_damage: 6.5
+    section: base
+    attribute:
+      attack_damage: 6.5
 
-  # 锄头
+  # 锄头  # 可以不写
   wooden_hoe:
-    attack_damage: 1
+    section: base
+    attribute:
+      attack_damage: 1
   stone_hoe:
-    attack_damage: 1
+    section: base
+    attribute:
+      attack_damage: 1
   golden_hoe:
-    attack_damage: 1
+    section: base
+    attribute:
+      attack_damage: 1
   iron_hoe:
-    attack_damage: 1
+    section: base
+    attribute:
+      attack_damage: 1
   diamond_hoe:
-    attack_damage: 1
+    section: base
+    attribute:
+      attack_damage: 1
   netherite_hoe:
-    attack_damage: 1
+    section: base
+    attribute:
+      attack_damage: 1
 
   # 护甲类
   turtle_helmet:
-    armor: 2
+    section: base
+    attribute:
+      armor: 2
 
   leather_helmet:
-    armor: 1
+    section: base
+    attribute:
+      armor: 1
   leather_chestplate:
-    armor: 3
+    section: base
+    attribute:
+      armor: 3
   leather_leggings:
-    armor: 2
+    section: base
+    attribute:
+      armor: 2
   leather_boots:
-    armor: 1
+    section: base
+    attribute:
+      armor: 1
 
   chainmail_helmet:
-    armor: 2
+    section: base
+    attribute:
+      armor: 2
   chainmail_chestplate:
-    armor: 5
+    section: base
+    attribute:
+      armor: 5
   chainmail_leggings:
-    armor: 4
+    section: base
+    attribute:
+      armor: 4
   chainmail_boots:
-    armor: 1
+    section: base
+    attribute:
+      armor: 1
 
   iron_helmet:
-    armor: 2
+    section: base
+    attribute:
+      armor: 2
   iron_chestplate:
-    armor: 6
+    section: base
+    attribute:
+      armor: 6
   iron_leggings:
-    armor: 5
+    section: base
+    attribute:
+      armor: 5
   iron_boots:
-    armor: 2
+    section: base
+    attribute:
+      armor: 2
 
   golden_helmet:
     armor: 2
   golden_chestplate:
-    armor: 5
+    section: base
+    attribute:
+      armor: 5
   golden_leggings:
-    armor: 3
+    section: base
+    attribute:
+      armor: 3
   golden_boots:
-    armor: 1
+    section: base
+    attribute:
+      armor: 1
 
   diamond_helmet:
-    armor: 3
-    armor_toughness: 2
+    section: base
+    attribute:
+      armor: 3
+      armor_toughness: 2
   diamond_chestplate:
-    armor: 8
-    armor_toughness: 2
+    section: base
+    attribute:
+      armor: 8
+      armor_toughness: 2
   diamond_leggings:
-    armor: 6
-    armor_toughness: 2
+    section: base
+    attribute:
+      armor: 6
+      armor_toughness: 2
   diamond_boots:
-    armor: 3
-    armor_toughness: 2
+    section: base
+    attribute:
+      armor: 3
+      armor_toughness: 2
 
   netherite_helmet:
-    armor: 3
-    armor_toughness: 3
+    section: base
+    attribute:
+      armor: 3
+      armor_toughness: 3
     # knockback_resistance: 不计入
   netherite_chestplate:
-    armor: 8
-    armor_toughness: 3
+    section: base
+    attribute:
+      armor: 8
+      armor_toughness: 3
   netherite_leggings:
-    armor: 6
-    armor_toughness: 3
+    section: base
+    attribute:
+      armor: 6
+      armor_toughness: 3
   netherite_boots:
-    armor: 3
-    armor_toughness: 3
+    section: base
+    attribute:
+      armor: 3
+      armor_toughness: 3
 
   leather_horse_armor:
-    armor: 3
+    section: base
+    attribute:
+      armor: 3
   iron_horse_armor:
-    armor: 5
+    section: base
+    attribute:
+      armor: 5
   golden_horse_armor:
-    armor: 7
+    section: base
+    attribute:
+      armor: 7
   diamond_horse_armor:
-    armor: 11
-    armor_toughness: 2
+    section: base
+    attribute:
+      armor: 11
+      armor_toughness: 2
   wolf_armor:
-    armor: 11
+    section: base
+    attribute:
+      armor: 11
 
 potion:
   # 原版药水效果（伤害类药水效果） 其余的没必要
   strength:
-    attack_damage: 3  # 等级会自动计算（*K）
+    section: base
+    attribute:
+      attack_damage: 3  # 等级会自动计算（*K）
   weakness:
-    attack_damage: -4 #
+    section: base
+    attribute:
+      attack_damage: -4 #
   resistance:
-    after_armor_reduction: 0.2  # 每级20%防御后伤害减免 (防御前的伤害减免太强大了)
+    section: base
+    attribute:
+      after_armor_reduction: 0.2  # 每级20%防御后伤害减免 (防御前的伤害减免太强大了)
   # 瞬间伤害 仍旧保持真伤
 
 # 原版附魔
@@ -193,3 +321,60 @@ potion:
 #    attack_damage: 0.5  # 锋利每级增加0.5的伤害  # 和原版不一致
 #  smite:
 #    attack_damage: 2.5  # 亡灵杀手每级增加2.5伤害（对亡灵）
+
+
+# 当然你的拓展也会生效 - 前提是你的实体类型写对了 :)
+# 这里只写护甲，因为生物伤害会以原版的伤害作为插件伤害，在计算护甲，同样的可以拓展
+# 不能像原版一样根据状态判断护甲值，可以折中取
+living_entity:
+  # 僵尸
+  zombie:
+    section: base
+    attribute:
+      armor: 2
+  # 僵尸猪灵
+  zombified_piglin:
+    section: base
+    attribute:
+      armor: 2
+  # 僵尸村民
+  zombie_villager:
+    section: base
+    attribute:
+      armor: 2
+  # 尸壳
+  husk:
+    section: base
+    attribute:
+      armor: 2
+  # 溺尸
+  drowned:
+    section: base
+    attribute:
+      armor: 2
+  # 凋零
+  wither:
+    section: base
+    attribute:
+      armor: 4
+  # 杀手兔
+  killer_rabbit:
+    section: base
+    attribute:
+      armor: 8
+  # 岩浆怪 - 大
+  magma_cube:
+    section: base
+    attribute:
+      armor: 12
+  # 潜影贝
+  shulker:
+    section: base
+    attribute:
+      armor: 20
+  # 拓展一个
+  iron_golem:
+    section: base
+    attribute:
+      armor: 80
+      attack_damage: 150

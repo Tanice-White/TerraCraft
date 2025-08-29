@@ -45,6 +45,7 @@ public final class TerraCraftLogger {
         ITEM,
         PLAYER,
         SKILL,
-        CALCULATOR
+        CALCULATOR,
+        REGISTRY
     }
 }

@@ -115,6 +115,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
      */
     @Override
     public CompletableFuture<List<TerraBuffRecord>> loadPlayerBuffRecords(String uuid) {
+        if (!ConfigManager.useMysql()) return CompletableFuture.completedFuture(Collections.emptyList());
         CompletableFuture<List<TerraBuffRecord>> future = new CompletableFuture<>();
         TerraSchedulers.databaseAsync().run(() -> {
             List<TerraBuffRecord> res = new ArrayList<>();
@@ -157,6 +158,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
      * @param playerData PlayerData对象
      */
     public void savePlayerData(TerraPlayerData playerData) {
+        if (!ConfigManager.useMysql()) return;
         TerraSchedulers.databaseAsync().run(() -> {
             String sql = "INSERT INTO player_data (uuid, health, max_health, mana, max_mana, mana_recovery_speed, ate) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?) " +
@@ -191,6 +193,7 @@ public final class DatabaseManager implements TerraDatabaseManager {
 
     // 从数据库加载PlayerData
     public CompletableFuture<TerraPlayerData> loadPlayerData(String uuid) {
+        if (!ConfigManager.useMysql()) return CompletableFuture.completedFuture(null);
         CompletableFuture<TerraPlayerData> future = new CompletableFuture<>();
         TerraSchedulers.databaseAsync().run(() -> {
             String sql = "SELECT health, max_health, mana, max_mana, mana_recovery_speed, ate " +

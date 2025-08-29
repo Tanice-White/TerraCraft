@@ -78,13 +78,13 @@ public class EntityAttributeCalculator implements TerraAttributeCalculator {
      * 获取 BuffList和中间 Map
      */
     private void initBuffListsAndTransformTmp(LivingEntity entity) {
-        List<TerraCalculableMeta> metas = EquipmentUtil.getActiveEquipmentMeta(entity);
+        List<TerraCalculableMeta> metas = EquipmentUtil.getEntityActiveMeta(entity);
         metas.addAll(EquipmentUtil.getEffectiveAccessoryMeta(entity));
         /* 原版药水效果计算 */
         TerraCalculableMeta potionMeta;
         TerraCalculableMeta tmp;
         for (PotionEffect effect : entity.getActivePotionEffects()) {
-            potionMeta = Registry.ORI_POTION.get(effect.getType().getKey().getKey());
+            potionMeta = Registry.ORI_POTION.get(effect.getType().getKey().getKey().toLowerCase());
             if (potionMeta != null) {
                 tmp = potionMeta.clone();
                 metas.add(tmp.selfMultiply(effect.getAmplifier() + 1));

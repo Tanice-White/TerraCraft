@@ -11,7 +11,7 @@ import io.github.tanice.terraCraft.api.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.buff.BuffRecord;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.player.PlayerData;
 import org.bukkit.Bukkit;
 

@@ -8,7 +8,7 @@ import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -134,8 +134,13 @@ public class GemHolderComponent extends AbstractItemComponent implements TerraGe
     }
 
     @Override
+    public int getGemNums() {
+        return gems == null ? 0 : gems.size();
+    }
+
+    @Override
     public List<ItemStack> getGems() {
-        return this.gems == null ? new ArrayList<>() : this.gems;
+        return gems == null ? new ArrayList<>() : gems;
     }
 
     @Override

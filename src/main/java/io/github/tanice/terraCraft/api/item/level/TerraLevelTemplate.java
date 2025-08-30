@@ -10,7 +10,7 @@ public interface TerraLevelTemplate {
 
     int getMax();
 
-    double getChance();
+    double getChance(int currentLevel);
 
     String getMaterial();
 

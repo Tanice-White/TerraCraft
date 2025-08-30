@@ -10,7 +10,7 @@ import io.github.tanice.terraCraft.bukkit.listener.attribute.EntityAttributeList
 import io.github.tanice.terraCraft.bukkit.listener.item.ItemOperationListener;
 import io.github.tanice.terraCraft.bukkit.listener.item.ItemUpdateListener;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

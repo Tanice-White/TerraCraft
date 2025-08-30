@@ -6,7 +6,7 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.command.CommandRunner;
 import io.github.tanice.terraCraft.bukkit.item.component.LevelComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.TerraNameComponent;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -81,7 +81,7 @@ public class LevelUpCommand extends CommandRunner {
                 return;
             }
             /* 成功 */
-            if (ig || Math.random() < terraLevelTemplate.getChance()) {
+            if (ig || Math.random() < terraLevelTemplate.getChance(level)) {
                 levelComponent.setLevel(level + 1);
                 levelComponent.cover(mainHandItem);
                 sender.sendMessage(GREEN + "Level up successfully");

@@ -29,12 +29,16 @@ terra_durability:
   damage: 5
   max_damage: 10
   break_loss: false
+  # 支持java的Math库，damage-目前的损伤值  max_damage 此物品最大损伤值  harm-武器或护甲则表示造成或承受的伤害，钓竿，弓，弩的值为0
+  damage_per_use_expr: "Math.max(1, harm * (damage / max_damage + 1))"
 
 gem:
   updatable: true # 默认为true
-  inlay_chance: 0.7  # 镶嵌成功概率
+  # 支持动态计算(+java的Math库)，占位符 gem_num 当前宝石数量  limit 槽位数量
+  inlay_chance_expr: 0.7  # 镶嵌成功概率
   inlay_fail_loss: false
-  dismantle_chance: 0.6  # 拆卸成功概率
+  # 支持动态计算(+java的Math库)，占位符 gem_num 当前宝石数量  limit 槽位数量
+  dismantle_chance_expr: 0.6  # 拆卸成功概率
   dismantle_fail_loss: false
 
 gem_holder:
@@ -76,6 +80,7 @@ quality:
   groups:
     - 可用品质组名
   default: 默认品质名
+  damage_per_use: "1" # 每次只损失1耐久  # 返回值忽略小数
 
 skill:
   updatable: true

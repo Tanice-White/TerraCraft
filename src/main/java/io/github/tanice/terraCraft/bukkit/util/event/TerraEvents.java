@@ -60,6 +60,6 @@ public final class TerraEvents {
     }
 
     private TerraEvents() {
-        throw new UnsupportedOperationException("Events class cannot be instantiated");
+        throw new UnsupportedOperationException("TerraEvents class cannot be instantiated");
     }
 }

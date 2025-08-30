@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.core.registry;
+package io.github.tanice.terraCraft.core.util.registry;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 

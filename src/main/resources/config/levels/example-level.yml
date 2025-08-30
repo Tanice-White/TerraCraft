@@ -2,8 +2,22 @@
   begin: 0  # 初始等级  必须, 默认 0
   max: 20  # 最大等级  必须, 默认 100
   level_up_need: "升级材料"  # terra name
+
+  # 支持 java api中的Math库, 占位符有 begin, max, level(使用本模板的武器目前强化成功次数)
+  # 武器当前等级应该是 level + begin
   chance: 0.8  # 每次有0.8的概率成功
+
   fail_level_down: false  # 失败是否丢降级 默认为false
   section: base  # 计算区
   attribute:
     attack_damage: 1
+
+带计算式的武器升级模板:
+  begin: 20
+  max: 50
+  level_up_need: "升级材料"
+  chance: "(max - level - begin) / 100"
+  section: base
+  attribute:
+    attack_damage: 1
+    armor: 1

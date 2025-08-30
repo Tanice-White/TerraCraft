@@ -3,7 +3,7 @@ package io.github.tanice.terraCraft.core.item.quality;
 import io.github.tanice.terraCraft.api.item.quality.TerraQuality;
 import io.github.tanice.terraCraft.api.item.quality.TerraQualityGroup;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.*;

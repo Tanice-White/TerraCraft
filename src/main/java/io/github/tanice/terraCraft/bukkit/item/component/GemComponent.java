@@ -8,6 +8,9 @@ import io.github.tanice.terraCraft.api.item.component.TerraGemComponent;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
+import io.github.tanice.terraCraft.core.util.expression.TerraExpression;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,36 +21,39 @@ import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
 public class GemComponent extends AbstractItemComponent implements TerraGemComponent {
     @Nullable
-    private Float inlaySuccessChance;
+    private String inlaySuccessExpr;
     @Nullable
-    private Float dismantleSuccessChance;
+    private String dismantleSuccessExpr;
     @Nullable
     private Boolean inlayFailLoss;
     @Nullable
     private Boolean dismantleFailLoss;
 
-    public GemComponent(@Nullable Float inlaySuccessChance, @Nullable Boolean inlayFailLoss, @Nullable Float dismantleSuccessChance, @Nullable Boolean dismantleFailLoss, boolean updatable) {
+    public GemComponent(@Nullable String inlaySuccessExpr, @Nullable Boolean inlayFailLoss, @Nullable String dismantleSuccessExpr, @Nullable Boolean dismantleFailLoss, boolean updatable) {
         super(updatable);
-        this.inlaySuccessChance = inlaySuccessChance;
+        this.inlaySuccessExpr = inlaySuccessExpr;
         this.inlayFailLoss = inlayFailLoss;
-        this.dismantleSuccessChance = dismantleSuccessChance;
+        this.dismantleSuccessExpr = dismantleSuccessExpr;
         this.dismantleFailLoss = dismantleFailLoss;
+        registerExpression();
     }
 
-    public GemComponent(@Nullable Float inlaySuccessChance, @Nullable Boolean inlayFailLoss, @Nullable Float dismantleSuccessChance, @Nullable Boolean dismantleFailLoss, ComponentState state) {
+    public GemComponent(@Nullable String inlaySuccessExpr, @Nullable Boolean inlayFailLoss, @Nullable String dismantleSuccessExpr, @Nullable Boolean dismantleFailLoss, ComponentState state) {
         super(state);
-        this.inlaySuccessChance = inlaySuccessChance;
+        this.inlaySuccessExpr = inlaySuccessExpr;
         this.inlayFailLoss = inlayFailLoss;
-        this.dismantleSuccessChance = dismantleSuccessChance;
+        this.dismantleSuccessExpr = dismantleSuccessExpr;
         this.dismantleFailLoss = dismantleFailLoss;
+        registerExpression();
     }
 
     public GemComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.inlaySuccessChance = cfg.isSet("inlay_chance") ? (float) cfg.getDouble("inlay_chance") : null;
+        this.inlaySuccessExpr = cfg.getString("inlay_chance_expr");
         this.inlayFailLoss = cfg.isSet("inlay_fail_loss") ? cfg.getBoolean("inlay_fail_loss") : null;
-        this.dismantleSuccessChance = cfg.isSet("dismantle_chance") ? (float) cfg.getDouble("dismantle_chance") : null;
+        this.dismantleSuccessExpr = cfg.getString("dismantle_chance_expr");
         this.dismantleFailLoss = cfg.isSet("dismantle_fail_loss") ? cfg.getBoolean("dismantle_fail_loss") : null;
+        registerExpression();
     }
 
     @Nullable
@@ -106,27 +112,47 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
 
     @Override
     public int hashCode() {
-        return Objects.hash(inlaySuccessChance, inlayFailLoss, dismantleSuccessChance, dismantleFailLoss);
+        return Objects.hash(inlaySuccessExpr, inlayFailLoss, dismantleSuccessExpr, dismantleFailLoss);
     }
 
     @Override
-    public float getInlaySuccessChance() {
-        return inlaySuccessChance != null ? inlaySuccessChance : 1f;
+    public float getInlaySuccessChance(int gemNum, int limit) {
+        if (inlaySuccessExpr == null || inlaySuccessExpr.isBlank()) return 1f;
+        try {
+            double v = (double) TerraExpression.calculate(inlaySuccessExpr, new Object[]{gemNum, limit});
+            if (ConfigManager.isDebug())
+                TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.EXPRESSION, "expression: " + inlaySuccessExpr + ", chance result=" + v);
+            return (float) v;
+        } catch (Exception e) {
+            TerraCraftLogger.error("Error when calculating chance in gem component when inserting: " + inlaySuccessExpr + ". \n" + e.getMessage());
+            return 1f;
+        }
     }
 
     @Override
-    public void setInlaySuccessChance(float chance) {
-        this.inlaySuccessChance = chance;
+    public void setInlaySuccessExpr(String inlaySuccessExpr) {
+        this.inlaySuccessExpr = inlaySuccessExpr;
+        registerExpression1();
     }
 
     @Override
-    public float getDismantleSuccessChance() {
-        return dismantleSuccessChance != null ? dismantleSuccessChance : 1f;
+    public float getDismantleSuccessChance(int gemNum, int limit) {
+        if (dismantleSuccessExpr == null || dismantleSuccessExpr.isBlank()) return 1f;
+        try {
+            double v = (double) TerraExpression.calculate(dismantleSuccessExpr, new Object[]{gemNum, limit});
+            if (ConfigManager.isDebug())
+                TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.EXPRESSION, "expression: " + dismantleSuccessExpr + ", chance result=" + v);
+            return (float) v;
+        } catch (Exception e) {
+            TerraCraftLogger.error("Error when calculating chance in gem component when dismantling: " + dismantleSuccessExpr + ". \n" + e.getMessage());
+            return 1f;
+        }
     }
 
     @Override
-    public void setDismantleSuccessChance(float chance) {
-        this.dismantleSuccessChance = chance;
+    public void setDismantleSuccessExpr(String dismantleSuccessExpr) {
+        this.dismantleSuccessExpr = dismantleSuccessExpr;
+        registerExpression2();
     }
 
     @Override
@@ -157,32 +183,71 @@ public class GemComponent extends AbstractItemComponent implements TerraGemCompo
     @Override
     public String toString() {
         return BOLD + YELLOW + "gem:" + "\n" +
-                "    " + AQUA + "inlay_chance:" +
-                WHITE + (inlaySuccessChance != null ? inlaySuccessChance : "1(default)") + "\n" +
+                "    " + AQUA + "inlay_chance_expr:" +
+                WHITE + (inlaySuccessExpr != null ? inlaySuccessExpr : "1") + "\n" +
                 "    " + AQUA + "inlay_fail_loss:" +
-                WHITE + (inlayFailLoss != null ? inlayFailLoss : "1(default)") + "\n" +
-                "    " + AQUA + "dismantle_chance:" +
-                WHITE + (dismantleSuccessChance != null ? dismantleSuccessChance : "1(default)") + "\n" +
+                WHITE + (inlayFailLoss != null ? inlayFailLoss : "false") + "\n" +
+                "    " + AQUA + "dismantle_chance_expr:" +
+                WHITE + (dismantleSuccessExpr != null ? dismantleSuccessExpr : "1") + "\n" +
                 "    " + AQUA + "dismantle_fail_loss:" +
-                WHITE + (dismantleFailLoss != null ? dismantleFailLoss : "1(default)") + "\n" +
+                WHITE + (dismantleFailLoss != null ? dismantleFailLoss : "false") + "\n" +
                 "    " + AQUA + "state:" + WHITE + state + RESET;
     }
 
     private void addToCompound(ReadWriteNBT compound) {
         compound.setByte("state", state.toNbtByte());
-        if (inlaySuccessChance != null) compound.setFloat("inlay_chance", inlaySuccessChance);
+        if (inlaySuccessExpr != null) compound.setString("inlay_chance_expr", inlaySuccessExpr);
         if (inlayFailLoss != null) compound.setBoolean("inlay_loss", inlayFailLoss);
-        if (dismantleSuccessChance != null) compound.setFloat("dismantle_chance", dismantleSuccessChance);
+        if (dismantleSuccessExpr != null) compound.setString("dismantle_chance_expr", dismantleSuccessExpr);
         if (dismantleFailLoss != null) compound.setBoolean("dismantle_loss", dismantleFailLoss);
     }
 
     private static GemComponent fromNBT(ReadableNBT nbt) {
         return new GemComponent(
-                nbt.getFloat("inlay_chance"),
+                nbt.getString("inlay_chance_expr"),
                 nbt.getBoolean("inlay_loss"),
-                nbt.getFloat("dismantle_chance"),
+                nbt.getString("dismantle_chance_expr"),
                 nbt.getBoolean("dismantle_loss"),
                 new ComponentState(nbt.getByte("state"))
         );
+    }
+
+    private void registerExpression() {
+        registerExpression1();
+        registerExpression2();
+    }
+
+    private void registerExpression1() {
+        if (inlaySuccessExpr == null || inlaySuccessExpr.isBlank()) return;
+        try {
+            TerraExpression.register(
+                    inlaySuccessExpr,
+                    inlaySuccessExpr,
+                    double.class,
+                    // gem_num 当前宝石数量  limit 槽位数量
+                    // 必须用double，否则计算过程全是int就会变成0
+                    new String[]{"gem_num", "limit"},
+                    new Class[]{double.class, double.class}
+            );
+        } catch (Exception e) {
+            TerraCraftLogger.error("Failed to register inlay chance expression: " + inlaySuccessExpr + "\n" + e.getMessage());
+        }
+
+    }
+
+    private void registerExpression2() {
+        if (dismantleSuccessExpr == null || dismantleSuccessExpr.isBlank()) return;
+        try {
+            TerraExpression.register(
+                    dismantleSuccessExpr,
+                    dismantleSuccessExpr,
+                    double.class,
+                    new String[]{"gem_num", "limit"},
+                    new Class[]{int.class, int.class}
+            );
+        } catch (Exception e) {
+            TerraCraftLogger.error("Failed to register dismantle chance expression: " + dismantleSuccessExpr + "\n" + e.getMessage());
+        }
+
     }
 }

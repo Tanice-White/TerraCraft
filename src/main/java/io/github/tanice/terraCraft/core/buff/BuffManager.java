@@ -16,7 +16,7 @@ import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
@@ -246,18 +246,20 @@ public final class BuffManager implements TerraBuffManager {
      * 执行 buff 效果
      */
     private void doBuffEffects() {
-        List<TerraBuffRecord> buffsToExecute = new ArrayList<>();
-        TerraJSEngineManager engineManager = TerraCraftBukkit.inst().getJSEngineManager();
-        /* 主线程执行buff效果 可以设置负载，过高则分给下 RUN_CD - 1 个tick */
-        buffTaskQueue.drainTo(buffsToExecute);
-        LivingEntity e;
-        TerraBaseBuff baseBuff;
-        for (TerraBuffRecord record : buffsToExecute) {
-            e = record.getEntityReference().get();
-            if (e == null || !e.isValid()) continue;
-            baseBuff = record.getBuff();
-            if (baseBuff instanceof TerraRunnableBuff b) engineManager.executeFunction(b.getFileName(), e);
-        }
+        TerraSchedulers.sync().run(() -> {
+            List<TerraBuffRecord> buffsToExecute = new ArrayList<>();
+            TerraJSEngineManager engineManager = TerraCraftBukkit.inst().getJSEngineManager();
+            /* 主线程执行buff效果 可以设置负载，过高则分给下 RUN_CD - 1 个tick */
+            buffTaskQueue.drainTo(buffsToExecute);
+            LivingEntity e;
+            TerraBaseBuff baseBuff;
+            for (TerraBuffRecord record : buffsToExecute) {
+                e = record.getEntityReference().get();
+                if (e == null || !e.isValid()) continue;
+                baseBuff = record.getBuff();
+                if (baseBuff instanceof TerraRunnableBuff b) engineManager.executeFunction(b.getFileName(), e);
+            }
+        });
     }
 
 

@@ -6,7 +6,7 @@ import io.github.tanice.terraCraft.bukkit.util.TerraWeakReference;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.EntityAttributeCalculator;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.Iterator;

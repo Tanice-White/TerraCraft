@@ -4,7 +4,7 @@ import de.tr7zw.nbtapi.NBT;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraGliderComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.inventory.ItemStack;
 
 public class GliderComponent implements TerraGliderComponent {

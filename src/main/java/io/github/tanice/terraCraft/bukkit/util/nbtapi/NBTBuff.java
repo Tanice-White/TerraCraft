@@ -3,7 +3,7 @@ package io.github.tanice.terraCraft.bukkit.util.nbtapi;
 import io.github.tanice.terraCraft.api.buff.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buff.TerraTimerBuff;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 
 import javax.annotation.Nullable;
 import java.util.Optional;

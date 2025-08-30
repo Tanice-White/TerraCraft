@@ -257,7 +257,7 @@ TerraMeta测试武器:
     default: # 默认品质名
   buff:
     attack:
-      - "流血 #200 %1 :2"
+      - "流血 #200 %0.5 :8"
 #  terra_durability  # 耐久展示有问题
 
 TerraGem伤害增加测试:
@@ -273,9 +273,9 @@ TerraGem伤害增加测试:
     attribute:
       attack_damage: 0.1  # 伤害提升 10%
   gem:  # 宝石标签
-    inlay_chance: 1  # 镶嵌成功概率
+    inlay_chance_expr: 1  # 镶嵌成功概率
     inlay_fail_loss: false
-    dismantle_chance: 1  # 拆卸成功概率
+    dismantle_chance_expr: 1  # 拆卸成功概率
     dismantle_fail_loss: false
 
 TerraGem暴击率测试:
@@ -291,9 +291,9 @@ TerraGem暴击率测试:
     attribute:
       critical_strike_chance: 1
   gem:
-    inlay_chance: 0.5  # 镶嵌成功概率
+    inlay_chance_expr: 0.5  # 镶嵌成功概率
     inlay_fail_loss: true
-    dismantle_chance: 0.5  # 拆卸成功概率
+    dismantle_chance_expr: 0.5  # 拆卸成功概率
     dismantle_fail_loss: true
 
 TerraGem护甲值测试:
@@ -309,9 +309,9 @@ TerraGem护甲值测试:
     attribute:
       armor: 15
   gem:
-    inlay_chance: 0.2  # 镶嵌成功概率
+    inlay_chance_expr: "(limit - gem_num + 1) / 10"  # 镶嵌成功概率
     inlay_fail_loss: true
-    dismantle_chance: 0.2  # 拆卸成功概率
+    dismantle_chance_expr: "1 / (limit - gem_num + 1)"  # 拆卸成功概率
     dismantle_fail_loss: true
 
 
@@ -430,18 +430,26 @@ TerraGem护甲值测试:
 武器耐久测试:
   id: golden_sword
   display_name: "<yellow>武器耐久测试"
+  lore:
+    - "<gradient:#FFD700:#8B4513>你的升级之路必定艰难()</gradient>"
+    - "<red>玻璃大炮</red>"
+    - "<gray>用升级材料即可, 没错就是我懒得写了</gray>"
   max_stack_size: 1
   terra_durability:
     damage: 0
-    max_damage: 25
+    max_damage: 125
     break_loss: false
+    # 支持java的Math库，damage-目前的损伤值  max_damage 此物品最大损伤值  harm-武器或护甲则表示造成或承受的伤害，钓竿，弓，弩的值为0
+    damage_per_use_expr: "Math.max(1, harm * (damage / max_damage + 1))"
   glint: true
   meta:
     section: base
     attribute:
-      attack_damage: 10
+      attack_damage: 15
   weapon:
     damage_per_attack: 5  # 本插件支持识别，三叉戟也支持
+  level: # 展示有问题
+    template: "带计算式的武器升级模板"
 
 弓耐久测试:
   id: bow
@@ -464,3 +472,4 @@ TerraGem护甲值测试:
     max_damage: 9
     break_loss: false
   glint: true
+

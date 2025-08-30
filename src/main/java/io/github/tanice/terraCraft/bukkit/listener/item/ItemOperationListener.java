@@ -4,6 +4,7 @@ import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -57,7 +58,7 @@ public class ItemOperationListener implements Listener, TerraListener {
     private void onShoot(EntityShootBowEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.getGameMode() == GameMode.CREATIVE) return;
-        if (processDurability(player, event.getBow(), 1)) {
+        if (processDurability(player, event.getBow(), 0, 1)) {
             ItemStack item = event.getConsumable();
             if (event.shouldConsumeItem() && item != null && !item.isEmpty())
                 player.getInventory().addItem(item);
@@ -70,14 +71,17 @@ public class ItemOperationListener implements Listener, TerraListener {
     public void onPlayerReelIn(PlayerFishEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.CREATIVE) return;
-        if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH || event.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {
+        int d = -1;
+        if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH || event.getState() == PlayerFishEvent.State.IN_GROUND) d = 1;
+        else if (event.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) d = 2;
+        if (d > 0) {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (!item.isEmpty() && item.getType() == Material.FISHING_ROD) {
-                if (processDurability(player, item, 1)) event.setCancelled(true);
+                if (processDurability(player, item, 0, 1)) event.setCancelled(true);
             } else {
                 item = player.getInventory().getItemInOffHand();
                 if (!item.isEmpty() && item.getType() == Material.FISHING_ROD) {
-                    if (processDurability(player, item, 1)) event.setCancelled(true);
+                    if (processDurability(player, item, 0, 1)) event.setCancelled(true);
                 }
             }
         }
@@ -91,7 +95,7 @@ public class ItemOperationListener implements Listener, TerraListener {
         /* 硬度为0不消耗耐久 */
         if (event.getBlock().getType().getHardness() == 0.0f) return;
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (processDurability(player, item, damagePerBlock(item))) event.setCancelled(true);
+        if (processDurability(player, item, 0, damagePerBlock(item))) event.setCancelled(true);
     }
 
     /* 耐久监听-盾牌档伤害事件的优先级是high */
@@ -105,15 +109,15 @@ public class ItemOperationListener implements Listener, TerraListener {
             if (attacker.getGameMode() != GameMode.CREATIVE) {
                 item = attacker.getInventory().getItemInMainHand();
                 /* 将伤害值为1 */
-                if (processDurability(attacker, item, damagePerAttack(item))) event.setDamage(1);
+                if (processDurability(attacker, item, event.getFinalDamage(), damagePerAttack(item))) event.setDamage(0);
             }
             /* 抛射物 */
         } else if (entityAttacker instanceof Projectile projectile) {
             ProjectileSource source = projectile.getShooter();
             if (source instanceof Player attacker && attacker.getGameMode() != GameMode.CREATIVE) {
                 /* 只有三叉戟需要监听耐久 */
-                if (projectile instanceof Trident trident && processDurability(attacker, trident.getItemStack(), damagePerAttack(trident.getItemStack()))) {
-                    event.setCancelled(true);  /* 抛射物取消事件 */
+                if (projectile instanceof Trident trident && processDurability(attacker, trident.getItemStack(), event.getFinalDamage(), damagePerAttack(trident.getItemStack()))) {
+                    event.setDamage(0);  /* 伤害变为0 */
                 }
             }
         }
@@ -122,7 +126,7 @@ public class ItemOperationListener implements Listener, TerraListener {
             EntityEquipment equipment = defender.getEquipment();
             if (equipment == null) return;
             /* 护甲耐久减少 */
-            for (ItemStack i : equipment.getArmorContents()) processDurability(defender, i, equipmentDamage(event.getFinalDamage()));
+            for (ItemStack i : equipment.getArmorContents()) processDurability(defender, i, event.getFinalDamage(), equipmentDamage(event.getFinalDamage()));
         }
     }
 
@@ -131,13 +135,14 @@ public class ItemOperationListener implements Listener, TerraListener {
      * @param item 需要丢失耐久的物品
      * @return 物品是否损坏--用于取消事件
      */
-    private boolean processDurability(Player player, @Nullable ItemStack item, int damage) {
+    private boolean processDurability(Player player, @Nullable ItemStack item, double harm, int defaultDamage) {
         if (item == null) return false;
         TerraDurabilityComponent component = DurabilityComponent.from(item);
         if (component == null) return false;
         /* 先判定是否已经损坏 */
         if (component.broken()) return true;
-        component.setDamage(component.getDamage() + damage);
+        int useDamage = component.getDamageForUse(harm);
+        component.setDamage(component.getDamage() + (useDamage < 0 ? defaultDamage : useDamage));
         component.cover(item);
         if (component.broken()) {
             // 播放break_sound
@@ -148,18 +153,16 @@ public class ItemOperationListener implements Listener, TerraListener {
         return false;
     }
 
-    /**
-     * 盾牌耐久计算
-     * TODO 兼容原版耐久计算 使用 exp4j
-     */
-    private int blockDamage(double damage) {
-        if (damage < 10) return 0;
-        return (int) Math.round(damage + 1);
-    }
+//    /**
+//     * 盾牌耐久计算
+//     */
+//    private int blockDamage(double damage) {
+//        if (damage < 10) return 0;
+//        return (int) Math.round(damage + 1);
+//    }
 
     /**
      * 护甲耐久计算
-     * TODO 兼容原版耐久计算 使用 exp4j
      */
     private int equipmentDamage(double damage) {
         return (int) Math.floor(Math.max(1, damage / 4));

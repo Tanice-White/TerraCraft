@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.core.logger;
+package io.github.tanice.terraCraft.core.util.logger;
 
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.logger.ConsoleColor;
@@ -6,7 +6,9 @@ import io.github.tanice.terraCraft.bukkit.util.logger.ConsoleColor;
 import java.util.logging.Level;
 
 public final class TerraCraftLogger {
-    private TerraCraftLogger() {}
+    private TerraCraftLogger() {
+        throw new UnsupportedOperationException("TerraCraftLogger class cannot be instantiated");
+    }
 
     public static void success(String message) {
         TerraCraftBukkit.inst().getLogger().log(Level.INFO, ConsoleColor.GREEN + message + ConsoleColor.RESET);
@@ -43,9 +45,9 @@ public final class TerraCraftLogger {
     public enum DebugLevel {
         BUFF,
         ITEM,
-        PLAYER,
         SKILL,
         CALCULATOR,
-        REGISTRY
+        REGISTRY,
+        EXPRESSION,
     }
 }

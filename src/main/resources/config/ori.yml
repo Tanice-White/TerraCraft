@@ -373,8 +373,8 @@ living_entity:
     attribute:
       armor: 20
   # 拓展一个
-  iron_golem:
-    section: base
-    attribute:
-      armor: 80
-      attack_damage: 150
+#  iron_golem:
+#    section: base
+#    attribute:
+#      armor: 80
+#      attack_damage: 150

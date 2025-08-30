@@ -7,7 +7,7 @@ import io.github.tanice.terraCraft.api.item.quality.TerraQualityGroup;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.core.item.level.LevelTemplate;
 import io.github.tanice.terraCraft.core.item.quality.QualityGroup;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 

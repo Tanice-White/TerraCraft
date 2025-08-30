@@ -2,7 +2,7 @@ package io.github.tanice.terraCraft.core.player;
 
 import io.github.tanice.terraCraft.api.player.TerraPlayerData;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;

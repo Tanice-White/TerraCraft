@@ -1,7 +1,7 @@
 package io.github.tanice.terraCraft.core.util.js;
 
 import io.github.tanice.terraCraft.api.js.TerraJSEngineManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;

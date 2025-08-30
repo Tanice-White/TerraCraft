@@ -8,7 +8,7 @@ import io.github.tanice.terraCraft.bukkit.util.StringUtil;
 import io.github.tanice.terraCraft.core.buff.impl.AttributeBuff;
 import io.github.tanice.terraCraft.core.buff.impl.RunnableBuff;
 import io.github.tanice.terraCraft.core.buff.impl.TimerBuff;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.EnumUtil;
 import org.bukkit.configuration.ConfigurationSection;
 

@@ -13,7 +13,7 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.item.component.DamageTypeComponent;
 import io.github.tanice.terraCraft.bukkit.util.annotation.NonnullByDefault;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.skill.SkillDamageMeta;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

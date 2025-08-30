@@ -3,7 +3,7 @@ package io.github.tanice.terraCraft.bukkit.listener;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.listener.helper.MythicListener;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

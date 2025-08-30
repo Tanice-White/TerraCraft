@@ -5,7 +5,7 @@ import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.item.component.TerraInnerNameComponent;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;

@@ -10,7 +10,7 @@ import io.github.tanice.terraCraft.bukkit.util.adapter.BukkitAttribute;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.namespace.TerraNamespaceKey;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;

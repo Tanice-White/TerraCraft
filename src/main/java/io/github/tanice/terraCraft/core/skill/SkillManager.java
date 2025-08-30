@@ -10,7 +10,7 @@ import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.util.TerraWeakReference;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.MMHelper;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

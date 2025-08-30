@@ -12,9 +12,9 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.buff.impl.AttributeBuff;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
-import io.github.tanice.terraCraft.core.registry.Registry;
+import io.github.tanice.terraCraft.core.util.registry.Registry;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 

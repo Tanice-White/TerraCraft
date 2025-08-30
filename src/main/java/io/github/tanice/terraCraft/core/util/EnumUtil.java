@@ -1,6 +1,6 @@
 package io.github.tanice.terraCraft.core.util;
 
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 
 public final class EnumUtil {
     /**

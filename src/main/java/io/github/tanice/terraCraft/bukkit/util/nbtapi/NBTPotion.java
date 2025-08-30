@@ -1,7 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.util.nbtapi;
 
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.namespace.TerraNamespaceKey;
 import org.bukkit.configuration.ConfigurationSection;
 

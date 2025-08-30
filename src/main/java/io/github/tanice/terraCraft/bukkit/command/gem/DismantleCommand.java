@@ -8,7 +8,7 @@ import io.github.tanice.terraCraft.bukkit.item.component.GemComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.GemHolderComponent;
 import io.github.tanice.terraCraft.bukkit.item.component.TerraNameComponent;
 import io.github.tanice.terraCraft.bukkit.util.MiniMessageUtil;
-import io.github.tanice.terraCraft.core.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -52,12 +52,12 @@ public class DismantleCommand extends CommandRunner {
             return true;
         }
         ItemStack mainhandItem = player.getInventory().getItemInMainHand();
-        TerraGemHolderComponent gemHolderComponent = GemHolderComponent.from(mainhandItem);
-        if (gemHolderComponent == null) {
+        TerraGemHolderComponent holderComponent = GemHolderComponent.from(mainhandItem);
+        if (holderComponent == null) {
             sender.sendMessage(RED + "This item does not have a gem holder component");
             return true;
         }
-        List<ItemStack> gems = gemHolderComponent.getGems();
+        List<ItemStack> gems = holderComponent.getGems();
         if (gems.isEmpty()) {
             sender.sendMessage(GOLD + "This item has no gems to remove");
             return true;
@@ -92,10 +92,10 @@ public class DismantleCommand extends CommandRunner {
         TerraGemComponent gemComponent = GemComponent.from(targetGem);
         if (gemComponent == null) ignoreChance = true;
         /* 成功 */
-        if (ignoreChance || Math.random() < gemComponent.getInlaySuccessChance()) {
+        if (ignoreChance || Math.random() < gemComponent.getDismantleSuccessChance(holderComponent.getGemNums(), holderComponent.getLimit())) {
             if (gems.remove(targetGem)) {
-                gemHolderComponent.setGems(gems);
-                gemHolderComponent.cover(mainhandItem);
+                holderComponent.setGems(gems);
+                holderComponent.cover(mainhandItem);
                 targetGem.setAmount(1);
                 player.getInventory().addItem(targetGem);
                 player.updateInventory();

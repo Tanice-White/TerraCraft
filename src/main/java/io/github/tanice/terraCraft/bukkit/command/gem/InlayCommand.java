@@ -65,7 +65,7 @@ public class InlayCommand extends CommandRunner {
             int limit = holderComponent.getLimit();
             if (limit > gems.size()) {
                 /* 成功 */
-                if (ignoreChance || Math.random() < gemComponent.getInlaySuccessChance()) {
+                if (ignoreChance || Math.random() < gemComponent.getInlaySuccessChance(holderComponent.getGemNums(), holderComponent.getLimit())) {
                     ItemStack tmp = offHandItem.clone();
                     tmp.setAmount(1);
                     gems.add(tmp);

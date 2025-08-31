@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraMetaSlotComponent;
@@ -14,7 +13,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 import static io.github.tanice.terraCraft.api.command.TerraCommand.RESET;

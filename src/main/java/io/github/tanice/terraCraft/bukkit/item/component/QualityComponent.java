@@ -137,7 +137,7 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(BOLD).append(YELLOW).append("quality:").append("\n");
-        sb.append("    ").append(AQUA).append("groups:");
+        sb.append("    ").append(AQUA).append("group:");
         if (groups != null && !groups.isEmpty()) {
             sb.append(WHITE).append(String.join(", ", groups));
         } else sb.append(GRAY).append("null");
@@ -153,8 +153,8 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     private void addToCompound(ReadWriteNBT compound) {
         if (quality != null) compound.setString("value", quality);
         if (groups != null) {
-            compound.getStringList("groups").clear();
-            compound.getStringList("groups").addAll(groups);
+            compound.getStringList("group").clear();
+            compound.getStringList("group").addAll(groups);
         }
         compound.setByte("state", state.toNbtByte());
     }
@@ -162,7 +162,7 @@ public class QualityComponent extends AbstractItemComponent implements TerraQual
     private static QualityComponent fromNBT(ReadableNBT nbt) {
         return new QualityComponent(
                 nbt.getString("value"),
-                nbt.getStringList("groups").toListCopy(),
+                nbt.getStringList("group").toListCopy(),
                 new ComponentState(nbt.getByte("state"))
         );
     }

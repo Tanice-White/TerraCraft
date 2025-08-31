@@ -101,8 +101,8 @@ public class DismantleCommand extends CommandRunner {
                 player.updateInventory();
                 sender.sendMessage(GREEN + "Removed gem successfully");
             } else {
-                sender.sendMessage(RED + "Failed to remove gem");
-                TerraCraftLogger.error("Player: " + player.getName() + " attempted to remove a null gem");
+                sender.sendMessage(GOLD + "Error whe removing gem");
+                TerraCraftLogger.error("Player: " + player.getName() + " attempted to remove a Invalid gem");
                 return true;
             }
         /* 失败 */

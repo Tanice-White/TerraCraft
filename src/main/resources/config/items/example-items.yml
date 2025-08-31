@@ -1,6 +1,5 @@
 # MINIMESSAGE 的hover语法不支持在lore中使用
 # 可堆叠物品不要有宝石槽位(Gem_holder)组件,否则将可以用来刷宝石
-
 # 槽位一定要限制：不然会出现玩家双手武器伤害和效果都能生效的问题
 
 NBT全知全能:
@@ -251,7 +250,7 @@ TerraMeta测试武器:
     template: "示例武器升级模板"
   quality:  # 展示有问题
     updatable: true # 默认为true
-    groups:
+    group:
       - "测试品质组名"
       - "伤害测试组"
     default: # 默认品质名

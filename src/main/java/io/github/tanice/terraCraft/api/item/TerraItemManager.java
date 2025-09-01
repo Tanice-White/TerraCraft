@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.api.item;
 
 import io.github.tanice.terraCraft.api.item.level.TerraLevelTemplate;
+import io.github.tanice.terraCraft.api.item.quality.TerraQuality;
 import io.github.tanice.terraCraft.api.item.quality.TerraQualityGroup;
 
 import java.util.Collection;
@@ -23,4 +24,6 @@ public interface TerraItemManager {
     Optional<TerraLevelTemplate> getLevelTemplate(String name);
 
     Optional<TerraQualityGroup> getQualityGroup(String name);
+
+    Optional<TerraQuality> getQuality(String name);
 }

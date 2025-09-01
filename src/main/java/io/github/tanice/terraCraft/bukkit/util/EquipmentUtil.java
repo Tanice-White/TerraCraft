@@ -2,6 +2,7 @@ package io.github.tanice.terraCraft.bukkit.util;
 
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.item.TerraItem;
+import io.github.tanice.terraCraft.api.item.TerraItemManager;
 import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
@@ -115,6 +116,7 @@ public final class EquipmentUtil {
         TerraMetaComponent metaComponent = MetaComponent.from(item);
         TerraGemHolderComponent gemHolderComponent = GemHolderComponent.from(item);
         TerraLevelComponent levelComponent = LevelComponent.from(item);
+        TerraQualityComponent qualityComponent = QualityComponent.from(item);
         List<TerraCalculableMeta> res = new ArrayList<>();
 
         if (metaComponent != null) res.add(metaComponent.getMeta());
@@ -124,9 +126,16 @@ public final class EquipmentUtil {
                 if (metaComponent != null) res.add(metaComponent.getMeta());
             }
         }
-        if (levelComponent != null) {
-            TerraCraftBukkit.inst().getItemManager().getLevelTemplate(levelComponent.getTemplate())
+        TerraItemManager itemManager = TerraCraftBukkit.inst().getItemManager();
+        if (levelComponent != null && levelComponent.getLevel() > 0) {
+            itemManager.getLevelTemplate(levelComponent.getTemplate())
                     .ifPresent(tmp -> res.add(tmp.getMeta().selfMultiply(levelComponent.getLevel())));
+        }
+        if (qualityComponent != null) {
+            String q = qualityComponent.getQuality();
+            if (q != null && !q.isBlank()) {
+                itemManager.getQuality(q).ifPresent(tmp -> res.add(tmp.getMeta()));
+            }
         }
         return res;
     }

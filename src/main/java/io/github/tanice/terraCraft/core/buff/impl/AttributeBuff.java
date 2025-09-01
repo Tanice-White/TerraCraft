@@ -4,7 +4,7 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.buff.BuffActiveCondition;
 import io.github.tanice.terraCraft.api.buff.TerraBuff;
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
-import io.github.tanice.terraCraft.bukkit.item.component.MetaComponent;
+import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.buff.AbstractBuff;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -16,7 +16,7 @@ public class AttributeBuff extends AbstractBuff implements TerraBuff {
 
     public AttributeBuff(String name, ConfigurationSection cfg, Set<String> mutex, AttributeActiveSection aas, BuffActiveCondition bac) {
         super(name, cfg, mutex, bac, aas);
-        meta = new MetaComponent(cfg).getMeta();
+        meta = new CalculableMeta(cfg, aas);
     }
 
     public TerraCalculableMeta getMeta() {

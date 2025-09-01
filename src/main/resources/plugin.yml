@@ -14,3 +14,114 @@ softdepend: [MythicMobs]
 commands:
   terracraft:
     aliases: [tc, terra]
+
+permissions:
+  # Main command permission
+  terracraft.command:
+    description: "Allows access to all TerraCraft commands"
+    default: op
+  # Sub-command group permissions
+  terracraft.command.attr:
+    description: "Allows access to all attribute-related commands"
+    default: op
+    depends: [terracraft.command]
+  terracraft.command.buff:
+    description: "Allows access to all buff-related commands"
+    default: op
+    depends: [terracraft.command]
+  terracraft.command.gem:
+    description: "Allows access to all gem-related commands"
+    default: op
+    depends: [terracraft.command]
+  terracraft.command.item:
+    description: "Allows access to all item-related commands"
+    default: op
+    depends: [terracraft.command]
+  terracraft.command.level:
+    description: "Allows access to all level-related commands"
+    default: op
+    depends: [terracraft.command]
+  terracraft.command.quality:
+    description: "Allows access to all quality-related commands"
+    default: op
+    depends: [terracraft.command]
+  terracraft.command.reload:
+    description: "Allows reloading the TerraCraft plugin"
+    default: op
+    depends: [terracraft.command]
+
+  # Attribute sub-command permissions
+  terracraft.command.attr.get:
+    description: "Allows viewing a player's attributes"
+    default: op
+    depends: [terracraft.command.attr]
+
+  # Buff sub-command permissions
+  terracraft.command.buff.give:
+    description: "Allows giving buffs to players"
+    default: op
+    depends: [terracraft.command.buff]
+  terracraft.command.buff.info:
+    description: "Allows viewing buff configurations"
+    default: op
+    depends: [terracraft.command.buff]
+  terracraft.command.buff.get:
+    description: "Allows viewing a player's active buffs"
+    default: op
+    depends: [terracraft.command.buff]
+  terracraft.command.buff.clear:
+    description: "Allows clearing a player's buffs"
+    default: op
+    depends: [terracraft.command.buff]
+
+  # Gem sub-command permissions
+  terracraft.command.gem.insert:
+    description: "Allows inlaying gems into items"
+    default: op
+    depends: [terracraft.command.gem]
+  terracraft.command.gem.dismantle:
+    description: "Allows dismantling gems from items"
+    default: op
+    depends: [terracraft.command.gem]
+
+  # Item sub-command permissions
+  terracraft.command.item.get:
+    description: "Allows obtaining TerraCraft items"
+    default: op
+    depends: [terracraft.command.item]
+  terracraft.command.item.info:
+    description: "Allows viewing item information"
+    default: op
+    depends: [terracraft.command.item]
+
+  # Level sub-command permissions
+  terracraft.command.level.up:
+    description: "Allows leveling up items"
+    default: op
+    depends: [terracraft.command.level]
+  terracraft.command.level.down:
+    description: "Allows leveling down items"
+    default: op
+    depends: [terracraft.command.level]
+  terracraft.command.level.info:
+    description: "Allows viewing level template configurations"
+    default: op
+    depends: [terracraft.command.level]
+
+  # Quality sub-command permissions
+  terracraft.command.quality.info:
+    description: "Allows viewing quality configurations"
+    default: op
+    depends: [terracraft.command.quality]
+  terracraft.command.quality.recast:
+    description: "Allows recasting item quality"
+    default: op
+    depends: [terracraft.command.quality]
+  terracraft.command.quality.set:
+    description: "Allows setting item quality"
+    default: op
+    depends: [terracraft.command.quality]
+  terracraft.command.quality.remove:
+    description: "Allows removing item quality"
+    default: op
+    depends: [terracraft.command.quality]

@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.core.item;
 import io.github.tanice.terraCraft.api.item.TerraItemManager;
 import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.level.TerraLevelTemplate;
+import io.github.tanice.terraCraft.api.item.quality.TerraQuality;
 import io.github.tanice.terraCraft.api.item.quality.TerraQualityGroup;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.core.item.level.LevelTemplate;
@@ -32,6 +33,7 @@ public final class ItemManager implements TerraItemManager {
 
     private final ConcurrentMap<String, TerraLevelTemplate> levelTemplates;
     private final ConcurrentMap<String, TerraQualityGroup> qualityGroups;
+    private final ConcurrentMap<String, TerraQuality> qualities;
 
     public ItemManager(TerraPlugin plugin) {
         this.plugin = plugin;
@@ -39,6 +41,7 @@ public final class ItemManager implements TerraItemManager {
         this.items = new ConcurrentHashMap<>();
         this.levelTemplates = new ConcurrentHashMap<>();
         this.qualityGroups = new ConcurrentHashMap<>();
+        this.qualities = new ConcurrentHashMap<>();
         this.loadLevelTemplates();
         this.loadQualityGroups();
         this.loadResource();
@@ -49,6 +52,7 @@ public final class ItemManager implements TerraItemManager {
         items.clear();
         levelTemplates.clear();
         qualityGroups.clear();
+        qualities.clear();
         loadLevelTemplates();
         loadQualityGroups();
         loadResource();
@@ -58,6 +62,7 @@ public final class ItemManager implements TerraItemManager {
         this.items.clear();
         this.levelTemplates.clear();
         this.qualityGroups.clear();
+        this.qualities.clear();
     }
 
     @Override
@@ -107,6 +112,11 @@ public final class ItemManager implements TerraItemManager {
     @Override
     public Optional<TerraQualityGroup> getQualityGroup(String name) {
         return Optional.ofNullable(qualityGroups.get(name));
+    }
+
+    @Override
+    public Optional<TerraQuality> getQuality(String name) {
+        return Optional.ofNullable(qualities.get(name));
     }
 
     private void loadResource() {
@@ -178,6 +188,7 @@ public final class ItemManager implements TerraItemManager {
         try (Stream<Path> files = Files.list(qualityDir)) {
             files.forEach(file -> {
                 String fileName = file.getFileName().toString();
+                TerraQualityGroup group;
                 if (fileName.endsWith(".yml")) {
                     ConfigurationSection section = YamlConfiguration.loadConfiguration(file.toFile());
                     for (String k : section.getKeys(false)) {
@@ -190,7 +201,15 @@ public final class ItemManager implements TerraItemManager {
                             TerraCraftLogger.error("Empty quality group: " + k);
                             continue;
                         }
-                        qualityGroups.put(k, new QualityGroup(k, sub));
+                        group = new QualityGroup(k, sub);
+                        qualityGroups.put(k, group);
+                        for (TerraQuality q : group.getQualities()) {
+                            if (qualities.containsKey(q.getName())) {
+                                TerraCraftLogger.warning("Duplicate quality name: " + q.getName());
+                                continue;
+                            }
+                            qualities.put(q.getName(), q);
+                        }
                         num.getAndIncrement();
                     }
                 }

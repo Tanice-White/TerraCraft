@@ -48,6 +48,7 @@ public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
 
     /**
      * 获取优先值
+     * @return 优先值
      */
     int getPriority();
 
@@ -61,6 +62,7 @@ public interface TerraBaseBuff extends Comparable<TerraBaseBuff> {
     /**
      * 是否冲突
      * @param buffName 目标buff名称
+     * @return 是否冲突
      */
     boolean mutexWith(String buffName);
 

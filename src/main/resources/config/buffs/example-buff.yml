@@ -15,7 +15,7 @@
   duration: 200  # 正常获取的持续tick
   mutex:  # 和本buff冲突的buff名  用逗号分隔 "冲突buff1,冲突buff2,...."
   override: "流血" # 本buff会覆盖的buff名
-  meta:
+  attribute:
     damage: 0
     armor: 100
     critical_strike_chance: 0.8
@@ -38,18 +38,18 @@
   priority: 0
   section: ADD
   chance: 0.5  # 作为 attack_buff 时有效，概率为对方挂上 buff
-  meta:
+  attribute:
     damage: 0.5  # 在加算区，伤害提升 50%
 
 测试增益_2_damage_mul:
   priority: 0
   section: MULTIPLY
-  meta:
+  attribute:
     damage: 0.5
 
 测试增益_3_damage_fix:
   priority: 0
   section: FIX
-  meta:
+  attribute:
     damage: 0.5
 

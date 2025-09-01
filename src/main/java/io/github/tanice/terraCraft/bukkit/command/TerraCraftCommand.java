@@ -39,8 +39,10 @@ public class TerraCraftCommand extends CommandGroup implements CommandExecutor, 
     @Override
     protected void sendHelp(CommandSender sender) {
         sender.sendMessage(GOLD + "=== TerraCraft Help ===");
+        sender.sendMessage(AQUA + "main command: " + WHITE + "/terracraft");
+        sender.sendMessage(AQUA + "sub commands:");
         subCommands.values().forEach(cmd ->
-                sender.sendMessage(String.format(GRAY + "/%s " + AQUA + "%s " + WHITE + "- %s", cmd.getName(), cmd.getUsage(), cmd.getDescription()))
+                sender.sendMessage(String.format(WHITE + "\t%s " + GRAY + "\t- %s", cmd.getName(), cmd.getDescription()))
         );
     }
 

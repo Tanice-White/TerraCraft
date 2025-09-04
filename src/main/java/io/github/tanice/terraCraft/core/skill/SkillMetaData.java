@@ -4,7 +4,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import static io.github.tanice.terraCraft.core.constant.ConfigKeys.*;
 
-public class SkillRowData {
+public class SkillMetaData {
     /** 技能名 */
     private final String skillName;
     private final String mythicSkillName;
@@ -13,7 +13,7 @@ public class SkillRowData {
     /** 技能基础的蓝耗 */
     private final double manaCost;
 
-    public SkillRowData(String skillName, ConfigurationSection cfg) {
+    public SkillMetaData(String skillName, ConfigurationSection cfg) {
         this.skillName = skillName;
         String mn = cfg.getString(MYTHIC_SKILL_NAME);
         this.mythicSkillName = mn == null ? skillName : mn;

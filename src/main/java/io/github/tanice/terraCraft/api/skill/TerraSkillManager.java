@@ -1,6 +1,6 @@
 package io.github.tanice.terraCraft.api.skill;
 
-import io.github.tanice.terraCraft.core.skill.SkillRowData;
+import io.github.tanice.terraCraft.core.skill.SkillMetaData;
 import org.bukkit.entity.Player;
 
 public interface TerraSkillManager {
@@ -14,7 +14,7 @@ public interface TerraSkillManager {
      * 手动设置技能冷却
      * @param nextAvailableTime 毫秒
      */
-    void setSkillCooldown(Player player, SkillRowData skill, long nextAvailableTime);
+    void setSkillCooldown(Player player, SkillMetaData skill, long nextAvailableTime);
 
     /**
      * 检查技能是否就绪 (只读)

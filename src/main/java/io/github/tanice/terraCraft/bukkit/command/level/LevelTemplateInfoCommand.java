@@ -27,7 +27,7 @@ public class LevelTemplateInfoCommand extends CommandRunner {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (args.length > 1) {
+        if (args.length != 1) {
             sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }

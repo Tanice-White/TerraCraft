@@ -2,6 +2,7 @@ package io.github.tanice.terraCraft.core.skill;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
+import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
@@ -43,6 +44,10 @@ public final class SkillManager implements TerraSkillManager {
     private static final long CLEAN_UP_CD = 20;
     /** 未使用记录保留时间(分钟) */
     private static final long REMAIN_TIME = 5;
+    /** 蓝量恢复间隔 */
+    private static final long RECOVERY_CD = 2;
+
+    private final TerraEntityAttributeManager attributeManager;
 
     /** 技能和对应的触发器 */
     private final ConcurrentMap<String, SkillMeta> skillMap;
@@ -52,21 +57,27 @@ public final class SkillManager implements TerraSkillManager {
     /** 脏标记 */
     private final ConcurrentMap<TerraWeakReference, AtomicBoolean> dirtyFlags;
     /** 玩家可释放的技能 */
-    private final Map<TerraWeakReference, EnumMap<Trigger, Set<SkillRowData>>> playerSkillMap;
+    private final Map<TerraWeakReference, EnumMap<Trigger, Set<SkillMetaData>>> playerSkillMap;
     /** 玩家ID -> 技能对象 -> 下一次可释放的时间戳(毫秒) */
     private final ConcurrentMap<TerraWeakReference, ConcurrentMap<String, Long>> playerSkillCooldowns;
 
+    /** 玩家蓝量 */
+    private final ConcurrentMap<TerraWeakReference, Double> playerMana;
 
     public SkillManager(TerraPlugin plugin) {
         this.plugin = plugin;
+        this.attributeManager = TerraCraftBukkit.inst().getEntityAttributeManager();
+
         this.skillMap = new ConcurrentHashMap<>();
         this.computingFlags = new ConcurrentHashMap<>();
         this.dirtyFlags = new ConcurrentHashMap<>();
         this.playerSkillMap = new ConcurrentHashMap<>();
         this.playerSkillCooldowns = new ConcurrentHashMap<>();
+        this.playerMana = new ConcurrentHashMap<>();
         this.loadResourceFiles();
 
         TerraSchedulers.async().repeat(this::cleanup, 2, CLEAN_UP_CD);
+        TerraSchedulers.async().repeat(this::recoverMana, 2, RECOVERY_CD);
     }
 
     public void reload() {
@@ -90,43 +101,14 @@ public final class SkillManager implements TerraSkillManager {
      * 释放技能(通过监听玩家事件)
      */
     public void castSkill(Player player, Trigger trigger) {
-        TerraWeakReference reference = new TerraWeakReference(player);
-
-        /* 获取玩家所有可用技能 */
-        EnumMap<Trigger, Set<SkillRowData>> triggerSkillMap = playerSkillMap.get(reference);
-        if (triggerSkillMap == null || triggerSkillMap.isEmpty()) return;
-        /* 获取指定触发器对应的技能集合 */
-        Set<SkillRowData> skills = triggerSkillMap.get(trigger);
-        if (skills == null || skills.isEmpty()) return;
-
-        long currentTime = System.currentTimeMillis();
-        TerraCalculableMeta meta = TerraCraftBukkit.inst().getEntityAttributeManager().getAttributeCalculator(player).getMeta();
-
-        double skillCooldown = 1 + meta.get(AttributeType.SKILL_COOLDOWN);
-        if (skillCooldown < 0) skillCooldown = 0;
-        double manaCost = 1 + meta.get(AttributeType.SKILL_MANA_COST);
-        if (manaCost < 0) manaCost = 0;
-        /* 遍历所有可用技能并释放可释放的技能 */
-        for (SkillRowData skill : skills) {
-            /* 可释放技能并且释放成功 */
-            if (isSkillCooldownReady(player, skill.getSkillName(), currentTime) && MMHelper.castSkill(player, skill.getMythicSkillName())) {
-                setSkillCooldown(player, skill, (long) (skill.getCd() * 1000L * skillCooldown) + currentTime);
-                // TODO 设置蓝蚝
-                if (ConfigManager.isDebug()) {
-                    TerraCraftLogger.error("Player: " + player.getName() + " casting skill: " + skill.getSkillName()
-                            + "(" + skill.getMythicSkillName() + ")" + ", mana cost: " + skill.getManaCost() * manaCost
-                            + ", cd: " + skill.getCd() * skillCooldown + " * 1000 ms"
-                    );
-                }
-            }
-        }
+        TerraSchedulers.async().run(() -> asyncCastSkills(player, trigger));
     }
 
     /**
      * 手动设置技能冷却
      * @param nextAvailableTime 毫秒
      */
-    public void setSkillCooldown(Player player, SkillRowData skill, long nextAvailableTime) {
+    public void setSkillCooldown(Player player, SkillMetaData skill, long nextAvailableTime) {
         playerSkillCooldowns.compute(new TerraWeakReference(player), (uid, skillMap) -> {
             if (skillMap == null) skillMap = new ConcurrentHashMap<>();
             skillMap.put(skill.getSkillName(), nextAvailableTime);
@@ -180,6 +162,44 @@ public final class SkillManager implements TerraSkillManager {
     }
 
     /**
+     * 异步技能调用
+     */
+    private void asyncCastSkills(Player player, Trigger trigger) {
+        TerraWeakReference reference = new TerraWeakReference(player);
+
+        /* 获取玩家所有可用技能 */
+        EnumMap<Trigger, Set<SkillMetaData>> triggerSkillMap = playerSkillMap.get(reference);
+        if (triggerSkillMap == null || triggerSkillMap.isEmpty()) return;
+        /* 获取指定触发器对应的技能集合 */
+        Set<SkillMetaData> skills = triggerSkillMap.get(trigger);
+        if (skills == null || skills.isEmpty()) return;
+
+        long currentTime = System.currentTimeMillis();
+        TerraCalculableMeta meta = attributeManager.getAttributeCalculator(player).getMeta();
+
+        /* 遍历所有可用技能并释放可释放的技能 */
+        for (SkillMetaData skill : skills) {
+            /* 可释放技能并且释放成功 */
+            if (isSkillCooldownReady(player, skill.getSkillName(), currentTime) && MMHelper.castSkill(player, skill.getMythicSkillName())) {
+                /* 技能至少相间一个tick */
+                double skillCooldown = 1 + meta.get(AttributeType.SKILL_COOLDOWN);
+                if (skillCooldown < 0) skillCooldown = 0;
+                if (skill.getCd() > 1) {
+                    setSkillCooldown(player, skill, (long) (skill.getCd() * 1000L * skillCooldown) + currentTime);
+                }
+                double manaCost = 1 + meta.get(AttributeType.SKILL_MANA_COST);
+                playerMana.computeIfPresent(reference, (key, mana) -> mana + skill.getManaCost() * (manaCost > 0 ? manaCost : 0));
+                if (ConfigManager.isDebug()) {
+                    TerraCraftLogger.error("Player: " + player.getName() + " casting skill: " + skill.getSkillName()
+                            + "(" + skill.getMythicSkillName() + ")" + ", mana cost: " + skill.getManaCost() * manaCost
+                            + ", cd: " + skill.getCd() * skillCooldown + " * 1000 ms"
+                    );
+                }
+            }
+        }
+    }
+
+    /**
      * 更新玩家可用技能
      */
     private void updateAvailableSkills(Player player) {
@@ -187,13 +207,13 @@ public final class SkillManager implements TerraSkillManager {
         try {
             /* 计算前清除脏标记 */
             dirtyFlags.get(reference).set(false);
-            EnumMap<Trigger, Set<SkillRowData>> tsm = playerSkillMap.computeIfAbsent(
+            EnumMap<Trigger, Set<SkillMetaData>> tsm = playerSkillMap.computeIfAbsent(
                     reference, k -> new EnumMap<>(Trigger.class)
             );
             /* 防止旧数据残留 */
             tsm.clear();
 
-            SkillRowData skillRowData;
+            SkillMetaData skillRowData;
             Trigger trigger;
             SkillComponent skillComponent;
             for (ItemStack item : EquipmentUtil.getActiveEquipmentItemStack(player)) {
@@ -204,7 +224,7 @@ public final class SkillManager implements TerraSkillManager {
                     SkillMeta skillMeta = skillMap.get(skillName);
                     if (skillMeta == null) continue;
 
-                    skillRowData = skillMeta.skillRowData;
+                    skillRowData = skillMeta.skillMetaData;
                     trigger = skillMeta.trigger;
                     tsm.computeIfAbsent(trigger, t -> ConcurrentHashMap.newKeySet()).add(skillRowData);
                 }
@@ -212,13 +232,13 @@ public final class SkillManager implements TerraSkillManager {
             /* DEBUG */
             if (ConfigManager.isDebug()) {
                 Trigger triggerType;
-                Set<SkillRowData> skillSet;
-                for (Map.Entry<Trigger, Set<SkillRowData>> entry : tsm.entrySet()) {
+                Set<SkillMetaData> skillSet;
+                for (Map.Entry<Trigger, Set<SkillMetaData>> entry : tsm.entrySet()) {
                     triggerType = entry.getKey();
                     skillSet = entry.getValue();
                     TerraCraftLogger.debug( TerraCraftLogger.DebugLevel.SKILL, " Trigger type: " + triggerType.name());
-                    for (SkillRowData skillData : skillSet) {
-                        TerraCraftLogger.debug( TerraCraftLogger.DebugLevel.SKILL, skillData.getSkillName() + "(" + skillData.getMythicSkillName() + ") ");
+                    for (SkillMetaData skillMetaData : skillSet) {
+                        TerraCraftLogger.debug( TerraCraftLogger.DebugLevel.SKILL, skillMetaData.getSkillName() + "(" + skillMetaData.getMythicSkillName() + ") ");
                     }
                 }
             }
@@ -232,6 +252,17 @@ public final class SkillManager implements TerraSkillManager {
                 }
             }
         }
+    }
+
+    /**
+     * 玩家蓝量恢复
+     */
+    private void recoverMana() {
+        playerMana.replaceAll((ref, mana) -> {
+            LivingEntity p = ref.get();
+            if (p == null || !p.isValid()) return mana;
+            return mana + attributeManager.getAttributeCalculator(p).getMeta().get(AttributeType.MANA_RECOVERY_SPEED);
+        });
     }
 
     /**
@@ -284,7 +315,7 @@ public final class SkillManager implements TerraSkillManager {
                             continue;
                         }
                         skillMap.computeIfAbsent(k,
-                                s -> new SkillMeta(new SkillRowData(k, cfg), trigger));
+                                s -> new SkillMeta(new SkillMetaData(k, cfg), trigger));
                         total.getAndIncrement();
                     }
                 }
@@ -296,11 +327,11 @@ public final class SkillManager implements TerraSkillManager {
     }
 
     private static class SkillMeta {
-        SkillRowData skillRowData;
+        SkillMetaData skillMetaData;
         Trigger trigger;
 
-        SkillMeta(SkillRowData skillRowData, Trigger trigger) {
-            this.skillRowData = skillRowData;
+        SkillMeta(SkillMetaData skillMetaData, Trigger trigger) {
+            this.skillMetaData = skillMetaData;
             this.trigger = trigger;
         }
     }

@@ -25,7 +25,7 @@ public class PlayerData implements TerraPlayerData, Cloneable {
     /** 蓝条 */
     private double mana;
     private double maxMana;
-    /** 玩家蓝量回复速度 每tick */
+    /** 玩家蓝量回复速度 每2tick */
     private double manaRecoverySpeed;
     /** 玩家所食用物品 */
     private final Map<String, Integer> ate;

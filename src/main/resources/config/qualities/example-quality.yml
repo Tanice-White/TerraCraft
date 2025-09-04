@@ -1,11 +1,3 @@
-# display_name所支持的 minimessage 格式
-# <gradient>TEXT_TO_DISPLAY</gradient>
-# <#fffff>TEXT_TO_DISPLAY
-
-# 可更改的属性(attribute)：
-# attack_damage、critical_strike_chance、critical_strike_damage、
-# skill_cooldown、mana_cost、armor、armor_toughness、
-# pre_armor_reduction、after_armor_reduction
 测试品质组名:
   品质1: # 需要单独设置 displayName 否则使用品质内部名
     display_name: "<red>破损的</red>"

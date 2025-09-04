@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.util.nbtapi;
+package io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla;
 
 import io.github.tanice.terraCraft.api.buff.TerraBaseBuff;
 import io.github.tanice.terraCraft.api.buff.TerraTimerBuff;

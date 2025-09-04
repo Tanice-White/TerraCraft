@@ -1,4 +1,4 @@
-package io.github.tanice.terraCraft.bukkit.util.nbtapi;
+package io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla;
 
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;

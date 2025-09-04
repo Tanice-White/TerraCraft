@@ -7,7 +7,7 @@ import io.github.tanice.terraCraft.api.protocol.TerraDamageProtocol;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.item.component.BuffComponent;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
-import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla.NBTBuff;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.calculator.DamageCalculator;
 import io.github.tanice.terraCraft.core.config.ConfigManager;

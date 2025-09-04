@@ -3,6 +3,8 @@ package io.github.tanice.terraCraft.api.skill;
 import io.github.tanice.terraCraft.core.skill.SkillMetaData;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
+
 public interface TerraSkillManager {
 
     /**
@@ -31,6 +33,12 @@ public interface TerraSkillManager {
      */
     void updatePlayerSkills(Player player);
 
+    @Nullable
+    Double getPlayerMana(Player player);
+
+    void setPlayerMana(Player player, double mana);
+
+    void addPlayerMana(Player player, double mana);
 
     enum Trigger {
         CROUCH_DOWN,

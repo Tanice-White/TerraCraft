@@ -53,6 +53,7 @@ public class MythicListener implements Listener, TerraListener {
         TerraSkillManager.Trigger trigger;
 
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+            // TODO 使用NBT判断 onGround
             if (!player.isOnGround() && !player.isSwimming()) {
                 trigger = TerraSkillManager.Trigger.JUMP_LEFT;
             } else {

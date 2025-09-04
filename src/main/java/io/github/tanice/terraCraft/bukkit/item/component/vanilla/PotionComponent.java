@@ -4,7 +4,7 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBTCompoundList;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraPotionComponent;
-import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTPotion;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla.NBTPotion;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
 import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;

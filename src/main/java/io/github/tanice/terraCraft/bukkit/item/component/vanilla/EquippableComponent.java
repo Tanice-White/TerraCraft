@@ -3,7 +3,7 @@ package io.github.tanice.terraCraft.bukkit.item.component.vanilla;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraEquippableComponent;
-import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTSound;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla.NBTSound;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;

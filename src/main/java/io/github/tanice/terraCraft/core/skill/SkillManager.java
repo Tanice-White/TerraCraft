@@ -19,6 +19,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -100,6 +101,7 @@ public final class SkillManager implements TerraSkillManager {
     /**
      * 释放技能(通过监听玩家事件)
      */
+    @Override
     public void castSkill(Player player, Trigger trigger) {
         TerraSchedulers.async().run(() -> asyncCastSkills(player, trigger));
     }
@@ -108,6 +110,7 @@ public final class SkillManager implements TerraSkillManager {
      * 手动设置技能冷却
      * @param nextAvailableTime 毫秒
      */
+    @Override
     public void setSkillCooldown(Player player, SkillMetaData skill, long nextAvailableTime) {
         playerSkillCooldowns.compute(new TerraWeakReference(player), (uid, skillMap) -> {
             if (skillMap == null) skillMap = new ConcurrentHashMap<>();
@@ -119,6 +122,7 @@ public final class SkillManager implements TerraSkillManager {
     /**
      * 检查技能是否就绪 (只读)
      */
+    @Override
     public boolean isSkillCooldownReady(Player player, String skillName, long currentTime) {
         ConcurrentMap<String, Long> skillMap = playerSkillCooldowns.get(new TerraWeakReference(player));
         if (skillMap == null || skillMap.isEmpty()) return true;
@@ -132,6 +136,7 @@ public final class SkillManager implements TerraSkillManager {
     /**
      * 获取技能剩余冷却时间 (只读)
      */
+    @Override
     public long getSkillRemainingCooldown(Player player, String skillName, long currentTime) {
         ConcurrentMap<String, Long> skillMap = playerSkillCooldowns.get(new TerraWeakReference(player));
         if (skillMap == null) return 0;
@@ -146,6 +151,7 @@ public final class SkillManager implements TerraSkillManager {
     /**
      * 提交玩家技能更新
      */
+    @Override
     public void updatePlayerSkills(Player player) {
         TerraWeakReference reference = new TerraWeakReference(player);
         dirtyFlags.computeIfAbsent(reference, k -> new AtomicBoolean(false));
@@ -159,6 +165,22 @@ public final class SkillManager implements TerraSkillManager {
 
             /* 计算中，标记为脏 */
         } else dirtyFlags.get(reference).set(true);
+    }
+
+    @Override
+    @Nullable
+    public Double getPlayerMana(Player player) {
+        return playerMana.get(new TerraWeakReference(player));
+    }
+
+    @Override
+    public void setPlayerMana(Player player, double mana) {
+        playerMana.put(new TerraWeakReference(player), mana);
+    }
+
+    @Override
+    public void addPlayerMana(Player player, double mana) {
+        playerMana.merge(new TerraWeakReference(player), mana, Double::sum);
     }
 
     /**
@@ -287,6 +309,7 @@ public final class SkillManager implements TerraSkillManager {
                 playerSkillMap.remove(reference);
                 computingFlags.remove(reference);
                 dirtyFlags.remove(reference);
+                // TODO playerMana什么时候写入更新？
             }
         }
     }

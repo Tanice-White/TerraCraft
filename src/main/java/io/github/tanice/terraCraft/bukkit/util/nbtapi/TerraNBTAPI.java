@@ -15,7 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import static io.github.tanice.terraCraft.api.item.component.TerraBaseComponent.MINECRAFT_PREFIX;
 
 public final class TerraNBTAPI {
-    // TODO 玩家属性 AttributeAPI
+    // TODO 玩家属性
+    // TODO 判断玩家是否 onGround
 
     /**
      * 判断物品是否有盾牌属性

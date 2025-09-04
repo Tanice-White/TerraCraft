@@ -13,7 +13,7 @@ import io.github.tanice.terraCraft.bukkit.item.component.BuffComponent;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.util.TerraWeakReference;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
-import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla.NBTBuff;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;

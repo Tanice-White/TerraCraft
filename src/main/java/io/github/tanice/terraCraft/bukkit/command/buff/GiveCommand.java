@@ -3,7 +3,7 @@ package io.github.tanice.terraCraft.bukkit.command.buff;
 import io.github.tanice.terraCraft.api.buff.TerraBaseBuff;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.command.CommandRunner;
-import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla.NBTBuff;
 import io.github.tanice.terraCraft.core.buff.impl.TimerBuff;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

@@ -7,7 +7,7 @@ import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraBuffComponent;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
-import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTBuff;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.vanilla.NBTBuff;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
 import org.bukkit.configuration.ConfigurationSection;

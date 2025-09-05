@@ -22,6 +22,7 @@ public class NBTPlayer {
     /** 玩家蓝量回复速度 每2tick */
     private double manaRecoverySpeed;
     /** 玩家所食用物品 */
+    // TODO 只有需要计数的才会计入nbt，否则不计入
     private final Map<String, Integer> ate;
 
     public NBTPlayer(float externalHealth, double mana, double maxMana, double manaRecoverySpeed, Map<String, Integer> ate) {

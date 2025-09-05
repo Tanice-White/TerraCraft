@@ -36,11 +36,25 @@ public interface TerraCalculableMeta extends Cloneable {
     double get(AttributeType type);
 
     /**
+     * 设置目标属性计算值
+     * @param type 目标属性
+     * @param value 预设的值
+     */
+    void set(AttributeType type, double value);
+
+    /**
      * 获取目标伤害类型计算值
      * @param type 目标伤害类型
      * @return 伤害类型数值
      */
     double get(DamageFromType type);
+
+    /**
+     * 设置目标伤害类型的计算值
+     * @param type 目标伤害类型
+     * @param value 预设的值
+     */
+    void set(DamageFromType type, double value);
 
     /**
      * 获取属性数组的引用

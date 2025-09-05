@@ -1,5 +1,7 @@
 package io.github.tanice.terraCraft.bukkit.util;
 
+import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
+import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.api.item.TerraItem;
 import io.github.tanice.terraCraft.api.item.TerraItemManager;
@@ -9,12 +11,15 @@ import io.github.tanice.terraCraft.bukkit.event.custom.TerraEnchantMetaLoadEvent
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.TerraNBTAPI;
+import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.registry.Registry;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
@@ -55,7 +60,7 @@ public final class EquipmentUtil {
     /**
      * 获取实体装备的整合 meta
      * 如果是插件物品则不增加原版伤害值
-     * 能被异步执行，所有事件需要在主线程上call!!!!!!
+     * 能被异步执行，所有事件需要在主线程上触发
      */
     public static List<TerraCalculableMeta> getEntityActiveMeta(LivingEntity entity) {
         List<TerraCalculableMeta> res = new ArrayList<>(12);
@@ -95,6 +100,10 @@ public final class EquipmentUtil {
             if (ConfigManager.isDebug()) TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.REGISTRY, "found vanilla living entity: " + entity.getType().toString().toLowerCase());
             res.add(customMeta);
         }
+        // 蓝量恢复
+        TerraCalculableMeta manaMeta = new CalculableMeta(AttributeActiveSection.BASE);
+        manaMeta.set(AttributeType.MANA_RECOVERY_SPEED, TerraNBTAPI.getManaRecoverySpeed(entity));
+        res.add(manaMeta);
         return res;
     }
 

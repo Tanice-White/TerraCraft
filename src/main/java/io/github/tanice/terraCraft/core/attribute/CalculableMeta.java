@@ -136,8 +136,18 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     }
 
     @Override
+    public void set(AttributeType type, double value) {
+        this.attributeModifiers[type.ordinal()] = value;
+    }
+
+    @Override
     public double get(DamageFromType type) {
         return this.damageTypeModifiers[type.ordinal()];
+    }
+
+    @Override
+    public void set(DamageFromType type, double value) {
+        this.damageTypeModifiers[type.ordinal()] = value;
     }
 
     @Override

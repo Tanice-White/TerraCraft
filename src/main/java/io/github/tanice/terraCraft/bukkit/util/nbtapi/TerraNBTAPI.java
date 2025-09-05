@@ -145,6 +145,17 @@ public final class TerraNBTAPI {
     }
 
     /**
+     * 获取mana恢复速度
+     */
+    public static double getManaRecoverySpeed(LivingEntity entity) {
+        return NBT.get(entity, nbt -> {
+            Double v = nbt.resolveOrNull("terraMeta.manaRecoverySpeed", Double.class);
+            if (v == null) return ConfigManager.getOriginalManaRecoverySpeed();
+            return v;
+        });
+    }
+
+    /**
      * 判断实体是否在地面
      * @param entity 目标实体
      * @return 在地面返回 true 否则 false

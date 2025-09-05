@@ -4,21 +4,20 @@ import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.bukkit.util.annotation.NonnullByDefault;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
 @NonnullByDefault
-public class TerraItemMetaLoadEvent extends Event {
+public class TerraEnchantMetaLoadEvent extends Event {
     protected static final HandlerList handlers = new HandlerList();
 
     @Nullable
     protected TerraCalculableMeta meta;
-    private final ItemStack bukkitItem;
+    private final String bukkitEnchantId;
 
-    public TerraItemMetaLoadEvent(ItemStack item) {
+    public TerraEnchantMetaLoadEvent(String enchantId) {
         this.meta = null;
-        this.bukkitItem = item;
+        this.bukkitEnchantId = enchantId;
     }
     public static HandlerList getHandlerList() {return handlers;}
 
@@ -36,7 +35,7 @@ public class TerraItemMetaLoadEvent extends Event {
         this.meta = meta;
     }
 
-    public ItemStack getBukkitItem() {
-        return this.bukkitItem;
+    public String getEnchantId() {
+        return this.bukkitEnchantId;
     }
 }

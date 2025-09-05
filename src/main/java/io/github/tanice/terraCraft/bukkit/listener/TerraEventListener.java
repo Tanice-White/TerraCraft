@@ -50,7 +50,7 @@ public class TerraEventListener implements Listener, TerraListener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDataLimitChange(TerraPlayerDataLimitChangeEvent event) {
-        TerraCraftBukkit.inst().getPlayerDataManager().changePlayerDataLimit(event.getEntity(), event.getDeltaPlayerData());
+        // TODO 玩家NBT数据写入
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

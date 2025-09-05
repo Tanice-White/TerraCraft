@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit;
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.buff.TerraBuffManager;
 import io.github.tanice.terraCraft.api.item.TerraItemManager;
-import io.github.tanice.terraCraft.api.player.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.api.plugin.TerraPlugin;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.api.database.TerraDatabaseManager;
@@ -26,7 +25,6 @@ import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.item.ItemManager;
 import io.github.tanice.terraCraft.core.util.expression.TerraExpression;
 import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
-import io.github.tanice.terraCraft.core.player.PlayerDataManager;
 import io.github.tanice.terraCraft.core.skill.SkillManager;
 import io.github.tanice.terraCraft.core.util.database.DatabaseManager;
 import io.github.tanice.terraCraft.core.util.helper.asm.ASMHelper;
@@ -43,7 +41,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
 
     private EntityAttributeManager entityAttributeManager;
     private SkillManager skillManager;
-    private PlayerDataManager playerDataManager;
 
     private DamageListener damageListener;
     private HelperListener helperListener;
@@ -72,7 +69,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         skillManager = new SkillManager(this);
 
         entityAttributeManager = new EntityAttributeManager();
-        playerDataManager = new PlayerDataManager();
 
         terraCraftCommand = new TerraCraftCommand(this);
         terraCraftCommand.register(new ItemGroupCommand(this));
@@ -97,7 +93,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         if (itemManager != null) itemManager.unload();
         if (skillManager != null) skillManager.unload();
         if (entityAttributeManager != null) entityAttributeManager.unload();
-        if (playerDataManager != null) playerDataManager.unload();
         if (databaseManager != null) databaseManager.unload();
         TerraExpression.clear();
         TerraSchedulers.shutdown();
@@ -122,7 +117,6 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         itemManager.reload();
         skillManager.reload();
         entityAttributeManager.reload();
-        playerDataManager.reload();
     }
 
     public static TerraCraftBukkit inst() {
@@ -157,10 +151,5 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
     @Override
     public TerraSkillManager getSkillManager() {
         return this.skillManager;
-    }
-
-    @Override
-    public TerraPlayerDataManager getPlayerDataManager() {
-        return this.playerDataManager;
     }
 }

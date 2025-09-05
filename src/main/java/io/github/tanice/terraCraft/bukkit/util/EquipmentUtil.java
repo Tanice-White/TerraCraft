@@ -5,6 +5,7 @@ import io.github.tanice.terraCraft.api.item.TerraItem;
 import io.github.tanice.terraCraft.api.item.TerraItemManager;
 import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.event.custom.TerraEnchantMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
@@ -12,6 +13,7 @@ import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.registry.Registry;
 import io.github.tanice.terraCraft.core.util.slot.TerraEquipmentSlot;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -77,14 +79,15 @@ public final class EquipmentUtil {
                 }
             }
             /* 原版附魔 */
-//            for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-//                TerraEnchantMetaLoadEvent enchantMetaLoadEvent = TerraEvents.callAndReturn(new TerraEnchantMetaLoadEvent(entry.getKey().toString()));
-//                if (enchantMetaLoadEvent.getMeta() != null) res.add(enchantMetaLoadEvent.getMeta());
-//                else {
-//                    customMeta = Registry.ORI_ENCHANT.get(item.getType().toString());
-//                    if (customMeta != null) res.add(customMeta);
-//                }
-//            }
+            for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
+                TerraEnchantMetaLoadEvent event = new TerraEnchantMetaLoadEvent(entry.getKey().toString());
+                TerraEvents.callSync(event);
+                if (event.getMeta() != null) res.add(event.getMeta());
+                else {
+                    customMeta = Registry.ORI_ENCHANT.get(item.getType().toString());
+                    if (customMeta != null) res.add(customMeta);
+                }
+            }
         }
         // 生物体meta
         customMeta = Registry.ORI_LIVING_ENTITY.get(entity.getType().toString().toLowerCase());
@@ -142,7 +145,7 @@ public final class EquipmentUtil {
 
     /**
      * 非宝石
-     * 通过 耐久 判断物品是否需要计入属性
+     * 通过耐久判断物品是否需要计入属性
      */
     private static boolean validate(ItemStack item) {
         if (item == null || item.isEmpty()) return false;

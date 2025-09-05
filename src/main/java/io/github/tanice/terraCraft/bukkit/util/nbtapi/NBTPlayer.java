@@ -1,23 +1,21 @@
 package io.github.tanice.terraCraft.bukkit.util.nbtapi;
 
+import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
-import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
- * TODO NBT储存/加载方式等
  * 插件中玩家的额外信息
  */
 public class NBTPlayer {
-    private final UUID uuid;
-    private double externalHealth;
+    private float externalHealth;
     /** 蓝条 */
     private double mana;
     private double maxMana;
@@ -26,8 +24,7 @@ public class NBTPlayer {
     /** 玩家所食用物品 */
     private final Map<String, Integer> ate;
 
-    public NBTPlayer(String uuid, double externalHealth, double mana, double maxMana, double manaRecoverySpeed, Map<String, Integer> ate) {
-        this.uuid = UUID.fromString(uuid);
+    public NBTPlayer(float externalHealth, double mana, double maxMana, double manaRecoverySpeed, Map<String, Integer> ate) {
         this.externalHealth = externalHealth;
         this.mana = mana;
         this.maxMana = maxMana;
@@ -38,10 +35,9 @@ public class NBTPlayer {
     /**
      * 创建用于玩家初始化的NBTPlayer对象
      */
-    public static NBTPlayer newFrom(Player player) {
+    public static NBTPlayer initVanilla(Player player) {
         return new NBTPlayer(
-                player.getUniqueId().toString(),
-                ConfigManager.getOriginalMaxHealth(),
+                ConfigManager.getExternalMaxHealth(),
                 ConfigManager.getOriginalMaxMana(),
                 ConfigManager.getOriginalMaxMana(),
                 ConfigManager.getOriginalManaRecoverySpeed(),
@@ -49,56 +45,60 @@ public class NBTPlayer {
         );
     }
 
-    public static NBTPlayer newFrom(ConfigurationSection cfg) {
-        return new NBTPlayer(
-                UUID.randomUUID().toString(),
-                cfg.getDouble("external_max_health", 0D),
-                cfg.getDouble("mana", 0D),
-                cfg.getDouble("max_mana", 0D),
-                cfg.getDouble("mana_recovery_speed", ConfigManager.getOriginalManaRecoverySpeed()),
-                new HashMap<>(0)
-        );
+    /**
+     * 获取整个插件附加的NBT
+     * @param player 目标玩家
+     * @return NBT数据实例
+     */
+    @Nullable
+    public static NBTPlayer from(Player player) {
+        return NBT.get(player, nbt -> {
+            ReadableNBT terraCompound = nbt.getCompound("terraMeta");
+            if (terraCompound == null) return null;
+
+            ReadableNBT mapCompound = terraCompound.getCompound("ate");
+            Map<String, Integer> map = new HashMap<>();
+            if (mapCompound != null) {
+                for (String key : mapCompound.getKeys()) map.put(key, mapCompound.getInteger(key));
+            }
+            return new NBTPlayer(
+                    terraCompound.getFloat("externalHealth"),
+                    terraCompound.getDouble("mana"),
+                    terraCompound.getDouble("maxMana"),
+                    terraCompound.getDouble("manaRecoverySpeed"),
+                    map
+            );
+        });
     }
 
     /**
      * 玩家初始化后调用
      */
-    public void apply() {
-        Entity e = Bukkit.getEntity(uuid);
-        if (!(e instanceof Player player) || !e.isValid()) {
-            TerraCraftLogger.error("Player " + uuid + " does not exist, cancelling NBTPlayer synchronization");
-            return;
-        }
-
-        // TODO 使用NBTAPI
-        // AttributeAPI.setOriBaseAttr(player, Attribute.MAX_HEALTH, maxHealth);
-        player.setHealth(externalHealth + 20);  // TODO 基础血量
-
+    public void apply(Player player) {
+        TerraNBTAPI.setExternalHealth(player, externalHealth);
         if (!player.isHealthScaled()) {
             player.setHealthScale(20);
             player.setHealthScaled(true);
         }
-
-        if (maxMana < 0) maxMana = 0;
-        if (mana < 0) mana = 0;
-        if (mana > maxMana) mana = maxMana;
-        if (manaRecoverySpeed < 0) manaRecoverySpeed = 0;
+        NBT.modify(player, nbt -> {
+            ReadWriteNBT terraCompound = nbt.getOrCreateCompound("terraMeta");
+            terraCompound.setDouble("mana", mana);
+            terraCompound.setDouble("maxMana", maxMana);
+            terraCompound.setFloat("externalHealth", externalHealth);
+            terraCompound.setDouble("manaRecoverySpeed", manaRecoverySpeed);
+            ReadWriteNBT mapCompound = terraCompound.getOrCreateCompound("ate");
+            for (Map.Entry<String, Integer> entry : ate.entrySet()) {
+                mapCompound.setString(entry.getKey(), String.valueOf(entry.getValue()));
+            }
+        });
     }
 
-    /**
-     * 合并两个NBTPlayer，即属性改变
-     */
-    public void merge(NBTPlayer np) {
-        this.externalHealth += np.getExternalHealth();
-        this.maxMana += np.getMaxMana();
-        this.manaRecoverySpeed += np.getManaRecoverySpeed();
+    public static void remove(LivingEntity entity) {
+        NBT.modify(entity, nbt -> {nbt.removeKey("terraMeta");});
+        TerraNBTAPI.removeExternalHealth(entity);
     }
 
-    public UUID getUUID() {
-        return uuid;
-    }
-
-    public double getExternalHealth() {
+    public float getExternalHealth() {
         return externalHealth;
     }
 
@@ -107,19 +107,31 @@ public class NBTPlayer {
     }
 
     public void setMana(double mana) {
-        mana = Math.min(maxMana, mana);
+        this.mana = Math.min(maxMana, mana);
     }
 
     public double getMaxMana() {
         return maxMana;
     }
 
+    public void setMaxMana(double maxMana) {
+        this.maxMana = maxMana;
+    }
+
     public double getManaRecoverySpeed() {
         return manaRecoverySpeed;
     }
 
+    public void setManaRecoverySpeed(double manaRecoverySpeed) {
+        this.manaRecoverySpeed = manaRecoverySpeed;
+    }
+
     public Map<String, Integer> getAte() {
         return ate;
+    }
+
+    public void eat(String terraName) {
+
     }
 
     public NBTPlayer clone() {

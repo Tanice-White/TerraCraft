@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.api.plugin;
 import io.github.tanice.terraCraft.api.attribute.TerraEntityAttributeManager;
 import io.github.tanice.terraCraft.api.buff.TerraBuffManager;
 import io.github.tanice.terraCraft.api.item.TerraItemManager;
-import io.github.tanice.terraCraft.api.player.TerraPlayerDataManager;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.api.database.TerraDatabaseManager;
 import io.github.tanice.terraCraft.api.js.TerraJSEngineManager;
@@ -25,8 +24,6 @@ public interface TerraPlugin {
     TerraEntityAttributeManager getEntityAttributeManager();
 
     TerraSkillManager getSkillManager();
-
-    TerraPlayerDataManager getPlayerDataManager();
 
     File getDataFolder();
 }

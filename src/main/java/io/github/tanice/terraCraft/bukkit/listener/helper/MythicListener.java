@@ -3,6 +3,7 @@ package io.github.tanice.terraCraft.bukkit.listener.helper;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.TerraNBTAPI;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.TerraDamageMechanic;
 import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.entity.Player;
@@ -15,7 +16,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 public class MythicListener implements Listener, TerraListener {
-    // TODO 根据 mmWiki拓展监听器
     public MythicListener() {
         TerraCraftBukkit.inst().getServer().getPluginManager().registerEvents(this, TerraCraftBukkit.inst());
     }
@@ -53,14 +53,13 @@ public class MythicListener implements Listener, TerraListener {
         TerraSkillManager.Trigger trigger;
 
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            // TODO 使用NBT判断 onGround
-            if (!player.isOnGround() && !player.isSwimming()) {
+            if (!TerraNBTAPI.isOnGround(player) && !player.isSwimming()) {
                 trigger = TerraSkillManager.Trigger.JUMP_LEFT;
             } else {
                 trigger = player.isSneaking() ? TerraSkillManager.Trigger.CROUCH_LEFT : TerraSkillManager.Trigger.LEFT_CLICK;
             }
         } else {
-            if (!player.isOnGround() && !player.isSwimming()) {
+            if (!TerraNBTAPI.isOnGround(player) && !player.isSwimming()) {
                 trigger = TerraSkillManager.Trigger.JUMP_RIGHT;
             } else {
                 trigger = player.isSneaking() ? TerraSkillManager.Trigger.CROUCH_RIGHT : TerraSkillManager.Trigger.RIGHT_CLICK;
@@ -75,4 +74,5 @@ public class MythicListener implements Listener, TerraListener {
             TerraCraftBukkit.inst().getSkillManager().castSkill(player, TerraSkillManager.Trigger.SHOOT);
         }
     }
+    // TODO 根据 mmWiki拓展监听器
 }

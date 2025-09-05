@@ -294,31 +294,32 @@ potion:
   # 瞬间伤害 仍旧保持真伤
 
 # 原版附魔
-# 由于本插件对于玩家攻击事件无感，无法实现 根据伤害来源与类型判定meta是否生效，故无法兼容原版附魔
-#enchant:
+# 由于本插件对于玩家攻击事件无感，无法实现 根据伤害来源与类型判定meta是否生效
+# 故由使用者自己配置相关数值
+enchant:
 #  bane_of_arthropods:
 #    attack_damage: 2.5  # 截肢杀手每级增加2.5伤害（对节肢动物）
 #  blast_protection:
 #    after_armor_reduction: 0.08  # 每级减少8%的爆炸伤害
-#  breach:
-#    after_armor_reduction: -0.15  # 每级减少15%的伤害减免
-#  density:
-#    attack_damage: 0.5  # 致密每级增加0.5伤害
+  breach:
+    after_armor_reduction: -0.15  # 每级减少15%的伤害减免
+  density:
+    attack_damage: 0.5  # 致密每级增加0.5伤害
 #  feather_falling:
 #    after_armor_reduction: 0.12  # 摔落缓冲每级提供12%的摔落伤害减免
 #  fire_protection:
 #    after_armor_reduction: 0.08  # 火焰保护每级提供8%的火焰伤害减免
-#  impaling:
-#    attack_damage: 2.5  # 穿刺每级增加2.5伤害
-#  power:
-#    section: add
-#    attack_damage: 0.5  # 力量每级增加50%的伤害
+  impaling:
+    attack_damage: 2.5  # 穿刺每级增加2.5伤害
+  power:
+    section: add
+    attack_damage: 0.5  # 力量每级增加50%的伤害
 #  projectile_protection:
 #    after_armor_reduction: 0.08  # 弹射物保护每级提供8%的弹射伤害减免
-#  protection:
-#    after_armor_reduction: 0.04  # 保护每级提供4%的伤害减免
-#  sharpness:
-#    attack_damage: 0.5  # 锋利每级增加0.5的伤害  # 和原版不一致
+  protection:
+    after_armor_reduction: 0.04  # 保护每级提供4%的伤害减免
+  sharpness:
+    attack_damage: 0.5  # 锋利每级增加0.5的伤害  # 和原版不一致
 #  smite:
 #    attack_damage: 2.5  # 亡灵杀手每级增加2.5伤害（对亡灵）
 
@@ -372,7 +373,7 @@ living_entity:
     section: base
     attribute:
       armor: 20
-  # 拓展一个
+  # 拓展一个彩蛋  -  被打了，还是注释掉吧
 #  iron_golem:
 #    section: base
 #    attribute:

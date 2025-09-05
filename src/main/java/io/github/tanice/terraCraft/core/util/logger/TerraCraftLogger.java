@@ -49,5 +49,6 @@ public final class TerraCraftLogger {
         CALCULATOR,
         REGISTRY,
         EXPRESSION,
+        ATTRIBUTE,
     }
 }

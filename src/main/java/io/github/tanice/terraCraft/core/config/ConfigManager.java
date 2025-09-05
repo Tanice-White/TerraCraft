@@ -40,7 +40,7 @@ public final class ConfigManager {
     private static String database;
     private static String username;
     private static String password;
-    private static double originalMaxHealth;
+    private static double externalMaxHealth;
     private static double originalMaxMana;
     private static double originalManaRecoverySpeed;
     private static double rarityIntensity;
@@ -85,7 +85,7 @@ public final class ConfigManager {
                 useMysql = false;
             }
         }
-        originalMaxHealth = cfg.getDouble("original_max_health", 20D);
+        externalMaxHealth = cfg.getDouble("external_max_health", 20D);
         originalMaxMana = cfg.getDouble("original_max_mana", 50D);
         originalManaRecoverySpeed = cfg.getDouble("original_mana_recovery_speed", 0.4D);
         rarityIntensity = cfg.getDouble("rarity_intensity", 0.5D);
@@ -163,8 +163,8 @@ public final class ConfigManager {
         return password;
     }
 
-    public static double getOriginalMaxHealth() {
-        return originalMaxHealth;
+    public static float getExternalMaxHealth() {
+        return (float) externalMaxHealth;
     }
 
     public static double getOriginalMaxMana() {
@@ -208,7 +208,7 @@ public final class ConfigManager {
     }
 
     private static void loadRegistry() {
-        File configFile = new File(TerraCraftBukkit.inst().getDataFolder(), "ori.yml");
+        File configFile = new File(TerraCraftBukkit.inst().getDataFolder(), "vanilla.yml");
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(configFile);
         ConfigurationSection tmp;
         ConfigurationSection sub = cfg.getConfigurationSection("item");
@@ -233,14 +233,17 @@ public final class ConfigManager {
             }
         }
         TerraCraftLogger.success("[Registry] Loaded " + total + " ORI_POTION");
-//        sub = cfg.getConfigurationSection("enchant");
-//        if (sub != null) {
-//            for (String key : sub.getKeys(false)) {
-//                tmp = sub.getConfigurationSection(key);
-//                if (tmp == null) continue;
-//                Registry.ORI_ENCHANT.register(key, new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
-//            }
-//        }
+        total = 0;
+        sub = cfg.getConfigurationSection("enchant");
+        if (sub != null) {
+            for (String key : sub.getKeys(false)) {
+                tmp = sub.getConfigurationSection(key);
+                if (tmp == null) continue;
+                Registry.ORI_ENCHANT.register(key, new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                total ++;
+            }
+        }
+        TerraCraftLogger.success("[Registry] Loaded " + total + " ORI_ENCHANT");
         total = 0;
         sub = cfg.getConfigurationSection("living_entity");
         if (sub != null) {

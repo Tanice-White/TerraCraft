@@ -1,13 +1,22 @@
 package io.github.tanice.terraCraft.bukkit.util.nbtapi;
 
 import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
+import io.github.tanice.terraCraft.api.item.component.vanilla.TerraAttributeModifiersComponent;
+import io.github.tanice.terraCraft.bukkit.util.adapter.BukkitAttribute;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
+import io.github.tanice.terraCraft.core.util.namespace.TerraNamespaceKey;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,8 +24,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import static io.github.tanice.terraCraft.api.item.component.TerraBaseComponent.MINECRAFT_PREFIX;
 
 public final class TerraNBTAPI {
-    // TODO 玩家属性
-    // TODO 判断玩家是否 onGround
 
     /**
      * 判断物品是否有盾牌属性
@@ -86,6 +93,72 @@ public final class TerraNBTAPI {
             });
         }
         return res.get();
+    }
+
+    // TODO 玩家属性
+
+    /**
+     * 设置生物额外生命值
+     * @param entity 生物
+     * @param externalHealth 额外的生命值（add）
+     */
+    public static void setExternalHealth(LivingEntity entity, float externalHealth) {
+        NBT.modify(entity, nbt -> {
+            String id;
+            boolean found = false;
+            for (ReadWriteNBT compound : nbt.getCompoundList("attributes")) {
+                id = compound.getString("id");
+                if (id == null || id.isEmpty() || !id.equals(BukkitAttribute.MAX_HEALTH.getBukkitAttribute().toString())) continue;
+                found = true;
+                setExternalHealth(compound.getCompoundList("modifiers").addCompound(), externalHealth);
+                break;
+            }
+            if (found && ConfigManager.isDebug())
+                TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.ATTRIBUTE, "Successfully set external health " + externalHealth + "to Living " + entity.getName());
+
+
+            if (!found) {
+                TerraCraftLogger.info("Cannot find generic max_health attribute for entity " + entity.getName() + " try to generate");
+
+                ReadWriteNBT compound = nbt.getCompoundList("attributes").addCompound();
+                compound.setString("id", BukkitAttribute.MAX_HEALTH.getBukkitAttribute().toString());
+                compound.setDouble("base", 20D);
+                setExternalHealth(compound.getCompoundList("modifiers").addCompound(), externalHealth);
+
+                TerraCraftLogger.success("Successfully generated max_health attribute for entity " + entity.getName());
+            }
+        });
+    }
+
+    /**
+     * 移除生物额外生命值
+     */
+    public static void removeExternalHealth(LivingEntity entity) {
+        NBT.modify(entity, nbt -> {
+            String id;
+            for (ReadWriteNBT compound : nbt.getCompoundList("attributes")) {
+                id = compound.getString("id");
+                if (id == null || id.isEmpty() || !id.equals(BukkitAttribute.MAX_HEALTH.getBukkitAttribute().toString())) continue;
+                compound.getCompoundList("modifiers").removeIf(sub -> Objects.equals(sub.getString("id"), new TerraNamespaceKey("external_health").get()));
+            }
+        });
+    }
+
+    /**
+     * 判断实体是否在地面
+     * @param entity 目标实体
+     * @return 在地面返回 true 否则 false
+     */
+    public static boolean isOnGround(Entity entity) {
+        AtomicBoolean onGround = new AtomicBoolean(false);
+        NBT.get(entity, nbt -> {onGround.set(nbt.getBoolean("OnGround"));});
+        return onGround.get();
+    }
+
+    private static void setExternalHealth(ReadWriteNBT compound, float externalHealth) {
+        compound.setString("id", new TerraNamespaceKey("external_health").get());
+        compound.setFloat("amount", externalHealth);
+        compound.setString("operation", TerraAttributeModifiersComponent.Operation.ADD_VALUE.name().toLowerCase());
     }
 
 }

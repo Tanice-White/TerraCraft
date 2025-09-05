@@ -34,7 +34,7 @@ original_critical_strike_addition: 0.2 # 0.2
 rarity_intensity: 0.5  # 越大压制越多
 
 # 玩家数据类
-original_max_health: 20
+external_max_health: 20
 original_max_mana: 50
 original_mana_recovery_speed: 0.2 #(每2tick恢复0.4蓝量, 相当于1s恢复4)
 

@@ -472,3 +472,24 @@ TerraGem护甲值测试:
     break_loss: false
   glint: true
 
+
+skill测试_头盔:
+  id: golden_helmet
+  display_name: "<gold>技能测试_头盔"
+  lore:
+    - "<yellow>[测试功能说明]</yellow>"
+    - "<white>基础操作测试：</white><aqua>左键基础触发 / 右键基础触发</aqua>"
+    - "<white>蹲伏状态测试：</white><aqua>蹲下动作 / 起身动作 / 蹲伏左键 / 蹲伏右键</aqua>"
+    - "<white>跳跃状态测试：</white><aqua>跳跃中左键触发 / 跳跃中右键触发</aqua>"
+    - "<white>远程操作测试：</white><aqua>搭配弓箭时射击触发</aqua>"
+  skill:
+    content:
+      - "测试蹲下"
+      - "测试起身"
+      - "测试蹲下左键"
+      - "测试蹲下右键"
+      - "测试左键"
+      - "测试右键"
+      - "测试跳起左键"
+      - "测试跳起右键"
+      - "测试射箭"

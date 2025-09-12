@@ -367,7 +367,7 @@ public final class BuffManager implements TerraBuffManager {
                     else provider.createBuff(name, file).ifPresent(b -> buffs.put(b.getName(), b));
                 }
             });
-            TerraCraftLogger.success("Loaded " + provider.getTotal() + " buffs in total, including " + provider.getValid() + " valid buffs and " + provider.getOther() + " invalid active_section buffs.");
+            TerraCraftLogger.success("Loaded " + provider.getTotal() + " buffs, including " + provider.getValid() + " valid buffs and " + provider.getOther() + " invalid active_section buffs.");
         } catch (IOException e) {
             TerraCraftLogger.error("Failed to load buffs from " + buffDir.toAbsolutePath() + " " + e.getMessage());
         }

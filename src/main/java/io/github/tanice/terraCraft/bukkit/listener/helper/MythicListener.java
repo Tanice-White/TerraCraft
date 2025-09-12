@@ -5,6 +5,7 @@ import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.TerraNBTAPI;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.TerraDamageMechanic;
+import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,12 +47,12 @@ public class MythicListener implements Listener, TerraListener {
     }
 
     /* 玩家释放技能（右键/左键等交互） */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    /* 如果忽略已经取消的事件则导致 左右键空气的时候不生效 */
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Action action = event.getAction();
         Player player = event.getPlayer();
         TerraSkillManager.Trigger trigger;
-
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             if (!TerraNBTAPI.isOnGround(player) && !player.isSwimming()) {
                 trigger = TerraSkillManager.Trigger.JUMP_LEFT;

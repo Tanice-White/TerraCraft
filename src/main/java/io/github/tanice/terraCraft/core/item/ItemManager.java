@@ -139,7 +139,7 @@ public final class ItemManager implements TerraItemManager {
                     }
                 }
             });
-            TerraCraftLogger.success("Loaded " + provider.getTotal() + " items in total");
+            TerraCraftLogger.success("Loaded " + provider.getTotal() + " items");
         } catch (IOException e) {
             TerraCraftLogger.error("Failed to load buffs from " + itemDir.toAbsolutePath() + " " + e.getMessage());
         }
@@ -172,7 +172,7 @@ public final class ItemManager implements TerraItemManager {
                     }
                 }
             });
-            TerraCraftLogger.success("Loaded " + num + " level template in total");
+            TerraCraftLogger.success("Loaded " + num + " level templates");
         } catch (IOException e) {
             TerraCraftLogger.error("Failed to load level template from " + levelDir.toAbsolutePath() + " " + e.getMessage());
         }
@@ -214,7 +214,7 @@ public final class ItemManager implements TerraItemManager {
                     }
                 }
             });
-            TerraCraftLogger.success("Loaded " + num + " quality groups in total");
+            TerraCraftLogger.success("Loaded " + num + " quality groups");
         } catch (IOException e) {
             TerraCraftLogger.error("Failed to load quality group from " + qualityDir.toAbsolutePath() + " " + e.getMessage());
         }

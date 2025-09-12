@@ -54,5 +54,8 @@ public interface TerraSkillManager {
         JUMP_RIGHT,
 
         SHOOT
+
+        /* 额外拓展 */
+
     }
 }

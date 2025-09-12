@@ -66,9 +66,9 @@ public final class TerraCraftBukkit extends JavaPlugin implements TerraPlugin {
         databaseManager = new DatabaseManager(this);
         buffManager = new BuffManager(this);
         itemManager = new ItemManager(this);
-        skillManager = new SkillManager(this);
 
         entityAttributeManager = new EntityAttributeManager();
+        skillManager = new SkillManager(this);  // skill 需要使用 entityAttributeManager
 
         terraCraftCommand = new TerraCraftCommand(this);
         terraCraftCommand.register(new ItemGroupCommand(this));

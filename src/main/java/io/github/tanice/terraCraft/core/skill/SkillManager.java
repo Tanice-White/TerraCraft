@@ -103,7 +103,10 @@ public final class SkillManager implements TerraSkillManager {
      */
     @Override
     public void castSkill(Player player, Trigger trigger) {
-        TerraSchedulers.async().run(() -> asyncCastSkills(player, trigger));
+        if (ConfigManager.isDebug())
+            TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL, "Player: " + player.getName() + " trigger: " + trigger.name().toLowerCase() + " detected");
+        // TerraSchedulers.async().run(() -> asyncCastSkills(player, trigger));
+        asyncCastSkills(player, trigger);
     }
 
     /**
@@ -212,7 +215,7 @@ public final class SkillManager implements TerraSkillManager {
                 double manaCost = 1 + meta.get(AttributeType.SKILL_MANA_COST);
                 playerMana.computeIfPresent(reference, (key, mana) -> mana + skill.getManaCost() * (manaCost > 0 ? manaCost : 0));
                 if (ConfigManager.isDebug()) {
-                    TerraCraftLogger.error("Player: " + player.getName() + " casting skill: " + skill.getSkillName()
+                    TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL, "Player: " + player.getName() + " casting skill: " + skill.getSkillName()
                             + "(" + skill.getMythicSkillName() + ")" + ", mana cost: " + skill.getManaCost() * manaCost
                             + ", cd: " + skill.getCd() * skillCooldown + " * 1000 ms"
                     );

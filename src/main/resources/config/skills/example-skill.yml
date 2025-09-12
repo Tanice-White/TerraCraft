@@ -1,5 +1,5 @@
 # 内部名称不能重复
-测试MythicMobs技能-青风斩:
+测试MythicMobs技能-青风斩-属性:
   mythic_name: 青风斩  # 与 mm 技能同名
   cd: 1  # (秒)  # 受到技能cd减免影响
   mana: 10  # 蓝量消耗 （正数为减少，负数增加）

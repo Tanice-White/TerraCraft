@@ -2,7 +2,6 @@ package io.github.tanice.terraCraft.core.skill;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import static io.github.tanice.terraCraft.core.constant.ConfigKeys.*;
 
 public class SkillMetaData {
     /** 技能名 */
@@ -15,7 +14,7 @@ public class SkillMetaData {
 
     public SkillMetaData(String skillName, ConfigurationSection cfg) {
         this.skillName = skillName;
-        String mn = cfg.getString(MYTHIC_SKILL_NAME);
+        String mn = cfg.getString("mythic_name");
         this.mythicSkillName = mn == null ? skillName : mn;
         this.cd = cfg.getInt("cd", 0);
         this.manaCost = cfg.getDouble("mana_cost", 0D);

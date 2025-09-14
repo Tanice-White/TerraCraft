@@ -9,6 +9,7 @@ import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.item.component.SkillComponent;
 import io.github.tanice.terraCraft.bukkit.util.EquipmentUtil;
 import io.github.tanice.terraCraft.bukkit.util.TerraWeakReference;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.TerraNBTAPI;
 import io.github.tanice.terraCraft.bukkit.util.scheduler.TerraSchedulers;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
@@ -32,7 +33,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static io.github.tanice.terraCraft.core.constant.ConfigKeys.*;
 import static io.github.tanice.terraCraft.core.constant.DataFolders.SKILL_FOLDER;
 
 /**
@@ -106,7 +106,7 @@ public final class SkillManager implements TerraSkillManager {
         if (ConfigManager.isDebug())
             TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL, "Player: " + player.getName() + " trigger: " + trigger.name().toLowerCase() + " detected");
         // TerraSchedulers.async().run(() -> asyncCastSkills(player, trigger));
-        asyncCastSkills(player, trigger);
+        syncCastSkills(player, trigger);
     }
 
     /**
@@ -189,7 +189,7 @@ public final class SkillManager implements TerraSkillManager {
     /**
      * 异步技能调用
      */
-    private void asyncCastSkills(Player player, Trigger trigger) {
+    private void syncCastSkills(Player player, Trigger trigger) {
         TerraWeakReference reference = new TerraWeakReference(player);
 
         /* 获取玩家所有可用技能 */
@@ -202,22 +202,47 @@ public final class SkillManager implements TerraSkillManager {
         long currentTime = System.currentTimeMillis();
         TerraCalculableMeta meta = attributeManager.getAttributeCalculator(player).getMeta();
 
+        double skillCooldownMultiplier;
+        double manaCostMultiplier;
+        double actualManaCost;
+        Double currentMana;
+        long cooldownMillis;
         /* 遍历所有可用技能并释放可释放的技能 */
         for (SkillMetaData skill : skills) {
-            /* 可释放技能并且释放成功 */
-            if (isSkillCooldownReady(player, skill.getSkillName(), currentTime) && MMHelper.castSkill(player, skill.getMythicSkillName())) {
-                /* 技能至少相间一个tick */
-                double skillCooldown = 1 + meta.get(AttributeType.SKILL_COOLDOWN);
-                if (skillCooldown < 0) skillCooldown = 0;
+            /* CD是否符合要求 */
+            if (!isSkillCooldownReady(player, skill.getSkillName(), currentTime)) continue;
+
+            skillCooldownMultiplier = Math.max(1 + meta.get(AttributeType.SKILL_COOLDOWN), 0);
+            manaCostMultiplier = Math.max(1 + meta.get(AttributeType.SKILL_MANA_COST), 0);
+            actualManaCost = skill.getManaCost() * manaCostMultiplier;
+            // 检查蓝量是否足够
+            currentMana = playerMana.get(reference);
+            if (currentMana == null || currentMana < actualManaCost) continue;
+
+            // 释放技能
+            if (MMHelper.castSkill(player, skill.getMythicSkillName())) {
+                // 更新CD
                 if (skill.getCd() > 1) {
-                    setSkillCooldown(player, skill, (long) (skill.getCd() * 1000L * skillCooldown) + currentTime);
+                    cooldownMillis = (long) (skill.getCd() * 50L * skillCooldownMultiplier); // * 1000 / 20 = * 50
+                    setSkillCooldown(player, skill, cooldownMillis + currentTime);
                 }
-                double manaCost = 1 + meta.get(AttributeType.SKILL_MANA_COST);
-                playerMana.computeIfPresent(reference, (key, mana) -> mana + skill.getManaCost() * (manaCost > 0 ? manaCost : 0));
+                // 扣除法力值
+                double finalActualManaCost = actualManaCost;
+                playerMana.computeIfPresent(reference, (key, mana) -> mana - finalActualManaCost);
+                // 调试日志输出
                 if (ConfigManager.isDebug()) {
-                    TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL, "Player: " + player.getName() + " casting skill: " + skill.getSkillName()
-                            + "(" + skill.getMythicSkillName() + ")" + ", mana cost: " + skill.getManaCost() * manaCost
-                            + ", cd: " + skill.getCd() * skillCooldown + " * 1000 ms"
+                    TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL,
+                            String.format("Player: %s casting skill: %s(%s), mana cost: %.2f, cd: %.2f s",
+                                    player.getName(),
+                                    skill.getSkillName(),
+                                    skill.getMythicSkillName(),
+                                    actualManaCost,
+                                    skill.getCd() * skillCooldownMultiplier)
+                    );
+                    TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.SKILL,
+                            String.format("Player: %s current mana: %.2f",
+                                    player.getName(),
+                                    playerMana.get(reference))
                     );
                 }
             }
@@ -286,7 +311,7 @@ public final class SkillManager implements TerraSkillManager {
         playerMana.replaceAll((ref, mana) -> {
             LivingEntity p = ref.get();
             if (p == null || !p.isValid()) return mana;
-            return mana + attributeManager.getAttributeCalculator(p).getMeta().get(AttributeType.MANA_RECOVERY_SPEED);
+            return Math.min(mana + attributeManager.getAttributeCalculator(p).getMeta().get(AttributeType.MANA_RECOVERY_SPEED), TerraNBTAPI.getMaxMana(p));
         });
     }
 
@@ -312,7 +337,7 @@ public final class SkillManager implements TerraSkillManager {
                 playerSkillMap.remove(reference);
                 computingFlags.remove(reference);
                 dirtyFlags.remove(reference);
-                // TODO playerMana什么时候写入更新？
+                playerMana.remove(reference);
             }
         }
     }
@@ -331,7 +356,7 @@ public final class SkillManager implements TerraSkillManager {
                         subsection = section.getConfigurationSection(k);
                         if (subsection == null) continue;
                         final ConfigurationSection cfg = subsection;
-                        String t = cfg.getString(TRIGGER);
+                        String t = cfg.getString("trigger");
                         if (t == null) continue;
                         Trigger trigger;
                         try {

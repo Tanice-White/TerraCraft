@@ -17,13 +17,12 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static io.github.tanice.terraCraft.api.item.component.TerraBaseComponent.MINECRAFT_PREFIX;
 
 public final class TerraNBTAPI {
+
+    public static final String TERRA_ENTITY_COMPONENT = "terraMeta";
 
     /**
      * 判断物品是否有盾牌属性
@@ -32,16 +31,11 @@ public final class TerraNBTAPI {
         if (item == null || item.isEmpty()) return false;
         /* 检测组件 */
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
-            AtomicBoolean isShield = new AtomicBoolean(false);
-            NBT.getComponents(item, nbt -> {
-                /* 有组件则 */
-                if (nbt.resolveCompound(MINECRAFT_PREFIX + "blocks_attacks") != null) {
-                    isShield.set(true);
-                    return;
-                }
-                isShield.set(nbt.resolveCompound("!" + MINECRAFT_PREFIX + "blocks_attacks") == null && item.getType() == Material.SHIELD);
+            return NBT.getComponents(item, nbt -> {
+                /* 有组件 */
+                if (nbt.resolveCompound(MINECRAFT_PREFIX + "blocks_attacks") != null) return true;
+                return nbt.resolveCompound("!" + MINECRAFT_PREFIX + "blocks_attacks") == null && item.getType() == Material.SHIELD;
             });
-            return isShield.get();
         }
         /* 看数据类型 */
         return item.getType() == Material.SHIELD;
@@ -53,13 +47,12 @@ public final class TerraNBTAPI {
     public static int damagePerBlock(@Nullable ItemStack item) {
         if (item == null || item.isEmpty()) return 0;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
-            AtomicInteger damagePerBlock = new AtomicInteger(1);
-            NBT.getComponents(item, nbt -> {
+            return NBT.getComponents(item, nbt -> {
                 ReadableNBT compound = nbt.resolveCompound(MINECRAFT_PREFIX + "tool");
-                if (compound == null) return;
-                if (compound.hasTag("damage_per_block")) damagePerBlock.set( compound.getInteger("damage_per_block"));
+                if (compound == null) return 1;
+                if (compound.hasTag("damage_per_block")) return compound.getInteger("damage_per_block");
+                return 1;
             });
-            return damagePerBlock.get();
         }
         return 1;
     }
@@ -70,13 +63,12 @@ public final class TerraNBTAPI {
     public static int damagePerAttack(@Nullable ItemStack item) {
         if (item == null || item.isEmpty()) return 0;
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
-            AtomicInteger damagePerAttack = new AtomicInteger(1);
-            NBT.getComponents(item, nbt -> {
+            return NBT.getComponents(item, nbt -> {
                 ReadableNBT component = nbt.resolveCompound(MINECRAFT_PREFIX + "weapon");
-                if (component == null) return;
-                if (component.hasTag("item_damage_per_attack")) damagePerAttack.set(component.getInteger("item_damage_per_attack"));
+                if (component == null) return 1;
+                if (component.hasTag("item_damage_per_attack")) return component.getInteger("item_damage_per_attack");
+                return 1;
             });
-            return damagePerAttack.get();
         }
         return 1;
     }
@@ -85,17 +77,16 @@ public final class TerraNBTAPI {
      * 获取原版的break_sound
      */
     public static String breakSound(ItemStack item) {
-        AtomicReference<String> res = new AtomicReference<>("minecraft:entity.item.break");
+        String res = "minecraft:entity.item.break";
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_21_5)) {
-            NBT.getComponents(item, nbt -> {
+            return NBT.getComponents(item, nbt -> {
                 ReadableNBT compound = nbt.getCompound(MINECRAFT_PREFIX + "break_sound");
-                if (compound != null) res.set(compound.getString("sound_id"));
+                if (compound != null) return compound.getString("sound_id");
+                return res;
             });
         }
-        return res.get();
+        return res;
     }
-
-    // TODO 玩家属性
 
     /**
      * 设置生物额外生命值
@@ -145,26 +136,74 @@ public final class TerraNBTAPI {
     }
 
     /**
-     * 获取mana恢复速度
-     */
-    public static double getManaRecoverySpeed(LivingEntity entity) {
-        return NBT.get(entity, nbt -> {
-            Double v = nbt.resolveOrNull("terraMeta.manaRecoverySpeed", Double.class);
-            if (v == null) return ConfigManager.getOriginalManaRecoverySpeed();
-            return v;
-        });
-    }
-
-    /**
      * 判断实体是否在地面
      * @param entity 目标实体
      * @return 在地面返回 true 否则 false
      */
     public static boolean isOnGround(Entity entity) {
-        AtomicBoolean onGround = new AtomicBoolean(false);
-        NBT.get(entity, nbt -> {onGround.set(nbt.getBoolean("OnGround"));});
-        return onGround.get();
+        return NBT.get(entity, nbt -> {return nbt.getBoolean("OnGround");});
     }
+
+    // 玩家属性
+
+    /**
+     * 获取玩家mana恢复速度
+     */
+    public static double getManaRecoverySpeed(LivingEntity entity) {
+        return NBT.getPersistentData(entity, nbt -> {
+            Double v = nbt.resolveOrNull(TERRA_ENTITY_COMPONENT + ".manaRecoverySpeed", Double.class);
+            return v == null ? -1 : v;
+        });
+    }
+
+    /**
+     * 设置玩家mana恢复速度
+     */
+    public static void setManaRecoverySpeed(LivingEntity entity, double v) {
+        NBT.modifyPersistentData(entity, nbt -> {
+            nbt.getOrCreateCompound(TERRA_ENTITY_COMPONENT).setDouble("manaRecoverySpeed", v);
+        });
+    }
+
+    /**
+     * 获取玩家蓝量
+     */
+    public static double getMana(LivingEntity entity) {
+        return NBT.getPersistentData(entity, nbt -> {
+            Double v = nbt.resolveOrNull(TERRA_ENTITY_COMPONENT + ".mana", Double.class);
+            return v == null ? -1 : v;
+        });
+    }
+
+    /**
+     * 设置玩家蓝量
+     */
+    public static void setMana(LivingEntity entity, @Nullable Double v) {
+        if (v == null) return;
+        NBT.modifyPersistentData(entity, nbt -> {
+            nbt.getOrCreateCompound(TERRA_ENTITY_COMPONENT).setDouble("mana", v);
+        });
+    }
+
+    /**
+     * 获取玩家最大mana
+     */
+    public static double getMaxMana(LivingEntity entity) {
+        return NBT.getPersistentData(entity, nbt -> {
+            Double v = nbt.resolveOrNull(TERRA_ENTITY_COMPONENT + ".maxMana", Double.class);
+            return v == null ? ConfigManager.getOriginalMaxMana() : v;
+        });
+    }
+
+    /**
+     * 设置玩家最大mana
+     */
+    public static void setMaxMana(LivingEntity entity, double v) {
+        NBT.modifyPersistentData(entity, nbt -> {
+            nbt.getOrCreateCompound(TERRA_ENTITY_COMPONENT).setDouble("maxMana", v);
+        });
+    }
+
 
     private static void setExternalHealth(ReadWriteNBT compound, float externalHealth) {
         compound.setString("id", new TerraNamespaceKey("external_health").get());

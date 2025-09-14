@@ -4,8 +4,8 @@ import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.TerraNBTAPI;
+import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.TerraDamageMechanic;
-import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,6 +14,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 public class MythicListener implements Listener, TerraListener {
@@ -37,6 +39,28 @@ public class MythicListener implements Listener, TerraListener {
             event.register(new TerraDamageMechanic(event.getConfig()));
         }
     }
+
+    // ================== Mana ==================  TODO 还写不进去
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        // Mana恢复速度
+        if (TerraNBTAPI.getManaRecoverySpeed(player) < 0) TerraNBTAPI.setManaRecoverySpeed(player, ConfigManager.getOriginalManaRecoverySpeed());
+        // Mana值初始化
+        TerraCraftBukkit.inst().getSkillManager().setPlayerMana(player, TerraNBTAPI.getMana(player));
+        // Mana最大值
+        if (TerraNBTAPI.getMana(player) < 0 ) TerraNBTAPI.setMana(player, ConfigManager.getOriginalMaxMana());
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // mana值写回
+        Player player = event.getPlayer();
+        TerraNBTAPI.setMana(player, TerraCraftBukkit.inst().getSkillManager().getPlayerMana(player));
+    }
+
+    // ================== Trigger ==================
 
     /* 下蹲 */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

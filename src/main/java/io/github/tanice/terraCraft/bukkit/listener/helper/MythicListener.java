@@ -1,5 +1,6 @@
 package io.github.tanice.terraCraft.bukkit.listener.helper;
 
+import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
@@ -45,7 +46,7 @@ public class MythicListener implements Listener, TerraListener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         // Mana恢复速度
-        if (TerraNBTAPI.getManaRecoverySpeed(player) < 0) TerraNBTAPI.setManaRecoverySpeed(player, ConfigManager.getOriginalManaRecoverySpeed());
+        if (TerraNBTAPI.getManaRecoverySpeed(player) < 0) TerraNBTAPI.setManaRecoverySpeed(player, ConfigManager.getOriginalPlayerMeta().get(AttributeType.MANA_RECOVERY_SPEED));
         // Mana值初始化
         TerraCraftBukkit.inst().getSkillManager().setPlayerMana(player, TerraNBTAPI.getMana(player));
         // Mana最大值

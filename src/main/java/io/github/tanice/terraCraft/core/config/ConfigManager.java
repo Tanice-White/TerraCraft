@@ -1,6 +1,7 @@
 package io.github.tanice.terraCraft.core.config;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
+import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
@@ -177,10 +178,6 @@ public final class ConfigManager {
 
     public static double getOriginalMaxMana() {
         return originalMaxMana;
-    }
-
-    public static double getOriginalManaRecoverySpeed() {
-        return originalManaRecoverySpeed;
     }
 
     public static TerraCalculableMeta getOriginalPlayerMeta() {

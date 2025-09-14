@@ -40,7 +40,7 @@ public class MythicListener implements Listener, TerraListener {
         }
     }
 
-    // ================== Mana ==================  TODO 还写不进去
+    // ================== Mana ==================
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {

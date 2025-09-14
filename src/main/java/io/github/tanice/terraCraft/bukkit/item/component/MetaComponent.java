@@ -108,7 +108,7 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
 
     @Override
     public TerraCalculableMeta getMeta() {
-        return this.meta.meta();
+        return this.meta.getMeta();
     }
 
     @Override

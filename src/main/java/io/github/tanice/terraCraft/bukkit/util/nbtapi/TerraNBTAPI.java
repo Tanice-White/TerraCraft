@@ -204,7 +204,6 @@ public final class TerraNBTAPI {
         });
     }
 
-
     private static void setExternalHealth(ReadWriteNBT compound, float externalHealth) {
         compound.setString("id", new TerraNamespaceKey("external_health").get());
         compound.setFloat("amount", externalHealth);

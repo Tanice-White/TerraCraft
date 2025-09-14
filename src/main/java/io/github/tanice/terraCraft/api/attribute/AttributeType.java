@@ -16,6 +16,5 @@ public enum AttributeType implements Serializable {
     SKILL_MANA_COST,
     SKILL_COOLDOWN,
 
-    HEALTH_RECOVER_SPEED,
     MANA_RECOVERY_SPEED,
 }

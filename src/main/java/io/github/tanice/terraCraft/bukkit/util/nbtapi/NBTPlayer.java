@@ -3,77 +3,57 @@ package io.github.tanice.terraCraft.bukkit.util.nbtapi;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
+import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 插件中玩家的额外信息
  */
 public class NBTPlayer {
+
+    public static final NBTPlayer ORIGINAL = new NBTPlayer(
+            ConfigManager.getOriginalExternalMaxHealth(),
+            0,
+            ConfigManager.getOriginalMaxMana(),
+            new NBTMeta(ConfigManager.getOriginalPlayerMeta())
+    );
+
     private float externalHealth;
     /** 蓝条 */
     private double mana;
     private double maxMana;
-    /** 玩家蓝量回复速度 每2tick */
-    private double manaRecoverySpeed;
-    /** 玩家所食用物品 */
-    // TODO 只有需要计数的才会计入nbt，否则不计入
-    private final Map<String, Integer> ate;
+    private NBTMeta meta;
 
-    public NBTPlayer(float externalHealth, double mana, double maxMana, double manaRecoverySpeed, Map<String, Integer> ate) {
+    public NBTPlayer(float externalHealth, double mana, double maxMana, NBTMeta meta) {
         this.externalHealth = externalHealth;
         this.mana = mana;
         this.maxMana = maxMana;
-        this.manaRecoverySpeed = manaRecoverySpeed;
-        this.ate = ate;
-    }
-
-    /**
-     * 创建用于玩家初始化的NBTPlayer对象
-     */
-    public static NBTPlayer initVanilla(Player player) {
-        return new NBTPlayer(
-                ConfigManager.getExternalMaxHealth(),
-                ConfigManager.getOriginalMaxMana(),
-                ConfigManager.getOriginalMaxMana(),
-                ConfigManager.getOriginalManaRecoverySpeed(),
-                new HashMap<>(0)
-        );
+        this.meta = meta;
     }
 
     /**
      * 获取整个插件附加的NBT
      * @param player 目标玩家
-     * @return NBT数据实例
+     * @return NBT数据实例, 没有则会返回默认的初始值
      */
-    @Nullable
     public static NBTPlayer from(Player player) {
-        return NBT.get(player, nbt -> {
+        return NBT.getPersistentData(player, nbt -> {
             ReadableNBT terraCompound = nbt.getCompound("terraMeta");
-            if (terraCompound == null) return null;
+            if (terraCompound == null) return ORIGINAL;
 
-            ReadableNBT mapCompound = terraCompound.getCompound("ate");
-            Map<String, Integer> map = new HashMap<>();
-            if (mapCompound != null) {
-                for (String key : mapCompound.getKeys()) map.put(key, mapCompound.getInteger(key));
-            }
             return new NBTPlayer(
                     terraCompound.getFloat("externalHealth"),
                     terraCompound.getDouble("mana"),
                     terraCompound.getDouble("maxMana"),
-                    terraCompound.getDouble("manaRecoverySpeed"),
-                    map
+                    NBTMeta.fromNBT(terraCompound)
             );
         });
     }
 
     /**
-     * 玩家初始化后调用
+     * 属性写入nbt
      */
     public void apply(Player player) {
         TerraNBTAPI.setExternalHealth(player, externalHealth);
@@ -81,21 +61,17 @@ public class NBTPlayer {
             player.setHealthScale(20);
             player.setHealthScaled(true);
         }
-        NBT.modify(player, nbt -> {
+        NBT.modifyPersistentData(player, nbt -> {
             ReadWriteNBT terraCompound = nbt.getOrCreateCompound("terraMeta");
             terraCompound.setDouble("mana", mana);
             terraCompound.setDouble("maxMana", maxMana);
             terraCompound.setFloat("externalHealth", externalHealth);
-            terraCompound.setDouble("manaRecoverySpeed", manaRecoverySpeed);
-            ReadWriteNBT mapCompound = terraCompound.getOrCreateCompound("ate");
-            for (Map.Entry<String, Integer> entry : ate.entrySet()) {
-                mapCompound.setString(entry.getKey(), String.valueOf(entry.getValue()));
-            }
+            meta.addToCompound(terraCompound);
         });
     }
 
     public static void remove(LivingEntity entity) {
-        NBT.modify(entity, nbt -> {nbt.removeKey("terraMeta");});
+        NBT.modifyPersistentData(entity, nbt -> {nbt.removeKey("terraMeta");});
         TerraNBTAPI.removeExternalHealth(entity);
     }
 
@@ -119,20 +95,12 @@ public class NBTPlayer {
         this.maxMana = maxMana;
     }
 
-    public double getManaRecoverySpeed() {
-        return manaRecoverySpeed;
+    public TerraCalculableMeta getMeta() {
+        return meta.getMeta();
     }
 
-    public void setManaRecoverySpeed(double manaRecoverySpeed) {
-        this.manaRecoverySpeed = manaRecoverySpeed;
-    }
-
-    public Map<String, Integer> getAte() {
-        return ate;
-    }
-
-    public void eat(String terraName) {
-
+    public void setMeta(TerraCalculableMeta meta) {
+        this.meta = new NBTMeta(meta);
     }
 
     public NBTPlayer clone() {
@@ -141,7 +109,7 @@ public class NBTPlayer {
             clone.externalHealth = this.externalHealth;
             clone.mana = this.mana;
             clone.maxMana = this.maxMana;
-            clone.manaRecoverySpeed = this.manaRecoverySpeed;
+            clone.meta = this.meta.clone();
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

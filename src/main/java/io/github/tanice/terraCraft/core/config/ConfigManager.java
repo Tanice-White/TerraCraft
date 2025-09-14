@@ -1,11 +1,11 @@
 package io.github.tanice.terraCraft.core.config;
 
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
+import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
 import io.github.tanice.terraCraft.core.util.logger.TerraCraftLogger;
 import io.github.tanice.terraCraft.core.util.registry.Registry;
-import io.github.tanice.terraCraft.core.util.EnumUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import static io.github.tanice.terraCraft.core.util.EnumUtil.safeValueOf;
 
 public final class ConfigManager {
 
@@ -40,11 +42,12 @@ public final class ConfigManager {
     private static String database;
     private static String username;
     private static String password;
-    private static double externalMaxHealth;
-    private static double originalMaxMana;
-    private static double originalManaRecoverySpeed;
     private static double rarityIntensity;
     private static Map<String, Boolean> oriUpdateConfigMap;
+
+    private static double originalExternalHealth;
+    private static double originalMaxMana;
+    private static TerraCalculableMeta originalPlayerMeta;
 
     public static void load() {
         File configFile = new File(TerraCraftBukkit.inst().getDataFolder(), "config.yml");
@@ -85,14 +88,19 @@ public final class ConfigManager {
                 useMysql = false;
             }
         }
-        externalMaxHealth = cfg.getDouble("external_max_health", 20D);
-        originalMaxMana = cfg.getDouble("original_max_mana", 50D);
-        originalManaRecoverySpeed = cfg.getDouble("original_mana_recovery_speed", 0.4D);
         rarityIntensity = cfg.getDouble("rarity_intensity", 0.5D);
         oriUpdateConfigMap = new HashMap<>();
         sub = cfg.getConfigurationSection("update");
         if (sub == null) TerraCraftLogger.error("Global configuration file error, there is no update config section");
         else for (String key : sub.getKeys(false)) oriUpdateConfigMap.put(key, sub.getBoolean(key, false));
+
+        sub = cfg.getConfigurationSection("player_original_attribute");
+        if (sub == null) TerraCraftLogger.error("Global configuration file error, there is no player original attribute section");
+        else {
+            originalExternalHealth = sub.getDouble("external_health", 20D);
+            originalMaxMana = sub.getDouble("max_mana", 50D);
+            originalPlayerMeta = new CalculableMeta(sub.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, sub.getString("section"), AttributeActiveSection.BASE));
+        }
     }
 
     public void reload() {
@@ -163,8 +171,8 @@ public final class ConfigManager {
         return password;
     }
 
-    public static float getExternalMaxHealth() {
-        return (float) externalMaxHealth;
+    public static float getOriginalExternalMaxHealth() {
+        return (float) originalExternalHealth;
     }
 
     public static double getOriginalMaxMana() {
@@ -173,6 +181,10 @@ public final class ConfigManager {
 
     public static double getOriginalManaRecoverySpeed() {
         return originalManaRecoverySpeed;
+    }
+
+    public static TerraCalculableMeta getOriginalPlayerMeta() {
+        return originalPlayerMeta;
     }
 
     public static double getRarityIntensity() {
@@ -217,7 +229,7 @@ public final class ConfigManager {
             for (String key : sub.getKeys(false)) {
                 tmp = sub.getConfigurationSection(key);
                 if (tmp == null) continue;
-                Registry.ORI_ITEM.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                Registry.ORI_ITEM.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
                 total ++;
             }
         }
@@ -228,7 +240,7 @@ public final class ConfigManager {
             for (String key : sub.getKeys(false)) {
                 tmp = sub.getConfigurationSection(key);
                 if (tmp == null) continue;
-                Registry.ORI_POTION.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                Registry.ORI_POTION.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
                 total ++;
             }
         }
@@ -239,7 +251,7 @@ public final class ConfigManager {
             for (String key : sub.getKeys(false)) {
                 tmp = sub.getConfigurationSection(key);
                 if (tmp == null) continue;
-                Registry.ORI_ENCHANT.register(key, new CalculableMeta(tmp, EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                Registry.ORI_ENCHANT.register(key, new CalculableMeta(tmp, safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
                 total ++;
             }
         }
@@ -250,7 +262,7 @@ public final class ConfigManager {
             for (String key : sub.getKeys(false)) {
                 tmp = sub.getConfigurationSection(key);
                 if (tmp == null) continue;
-                Registry.ORI_LIVING_ENTITY.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), EnumUtil.safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
+                Registry.ORI_LIVING_ENTITY.register(key.toLowerCase(), new CalculableMeta(tmp.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, tmp.getString("section"), AttributeActiveSection.BASE)));
                 total ++;
             }
         }

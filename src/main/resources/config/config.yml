@@ -16,6 +16,30 @@ database:
 # 是否生成示例配置文件
 generate_examples: true  # true
 
+# 玩家基础属性 -- 这部分的属性直接影响伤害计算
+player_original_attribute:
+  external_health: 20
+  max_mana: 50
+  section: base  # 默认
+  attribute:
+    damage: 0
+    armor: 0
+    critical_strike_chance: 0
+    critical_strike_damage: 0
+    armor_toughness: 0
+    pre_armor_reduction: 0
+    after_armor_reduction: 0
+    mana_cost: 0
+    skill_cooldown: 0
+    mana_recovery_speed: 0.5 #(每2tick恢复0.5蓝量, 相当于1s恢复5)
+    melee: 0
+    magic: 0
+    ranged: 0
+    rouge: 0
+    summon: 0
+    environment: 0
+    other: 0
+
 # 防御伤害抵消乘数
 world_k: 1  # 1点防御抵消 k点伤害
 
@@ -32,11 +56,6 @@ original_critical_strike_addition: 0.2 # 0.2
 
 # 稀有品质权重压制（让权重低的更加难以出现）
 rarity_intensity: 0.5  # 越大压制越多
-
-# 玩家数据类
-external_max_health: 20
-original_max_mana: 50
-original_mana_recovery_speed: 0.2 #(每2tick恢复0.4蓝量, 相当于1s恢复4)
 
 # 原版属性组件是否覆盖式更新
 update:

@@ -43,10 +43,10 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
      * 根据配置文件生成属性
      * @param cfg attr下的配置
      */
-    public CalculableMeta(ConfigurationSection cfg, AttributeActiveSection activeSection) {
+    public CalculableMeta(ConfigurationSection cfg, AttributeActiveSection aac) {
         this.attributeModifiers = new double[ATTRIBUTE_TYPE_COUNT];
         this.damageTypeModifiers = new double[DAMAGE_TYPE_COUNT];
-        this.activeSection = activeSection;
+        this.activeSection = aac;
 
         if (cfg == null) return;
         for (AttributeType type : AttributeType.values()) {
@@ -172,7 +172,7 @@ public class CalculableMeta implements TerraCalculableMeta, Cloneable {
     }
 
     /**
-     * 克隆方法优化：数组克隆比Map克隆更高效
+     * 克隆方法优化
      */
     @Override
     public CalculableMeta clone() {

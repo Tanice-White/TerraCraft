@@ -7,6 +7,7 @@ public class AttributeGroupCommand extends CommandGroup {
     public AttributeGroupCommand(JavaPlugin plugin) {
         super(plugin);
         this.register(new PlayerAttributeGetCommand());
+        this.register(new PlayerAttributeSetCommand());
     }
 
     @Override

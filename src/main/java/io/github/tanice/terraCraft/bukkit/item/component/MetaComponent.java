@@ -2,14 +2,13 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
-import de.tr7zw.nbtapi.iface.ReadWriteNBTList;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.attribute.AttributeActiveSection;
 import io.github.tanice.terraCraft.api.attribute.TerraCalculableMeta;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraMetaComponent;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTMeta;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
 import io.github.tanice.terraCraft.core.attribute.CalculableMeta;
@@ -17,8 +16,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
@@ -30,24 +27,24 @@ import static io.github.tanice.terraCraft.core.util.EnumUtil.safeValueOf;
  */
 public class MetaComponent extends AbstractItemComponent implements TerraMetaComponent {
 
-    private TerraCalculableMeta meta;
+    private NBTMeta meta;
 
-    public MetaComponent(TerraCalculableMeta meta, boolean updatable) {
+    public MetaComponent(NBTMeta meta, boolean updatable) {
         super(updatable);
         this.meta = meta;
     }
 
-    public MetaComponent(TerraCalculableMeta meta, ComponentState state) {
+    public MetaComponent(NBTMeta meta, ComponentState state) {
         super(state);
         this.meta = meta;
     }
 
     public MetaComponent(ConfigurationSection cfg) {
         super(cfg.getBoolean("updatable", true));
-        this.meta = new CalculableMeta(
+        this.meta = new NBTMeta(new CalculableMeta(
                 cfg.getConfigurationSection("attribute"),
                 safeValueOf(AttributeActiveSection.class, cfg.getString("section"), AttributeActiveSection.ERROR)
-        );
+        ));
     }
 
     @Nullable
@@ -111,12 +108,12 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
 
     @Override
     public TerraCalculableMeta getMeta() {
-        return this.meta;
+        return this.meta.meta();
     }
 
     @Override
     public void setMeta(TerraCalculableMeta meta) {
-        this.meta = meta;
+        this.meta = new NBTMeta(meta);
     }
 
     @Override
@@ -125,21 +122,12 @@ public class MetaComponent extends AbstractItemComponent implements TerraMetaCom
     }
 
     private void addToCompound(ReadWriteNBT compound) {
-        compound.setString("active_section", meta.getActiveSection().name().toLowerCase());
-        compound.getDoubleList("attribute").clear();
-        compound.getDoubleList("attribute").addAll(Arrays.stream(meta.getAttributeModifierArray()).boxed().toList());
-        compound.getDoubleList("damage_type").clear();
-        compound.getDoubleList("damage_type").addAll(Arrays.stream(meta.getDamageTypeModifierArray()).boxed().toList());
+        meta.addToCompound(compound);
         compound.setByte("state", state.toNbtByte());
     }
 
     private static MetaComponent fromNBT(ReadableNBT nbt) {
-        AttributeActiveSection as = safeValueOf(AttributeActiveSection.class, nbt.getString("active_section"), AttributeActiveSection.ERROR);
-        List<Double> attributeList = nbt.getDoubleList("attribute").toListCopy();
-        double[] attributes = attributeList.stream().mapToDouble(Double::doubleValue).toArray();
-        List<Double> damageTypeList = nbt.getDoubleList("damage_type").toListCopy();
-        double[] damageTypes = damageTypeList.stream().mapToDouble(Double::doubleValue).toArray();
-        return new MetaComponent(new CalculableMeta(attributes, damageTypes, as), new ComponentState(nbt.getByte("state")));
+        return new MetaComponent(NBTMeta.fromNBT(nbt), new ComponentState(nbt.getByte("state")));
     }
 
     @Override

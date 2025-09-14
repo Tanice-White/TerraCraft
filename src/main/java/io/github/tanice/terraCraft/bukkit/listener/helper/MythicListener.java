@@ -41,7 +41,6 @@ public class MythicListener implements Listener, TerraListener {
     }
 
     // ================== Mana ==================
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -61,7 +60,6 @@ public class MythicListener implements Listener, TerraListener {
     }
 
     // ================== Trigger ==================
-
     /* 下蹲 */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerSneak(PlayerToggleSneakEvent event) {

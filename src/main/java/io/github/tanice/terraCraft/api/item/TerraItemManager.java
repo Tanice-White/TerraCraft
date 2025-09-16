@@ -21,6 +21,8 @@ public interface TerraItemManager {
 
     Collection<String> filterQualityGroups(String name);
 
+    Collection<String> filterQualities(String name);
+
     Optional<TerraLevelTemplate> getLevelTemplate(String name);
 
     Optional<TerraQualityGroup> getQualityGroup(String name);

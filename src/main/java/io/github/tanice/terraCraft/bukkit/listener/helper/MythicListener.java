@@ -4,6 +4,7 @@ import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
+import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTPlayer;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.TerraNBTAPI;
 import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.TerraDamageMechanic;
@@ -45,19 +46,15 @@ public class MythicListener implements Listener, TerraListener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        // Mana恢复速度
-        if (TerraNBTAPI.getManaRecoverySpeed(player) < 0) TerraNBTAPI.setManaRecoverySpeed(player, ConfigManager.getOriginalPlayerMeta().get(AttributeType.MANA_RECOVERY_SPEED));
-        // Mana值初始化
-        TerraCraftBukkit.inst().getSkillManager().setPlayerMana(player, TerraNBTAPI.getMana(player));
-        // Mana最大值
-        if (TerraNBTAPI.getMana(player) < 0 ) TerraNBTAPI.setMana(player, ConfigManager.getOriginalMaxMana());
+        NBTPlayer nbtPlayer = NBTPlayer.from(player);
+        nbtPlayer.apply(player);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // mana值写回
         Player player = event.getPlayer();
-        TerraNBTAPI.setMana(player, TerraCraftBukkit.inst().getSkillManager().getPlayerMana(player));
+        NBTPlayer nbtPlayer = NBTPlayer.from(player);
+        nbtPlayer.apply(player);
     }
 
     // ================== Trigger ==================

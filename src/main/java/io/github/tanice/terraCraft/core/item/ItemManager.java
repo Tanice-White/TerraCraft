@@ -105,6 +105,11 @@ public final class ItemManager implements TerraItemManager {
     }
 
     @Override
+    public Collection<String> filterQualities(String name) {
+        return qualities.keySet().stream().filter(tmp -> tmp.startsWith(name)).toList();
+    }
+
+    @Override
     public Optional<TerraLevelTemplate> getLevelTemplate(String name) {
         return Optional.ofNullable(levelTemplates.get(name));
     }

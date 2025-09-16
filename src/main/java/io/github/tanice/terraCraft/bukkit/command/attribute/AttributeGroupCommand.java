@@ -17,6 +17,6 @@ public class AttributeGroupCommand extends CommandGroup {
 
     @Override
     public String getName() {
-        return "attr";
+        return "attribute";
     }
 }

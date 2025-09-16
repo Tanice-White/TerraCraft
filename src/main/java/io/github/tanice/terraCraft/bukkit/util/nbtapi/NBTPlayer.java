@@ -79,6 +79,10 @@ public class NBTPlayer {
         return externalHealth;
     }
 
+    public void setExternalHealth(float externalHealth) {
+        this.externalHealth = externalHealth;
+    }
+
     public double getMana() {
         return mana;
     }

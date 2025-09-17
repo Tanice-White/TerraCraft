@@ -187,7 +187,7 @@ public final class SkillManager implements TerraSkillManager {
     }
 
     /**
-     * 异步技能调用
+     * 同步技能调用
      */
     private void syncCastSkills(Player player, Trigger trigger) {
         TerraWeakReference reference = new TerraWeakReference(player);

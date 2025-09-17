@@ -6,8 +6,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AttributeGroupCommand extends CommandGroup {
     public AttributeGroupCommand(JavaPlugin plugin) {
         super(plugin);
-        this.register(new PlayerAttributeGetCommand());
-        this.register(new PlayerAttributeSetCommand());
+        this.register(new GetCommand());
+        this.register(new SetCommand());
+        this.register(new ClearCommand());
     }
 
     @Override

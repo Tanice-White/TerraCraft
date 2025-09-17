@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 /**
  * 插件中玩家的额外信息
  */
-public class NBTPlayer {
+public class NBTPlayer implements Cloneable {
 
     public static final NBTPlayer ORIGINAL = new NBTPlayer(
             ConfigManager.getOriginalExternalMaxHealth(),
@@ -41,7 +41,7 @@ public class NBTPlayer {
     public static NBTPlayer from(Player player) {
         return NBT.getPersistentData(player, nbt -> {
             ReadableNBT terraCompound = nbt.getCompound("terraMeta");
-            if (terraCompound == null) return ORIGINAL;
+            if (terraCompound == null) return ORIGINAL.clone();
 
             return new NBTPlayer(
                     terraCompound.getFloat("externalHealth"),
@@ -107,6 +107,7 @@ public class NBTPlayer {
         this.meta = new NBTMeta(meta);
     }
 
+    @Override
     public NBTPlayer clone() {
         try {
             NBTPlayer clone = (NBTPlayer) super.clone();

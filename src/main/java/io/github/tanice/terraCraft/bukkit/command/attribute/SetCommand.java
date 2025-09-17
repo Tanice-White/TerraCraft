@@ -11,21 +11,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 import static io.github.tanice.terraCraft.api.command.TerraCommand.GREEN;
 
-public class PlayerAttributeSetCommand extends CommandRunner {
+public class SetCommand extends CommandRunner {
 
     private static final List<String> BASE_ATTRIBUTE = Arrays.asList("external_health", "mana", "max_mana", "section");
-    private static final List<String> TYPE_ATTRIBUTE = Arrays.stream(AttributeType.values()).map(Enum::name).toList();
-    private static final List<String> DAMAGE_ATTRIBUTE = Arrays.stream(DamageFromType.values()).map(Enum::name).toList();
+    private static final List<String> TYPE_ATTRIBUTE = Arrays.stream(AttributeType.values()).map(Enum::name).map(String::toLowerCase).toList();
+    private static final List<String> DAMAGE_ATTRIBUTE = Arrays.stream(DamageFromType.values()).map(Enum::name).map(String::toLowerCase).toList();
 
-    private static final List<String> SECTION = Arrays.stream(AttributeActiveSection.values()).map(Enum::name).toList();
+    private static final List<String> SECTION = Arrays.stream(AttributeActiveSection.values()).map(Enum::name).map(String::toLowerCase).toList();
 
     @Override
     public String getName() {
@@ -56,14 +53,13 @@ public class PlayerAttributeSetCommand extends CommandRunner {
         String valueStr = args[1];
         Player player = (args.length == 3) ? Bukkit.getPlayer(args[2]) : (sender instanceof Player ? (Player) sender : null);
         if (player == null) {
-            sender.sendMessage(RED + "Invalid player name: " + args[0]);
+            sender.sendMessage(RED + "Invalid target player");
             return true;
         }
 
-        NBTPlayer nbtPlayer = NBTPlayer.from(player).clone();
+        NBTPlayer nbtPlayer = NBTPlayer.from(player);
         TerraCalculableMeta meta = nbtPlayer.getMeta();
         boolean success = false;
-
         // 处理基础属性
         if (BASE_ATTRIBUTE.contains(key)) {
             switch (key) {
@@ -105,7 +101,7 @@ public class PlayerAttributeSetCommand extends CommandRunner {
             }
         }
         // 处理AttributeType枚举
-        else if (TYPE_ATTRIBUTE.contains(key.toUpperCase(Locale.ENGLISH))) {
+        else if (TYPE_ATTRIBUTE.contains(key)) {
             try {
                 AttributeType type = AttributeType.valueOf(key.toUpperCase());
                 meta.set(type, Double.parseDouble(valueStr));
@@ -116,7 +112,7 @@ public class PlayerAttributeSetCommand extends CommandRunner {
             }
         }
         // 处理DamageFromType枚举
-        else if (DAMAGE_ATTRIBUTE.contains(key.toUpperCase(Locale.ENGLISH))) {
+        else if (DAMAGE_ATTRIBUTE.contains(key)) {
             try {
                 DamageFromType type = DamageFromType.valueOf(key.toUpperCase());
                 meta.set(type, Double.parseDouble(valueStr));
@@ -139,16 +135,19 @@ public class PlayerAttributeSetCommand extends CommandRunner {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
-        if (args.length == 0) {
+        if (args.length == 3) return playerList(args[2]);
+
+        if (args.length == 2 && "section".equals(args[0])) {
+            return SECTION.stream().filter(s -> s.startsWith(args[1].toUpperCase())).toList();
+        }
+
+        if (args.length == 1) {
             ArrayList<String> mergedList = new ArrayList<>();
             mergedList.addAll(BASE_ATTRIBUTE);
             mergedList.addAll(TYPE_ATTRIBUTE);
             mergedList.addAll(DAMAGE_ATTRIBUTE);
-            return mergedList;
+            return mergedList.stream().filter(v -> v.startsWith(args[0])).toList();
         }
-        if (args.length == 1 && args[0].equals("section")) return SECTION;
-        if (args.length == 2) return playerList("");
-        if (args.length == 3) return playerList(args[2]);
-        return null;
+        return Collections.emptyList();
     }
 }

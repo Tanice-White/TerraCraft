@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
 import io.github.tanice.terraCraft.api.item.component.vanilla.TerraAttributeModifiersComponent;
+import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.adapter.BukkitAttribute;
 import io.github.tanice.terraCraft.bukkit.util.version.MinecraftVersions;
 import io.github.tanice.terraCraft.bukkit.util.version.ServerVersion;
@@ -99,7 +100,7 @@ public final class TerraNBTAPI {
             boolean found = false;
             for (ReadWriteNBT compound : nbt.getCompoundList("attributes")) {
                 id = compound.getString("id");
-                if (id == null || id.isEmpty() || !id.equals(BukkitAttribute.MAX_HEALTH.getBukkitAttribute().toString())) continue;
+                if (id == null || id.isEmpty() || !id.equals(BukkitAttribute.MAX_HEALTH.getAttributeKey().asString())) continue;
                 found = true;
                 setExternalHealth(compound.getCompoundList("modifiers").addCompound(), externalHealth);
                 break;
@@ -109,14 +110,14 @@ public final class TerraNBTAPI {
 
 
             if (!found) {
-                TerraCraftLogger.info("Cannot find generic max_health attribute for entity " + entity.getName() + " try to generate");
+                TerraCraftLogger.info("Cannot find generic max_health attribute for " + entity.getName() + " try to generate");
 
                 ReadWriteNBT compound = nbt.getCompoundList("attributes").addCompound();
-                compound.setString("id", BukkitAttribute.MAX_HEALTH.getBukkitAttribute().toString());
+                compound.setString("id", BukkitAttribute.MAX_HEALTH.getAttributeKey().asString());
                 compound.setDouble("base", 20D);
                 setExternalHealth(compound.getCompoundList("modifiers").addCompound(), externalHealth);
 
-                TerraCraftLogger.success("Successfully generated max_health attribute for entity " + entity.getName());
+                TerraCraftLogger.success("Successfully generated max_health attribute for " + entity.getName());
             }
         });
     }

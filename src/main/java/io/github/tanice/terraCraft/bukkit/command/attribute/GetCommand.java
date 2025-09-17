@@ -11,7 +11,7 @@ import java.util.List;
 
 import static io.github.tanice.terraCraft.api.command.TerraCommand.*;
 
-public class PlayerAttributeGetCommand extends CommandRunner {
+public class GetCommand extends CommandRunner {
     @Override
     public String getName() {
         return "get";
@@ -24,18 +24,21 @@ public class PlayerAttributeGetCommand extends CommandRunner {
 
     @Override
     public String getUsage() {
-        return "get <player>";
+        return """
+                get
+                get <player>
+                """;
     }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (args.length != 1) {
+        if (args.length > 1) {
             sender.sendMessage(RED + "Invalid number of arguments");
             return true;
         }
-        Player player = Bukkit.getPlayer(args[0]);
+        Player player = args.length == 1 ? Bukkit.getPlayer(args[0]) : (sender instanceof Player ? (Player) sender : null);
         if (player == null) {
-            sender.sendMessage(RED + "Invalid player name: " + args[0]);
+            sender.sendMessage(RED + "Invalid target player");
             return true;
         }
         TerraAttributeCalculator calculator = TerraCraftBukkit.inst().getEntityAttributeManager().getAttributeCalculator(player);

@@ -98,8 +98,8 @@ public final class ConfigManager {
         sub = cfg.getConfigurationSection("player_original_attribute");
         if (sub == null) TerraCraftLogger.error("Global configuration file error, there is no player original attribute section");
         else {
-            originalExternalHealth = sub.getDouble("external_health", 20D);
-            originalMaxMana = sub.getDouble("max_mana", 50D);
+            originalExternalHealth = sub.getDouble("external_health", 0D);
+            originalMaxMana = sub.getDouble("max_mana", 0D);
             originalPlayerMeta = new CalculableMeta(sub.getConfigurationSection("attribute"), safeValueOf(AttributeActiveSection.class, sub.getString("section"), AttributeActiveSection.BASE));
         }
     }

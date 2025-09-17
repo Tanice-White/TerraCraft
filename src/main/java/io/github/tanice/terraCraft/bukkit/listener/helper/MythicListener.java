@@ -48,12 +48,15 @@ public class MythicListener implements Listener, TerraListener {
         Player player = event.getPlayer();
         NBTPlayer nbtPlayer = NBTPlayer.from(player);
         nbtPlayer.apply(player);
+        TerraCraftBukkit.inst().getSkillManager().setPlayerMana(player, nbtPlayer.getMana());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         NBTPlayer nbtPlayer = NBTPlayer.from(player);
+        Double mana = TerraCraftBukkit.inst().getSkillManager().getPlayerMana(player);
+        if (mana != null) nbtPlayer.setMana(mana);
         nbtPlayer.apply(player);
     }
 

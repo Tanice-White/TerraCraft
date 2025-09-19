@@ -58,7 +58,7 @@ public class SlotComponent extends AbstractItemComponent implements TerraMetaSlo
     }
 
     @Override
-    public void doCover(ItemStack item) {
+    protected void doCover(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".slot");
@@ -89,7 +89,7 @@ public class SlotComponent extends AbstractItemComponent implements TerraMetaSlo
     }
 
     @Override
-    public void updateLore() {
+    protected void updateLore() {
 
     }
 

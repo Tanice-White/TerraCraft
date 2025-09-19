@@ -3,7 +3,6 @@ package io.github.tanice.terraCraft.bukkit.item.component;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
-import io.github.tanice.terraCraft.api.item.TerraBaseItem;
 import io.github.tanice.terraCraft.api.item.component.ComponentState;
 import io.github.tanice.terraCraft.api.item.component.TerraSkillComponent;
 import io.github.tanice.terraCraft.api.item.component.AbstractItemComponent;
@@ -56,7 +55,7 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     @Override
-    public void doCover(ItemStack item) {
+    protected void doCover(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT data = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".skill");
@@ -71,7 +70,7 @@ public class SkillComponent extends AbstractItemComponent implements TerraSkillC
     }
 
     @Override
-    public void updateLore() {
+    protected void updateLore() {
 
     }
 

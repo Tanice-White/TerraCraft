@@ -1,12 +1,10 @@
 package io.github.tanice.terraCraft.bukkit.listener.helper;
 
-import io.github.tanice.terraCraft.api.attribute.AttributeType;
 import io.github.tanice.terraCraft.api.listener.TerraListener;
 import io.github.tanice.terraCraft.api.skill.TerraSkillManager;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.NBTPlayer;
 import io.github.tanice.terraCraft.bukkit.util.nbtapi.TerraNBTAPI;
-import io.github.tanice.terraCraft.core.config.ConfigManager;
 import io.github.tanice.terraCraft.core.util.helper.mythicmobs.TerraDamageMechanic;
 import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.entity.Player;

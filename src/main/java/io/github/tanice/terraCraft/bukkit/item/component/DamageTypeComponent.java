@@ -57,7 +57,7 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     }
 
     @Override
-    public void doCover(ItemStack item) {
+    protected void doCover(ItemStack item) {
         if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_20_5)) {
             NBT.modifyComponents(item, nbt -> {
                 ReadWriteNBT component = nbt.resolveOrCreateCompound(MINECRAFT_PREFIX + "custom_data." + TERRA_COMPONENT_KEY + ".damage_type");
@@ -74,7 +74,7 @@ public class DamageTypeComponent extends AbstractItemComponent implements TerraD
     }
 
     @Override
-    public void updateLore() {
+    protected void updateLore() {
 
     }
 

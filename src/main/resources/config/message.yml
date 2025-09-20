@@ -1,0 +1,74 @@
+# 通用提示
+command.help.title: "=== TerraCraft 帮助 ==="
+command.help.main: "主指令: /terracraft"
+command.help.subcommands: "子指令:"
+command.help.format: "\t{0} - {1}"
+command.no_permission: "你没有执行此命令的权限！"
+command.required_permission: "所需权限: {0}"
+command.unknown_subcommand: "未知的子指令！可用指令:"
+command.no_available_subcommands: "你没有任何子指令的权限！"
+command.invalid_arguments: "参数数量无效"
+command.player_only: "此命令只能由玩家执行"
+
+# 物品相关
+item.info.title: "物品中的Terra组件"
+item.info.hold_item: "你必须在主手持有物品"
+item.info.not_found: "没有名为 {0} 的terra物品"
+item.get.success: "成功给予 {0} {1}{2} 个物品: {3}{4}"
+item.get.fail: "无法获取物品: {0}"
+
+# 品质相关
+quality.info.invalid_name: "无效的品质名称"
+quality.set.success: "品质已重铸为 {0}"
+quality.set.invalid_in_groups: "物品组中不存在该品质名称"
+quality.set.hold_item: "请在主手持有terra物品"
+quality.set.no_component: "物品没有品质组件"
+quality.recast.success: "品质已重铸为 {0}"
+
+# 等级相关
+level.up.success: "升级成功"
+level.up.fail: "升级失败"
+level.up.fail.level_down: "升级失败，等级下降"
+level.up.no_component: "物品没有等级组件"
+level.up.offhand_material: "请在副手持有所需材料"
+level.up.invalid_material: "副手物品与所需材料不匹配"
+level.up.max_reached: "等级已达到最大值"
+level.up.too_many_arguments: "参数过多"
+level.template.info.invalid_name: "无效的等级模板名称"
+level.down.description: "降低主手物品的等级"
+
+# 属性相关
+attribute.set.success: "已将 {0} 更新为 {1}"
+attribute.set.invalid_player: "无效的目标玩家"
+attribute.set.invalid_value: "无效的 {0} 值: {1}"
+attribute.set.invalid_section: "无效的区间: {0}"
+attribute.set.unknown_base: "未知的基础属性: {0}"
+attribute.set.invalid_key_value: "无效的键值对: {0}"
+attribute.set.unknown_key: "未知的键: {0}"
+
+# Buff相关
+buff.info.not_found: "未找到匹配 {0} 的buff"
+buff.give.success: "成功给予 {0} buff {1}，持续时间: {2}秒，间隔: {3}秒"
+buff.give.invalid: "无效的buff"
+buff.give.invalid_player: "玩家 {0} 不存在"
+buff.give.invalid_duration: "无效的持续时间数值"
+buff.give.invalid_interval: "无效的间隔数值"
+buff.clear.success: "已清除玩家所有buff"
+buff.get.description: "获取玩家的TerraCraft buff记录"
+
+# 宝石相关
+gem.inlay.success: "镶嵌成功"
+gem.inlay.fail: "镶嵌失败"
+gem.inlay.fail.disappear: "镶嵌失败，宝石已消失"
+gem.inlay.no_stack: "没有更多宝石位置"
+gem.inlay.hold_items: "请在主手持有带宝石槽的物品，副手持有宝石"
+gem.dismantle.success: "成功移除宝石"
+gem.dismantle.fail: "拆卸失败"
+gem.dismantle.fail.disappear: "拆卸失败，宝石已消失"
+gem.dismantle.no_holder: "该物品没有宝石槽组件"
+gem.dismantle.no_gems: "该物品没有可移除的宝石"
+gem.dismantle.not_found: "未找到名为 {0} 的宝石"
+gem.dismantle.error: "移除宝石时出错"
+
+# 其他
+reload.description: "重新加载terraCraft"

@@ -6,6 +6,7 @@ import io.github.tanice.terraCraft.api.item.TerraItemManager;
 import io.github.tanice.terraCraft.api.item.component.*;
 import io.github.tanice.terraCraft.bukkit.TerraCraftBukkit;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraEnchantMetaLoadEvent;
+import io.github.tanice.terraCraft.bukkit.event.custom.TerraEntityMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.event.custom.TerraItemMetaLoadEvent;
 import io.github.tanice.terraCraft.bukkit.item.component.*;
 import io.github.tanice.terraCraft.bukkit.util.event.TerraEvents;
@@ -94,10 +95,15 @@ public final class EquipmentUtil {
         // 生物体meta
         if (entity instanceof Player player) res.add(NBTPlayer.from(player).getMeta());
         else {
-            customMeta = Registry.ORI_LIVING_ENTITY.get(entity.getType().toString().toLowerCase());
-            if (customMeta != null) {
-                if (ConfigManager.isDebug()) TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.REGISTRY, "found vanilla living entity: " + entity.getType().toString().toLowerCase());
-                res.add(customMeta);
+            TerraEntityMetaLoadEvent event = new TerraEntityMetaLoadEvent(entity);
+            TerraEvents.callSync(event);
+            if (event.getMeta() != null) res.add(event.getMeta());
+            else {
+                customMeta = Registry.ORI_LIVING_ENTITY.get(entity.getType().toString().toLowerCase());
+                if (customMeta != null) {
+                    if (ConfigManager.isDebug()) TerraCraftLogger.debug(TerraCraftLogger.DebugLevel.REGISTRY, "found vanilla living entity: " + entity.getType().toString().toLowerCase());
+                    res.add(customMeta);
+                }
             }
         }
         return res;

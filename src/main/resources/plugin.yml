@@ -21,7 +21,7 @@ permissions:
     description: "Allows access to all TerraCraft commands"
     default: op
   # Sub-command group permissions
-  terracraft.command.attr:
+  terracraft.command.attribute:
     description: "Allows access to all attribute-related commands"
     default: op
     depends: [terracraft.command]
@@ -51,10 +51,18 @@ permissions:
     depends: [terracraft.command]
 
   # Attribute sub-command permissions
-  terracraft.command.attr.get:
+  terracraft.command.attribute.get:
     description: "Allows viewing a player's attributes"
     default: op
-    depends: [terracraft.command.attr]
+    depends: [terracraft.command.attribute]
+  terracraft.command.attribute.set:
+    description: "Allows set a player's attributes"
+    default: op
+    depends: [ terracraft.command.attribute ]
+  terracraft.command.attribute.clear:
+    description: "Allows clear a player's attributes"
+    default: op
+    depends: [terracraft.command.attribute]
 
   # Buff sub-command permissions
   terracraft.command.buff.give:

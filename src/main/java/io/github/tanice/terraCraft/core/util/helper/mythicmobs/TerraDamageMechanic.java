@@ -59,7 +59,9 @@ public class TerraDamageMechanic implements ITargetedEntitySkill {
                     preventImmunity.get(data, target),
                     ignoreInvulnerability.get(data, target)
             );
+            if (skillDamageData.isIgnoreInvulnerability()) defender.setNoDamageTicks(0);
             target.damage((float) DamageCalculator.calculate(attacker, defender, skillDamageData).getFinalDamage());
+            if (skillDamageData.isPreventImmunity()) defender.setNoDamageTicks(0);
         }
         return SkillResult.SUCCESS;
     }

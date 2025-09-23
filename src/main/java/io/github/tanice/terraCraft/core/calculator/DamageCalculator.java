@@ -84,9 +84,11 @@ public final class DamageCalculator {
         /* 前置Buff处理 */
         if (!processBeforeBuffs(protocol, true)) return protocol;
         /* 伤害浮动 */
-        if(skillMeta.getDamage() < 0) {
+        if(skillMeta.getDamage() <= 0) {
             protocol.setFinalDamage(skillMeta.getDamageK() * attackerCalculator.getMeta().get(AttributeType.ATTACK_DAMAGE));
         } else protocol.setFinalDamage(skillMeta.getDamage());
+        /* 是否被damageFromTye影响 */
+        if (skillMeta.isPowerByDamageType()) protocol.setFinalDamage(protocol.getFinalDamage() * (1 + attackerCalculator.getMeta().get(type)));
         /* 暴击和伤害浮动 */
         applyCriticalDamage(protocol, skillMeta);
         applyFloatDamage(protocol);
